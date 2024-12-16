@@ -1,0 +1,33 @@
+.preciosos input{
+    border: 0 !important;
+    padding: 0;
+    border-bottom: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+
+  .preciosos label{
+    font-weight: bold;
+  }
+
+  
+  .preciosos h6{
+    font-weight: bold;
+    color: var(--corPrimaria);
+  }
+
+  .pagando h6{
+    font-weight: bold;
+    color: var(--corPrimaria);
+    margin-top: 15px;
+  }
+
+  .pagando label{
+    font-weight: bold;
+  }
+
+
+  @media (max-width:769px){
+    .meusInputs{
+      padding-bottom: 100px !important;
+    }
+  }

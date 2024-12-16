@@ -1,0 +1,373 @@
+:root{
+  --corPrimaria:#044697;
+  --corSecodaria: #0070fa;
+  --sombra: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --sombraTexto: 2px 2px 4px rgba(0, 0, 0, 0.3), /* Sombra mais escura */
+  -1px -1px 2px rgba(255, 255, 255, 0.8);
+  --border:  0.8px solid rgba(128,128,128,.143);
+  --trasicao:all 300ms ease-in;
+  --sombraA: 2px 4px 29px #ddd;
+  --sombraC: 0 .0rem 1rem rgba(0, 0, 0, .15);
+  --borderRadius: 8px !important;
+  --transformA:scale(1.09);
+  --transformB:scale(1.07);
+  --transformC:scale(1.05);
+  --corTerciaria: #fff;
+  --borderRadiusPercento:50%;
+  --linearGradiente: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+  --linearGradienteA: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
+  --sombraAdmin: 0 .0rem 1rem rgba(0, 0, 0, .15);
+}
+
+a{
+  color: var(--corTerciaria);
+  text-decoration: none;
+}
+
+a:hover{
+  cursor: pointer;
+}
+*{
+  margin: 0 ;
+  padding: 0;
+  box-sizing: border-box !important;
+
+}
+
+
+
+input,textarea,select{
+  border-radius: 0 !important;
+  border:1px solid #04469757  !important;
+  box-shadow: var(--sombraC);
+
+  
+}
+
+
+input:focus,textarea:focus,select:focus{
+  
+  box-shadow: 0 0 6px 2px rgba(4, 70, 151, 0.4) /* Sombra suave */!important;
+
+}
+
+.fortificarLetter{
+  font-weight: 500;
+  
+}
+
+
+/* Para navegadores WebKit (Chrome, Safari, Edge baseado em Chromium) */
+html::-webkit-scrollbar {
+  width: 10px;
+  border-left: 2px solid #888;
+ 
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #888;
+  
+}
+
+/* Para navegadores Mozilla Firefox */
+html {
+  scrollbar-width: thin; /* Define uma largura pequena para o scrollbar */
+  scrollbar-color: #888 transparent; /* Cor do thumb e background do scrollbar */
+ 
+}
+
+/* Estilização da barra de rolagem */
+html::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+html::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #888 !important;
+  border-radius: 10px !important;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: #555 !important;
+}
+
+
+body{
+  font-family: 'Poppins',Arial, Helvetica, sans-serif;
+  
+  
+  
+}
+
+.links-acessos{
+  transition: var(--trasicao);
+}
+
+.links-acessos:hover{
+  transform: scale(1.1);
+}
+
+.titulo-secao{
+  font-family:'Poppins',Arial, Helvetica, sans-serif;
+  color: var(--corPrimaria);
+  margin-bottom: 45px;
+  text-shadow: var(--sombraTexto);
+}
+
+.nnB{
+  width: 300px;
+  margin-top: 40px !important;
+}
+
+@media ((min-width:760px) and (max-width:778px)){
+  .mmf{
+    height: 40px !important;
+  }
+}
+
+.minhaCor{
+  color: var(--corPrimaria) !important;
+ padding: 10px 15px;
+}
+
+
+[class="btn btn-primary"]{
+  background-color: var(--corPrimaria);
+}
+
+/*
+  [class="form-control"]{
+  box-shadow:  !important;
+
+}
+*/
+
+[aria-controls="basic-navbar-nav"]{
+  border-radius: 0;
+}
+
+
+
+.modal-content{
+  border-radius: var(--borderRadius) !important;
+  transition: all 300ms ease-in !important;
+}
+
+
+
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: var(--corPrimaria); /* ou qualquer cor desejada */
+  padding: 10px 0;
+  color: #fff;
+  text-align: center;
+}
+
+
+.bg-primaryy{
+  display: block;
+  position: absolute;
+  width: 100%;
+  background-color: #fff;
+  z-index: -10;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pe1{
+ padding-left: 260px;
+}
+
+@media (max-width:992px){
+
+.pe1{
+ padding-left: 50px;
+}
+}
+
+
+
+@media (max-width:769px){
+  .oculte{
+    display: none;
+  }
+}
+
+
+
+.OutroText{
+  font-size: .9em;
+  display: block;
+  margin: auto !important
+}
+
+
+
+
+
+.alturaPereita{
+  height: auto !important;
+  min-height: 100vh;
+}
+
+.fotoImagem{
+  border: 5px solid #000000ce;
+  width: 130px;
+  height: 130px;
+  box-shadow: var(--sombraA);
+  border-radius: 15px;
+}
+
+.fotoAR{
+  font-size: 60px;
+  color: #000000ce;
+  margin: 30px;
+}
+
+
+
+.divHeaderBloger{
+  background-color: var(--corPrimaria);
+  padding: 25px 15px;
+  color: #fff;
+  margin: 12px 0;
+  position: relative;
+  text-align: justify;
+  max-width: 100%;
+}
+
+.divHeaderBloger h1{
+  font-size: 1.8em;
+}
+
+
+.alinharParagrafoEspecial{
+  text-align:justify !important;
+  color: #555;
+}
+
+p,a,h1,h1,h3,h4,h5,h6,span {
+  word-wrap: break-word; /* Quebra a palavra quando for muito longa */
+  white-space: pre-wrap; /* Respeita as quebras de linha do conteúdo */
+}
+
+
+.fw-Linha{
+  font-weight:500;
+}
+
+.alinharAviso{
+  
+  margin-left:50px !important;
+}
+
+.ajusteError{
+  margin-left: 48px;
+}
+
+
+.iconeEliminar{
+   color: var(--corPrimaria) !important;
+}
+
+.btnIcone{
+  border: none;
+  padding-top: 20px;
+  transition: all ease-in 300ms;
+}
+
+.btnIcone:hover{
+   transform: scale(1.2);
+}
+
+.btnAddEspecial{
+   
+ 
+  transition: all ease-in 300ms;
+}
+
+
+.iconeApagarNota{
+  cursor: pointer;
+  color: var(--corPrimaria);
+  transition: all ease-in 300ms;
+}
+
+.iconeApagarNota:hover{
+
+  transform: scale(1.1);
+}
+
+
+
+@media (max-width:768px){
+  .btnIcone{
+    display: block;
+    float: right;
+  }
+}
+
+.btnBorder{
+
+  border: 0 !important;
+
+}
+
+.color-options{
+   border: 1px solid #000;
+}
+
+.btnAddCor{
+  right: -8px;
+  position: relative;
+}
+
+.btnAddEsp{
+   background-color: #00000000 !important;
+   border: none;
+   transition: var(--trasicao);
+}
+
+.btnAddEsp:hover{
+  transform: scale(1.1);
+}
+
+.btnColorir{
+  color: var(--corPrimaria);
+  font-size: 2em;
+}
+
+.btnDeleteColorir{
+  color: var(--corPrimaria);
+  font-size: 2em;
+}
+
+.cursor-point{
+  cursor: pointer !important
+  ;
+}
+
+.btn-delete{
+
+  background-color: #00000000 !important;
+  border: 0;
+}
+
+
+.icone-delete{
+  color: #000000c7;
+  transition: var(--trasicao);
+}
+
+.icone-delete:hover{
+  transform:scale(1.2);
+}
+
+.box-calendario{
+   box-shadow: var(--sombraA);
+}

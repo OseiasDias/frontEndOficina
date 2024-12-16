@@ -1,0 +1,119 @@
+
+.seccao-inicio{
+   
+  background-size: cover;
+  background-position: top;
+  border-bottom: 6px solid var(--corPrimaria);
+  box-shadow: var(--sombra) !important;
+
+ 
+ 
+}
+
+.seccao-inicioA{
+    background: var(--linearGradiente),
+    url("../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
+    height: 100vh !important;
+    background-size: cover;
+ 
+ 
+}
+
+.seccao-inicioB{
+    background: var(--linearGradiente),
+    url("../assets/img/StockCake-Oficina Automotiva Ocupada_1729296552.jpg");
+    height: 100vh !important;
+    background-size: cover;
+  
+ 
+ 
+}
+.seccao-inicioC{
+    background: var(--linearGradiente),
+    url("../assets/img/StockCake-Oficina de reparação automotiva_1729297101.jpg");
+    height: 100vh !important;
+    background-size: cover;
+
+ 
+ 
+}
+
+.h1-home{
+    text-align: center;
+    font-size: 3.8em;
+    color: var(--corTerciaria);
+    font-weight: 400;
+    font-family:'Poppins',Arial, Helvetica, sans-serif;
+}
+
+@media (max-width:768px){
+    .h1-home{
+        text-align: center;
+        font-size: 2.8em;
+        
+    }
+}
+
+
+html, body {
+    height: 100%; /* Garantir que o body ocupe toda a altura da tela */
+    margin: 0; /* Remover margens padrão */
+}
+
+.textoGrupo {
+    display: flex; /* Usar flexbox */
+    flex-direction: column; /* Alinhar os itens em coluna */
+    justify-content: center; /* Centralizar verticalmente */
+    align-items: center; /* Centralizar horizontalmente */
+    height: 100vh; /* Ocupa toda a altura da viewport */
+    width: 75%;
+    margin: auto;
+    
+}
+
+@media (max-width:992px){
+    .seccao-inicio{
+         background-size: cover;
+        background-position: center;
+    }
+
+    .seccao-inicioA{
+        background: var(--linearGradiente),
+        url("../assets/img/StockCake-Trabalho noturno na garagem_1728582899.jpg");
+       
+    }
+
+    .seccao-inicioB{
+        background: var(--linearGradiente),
+        url("../assets/img/StockCake-Oficina de reparação de automóveis_1729296675.jpg");
+       
+    }
+
+    .seccao-inicioC{
+        background: var(--linearGradiente),
+        url("../assets/img/StockCake-Linha de montagem automotiva_1729296819.jpg");
+       
+    }
+}
+
+.btn-agendar{
+    border: none;
+    font-size: 1.1em;
+}
+
+@media (max-width:768px){
+    
+.btn-agendar{
+    border: none;
+    font-size: 1em;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+}
+
+.seccao-inicio{
+    box-shadow: var(--sombra) !important;
+}
+
+
+

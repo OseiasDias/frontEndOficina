@@ -1,0 +1,10 @@
+
+
+.containerAcesso {
+    border-bottom: 6px solid var(--corPrimaria);
+    border-top: 6px solid var(--corPrimaria) !important;
+    border-radius: var(--borderRadius);
+    
+ 
+  
+}

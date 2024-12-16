@@ -1,0 +1,72 @@
+.faq-seccao {
+  background:var(--corTerciaria);
+  background-size: cover;
+  background-position: center;
+}
+
+.bordaritem {
+  border-radius: var(--borderRadius) !important;
+  
+}
+
+
+.textAliado {
+  text-align: justify !important;
+}
+
+.faq-seccao .accordion-button {
+  background-color:var(--corTerciaria) !important;
+  box-shadow: none !important;
+
+}
+
+.faq-seccao .accordion-item {
+  border-top: 4px solid var(--corPrimaria) !important;
+  border-bottom: 4px solid var(--corPrimaria);
+  margin-top: 12px;
+  border-radius: var(--borderRadius) !important;
+  box-shadow: var(--sombra);
+}
+
+.iconeFaq {
+  background-color: var(--corPrimaria);
+  color:var(--corTerciaria) !important;
+  font-size: 30px;
+  padding: 5px;
+  border-radius: var(--borderRadius);
+  margin-right: 10px;
+}
+
+.faq-seccao .accordion-button::after {
+  margin-top: -10px;
+
+}
+
+.perguntasFaq {
+
+  color: var(--corPrimaria);
+  margin-bottom: 40px !important;
+}
+
+.horasTrabalho {
+  box-shadow: var(--sombra);
+  padding: 30px 20px 30px 20px;
+  border-bottom: 5px solid var(--corPrimaria);
+  border-top: 4px solid var(--corPrimaria) !important;
+  border-radius: var(--borderRadius);
+  margin-bottom: 50px;
+
+}
+
+.pHorarios {
+  border-left: 4px solid var(--corPrimaria);
+  border-right: 4px solid var(--corPrimaria) !important;
+  padding: 11px 5px;
+  border-radius: 20px !important;
+  box-shadow: var(--sombra);
+  transition: all 300ms ease-in;
+}
+
+.pHorarios:hover {
+  transform: scale(1.07);
+}

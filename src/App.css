@@ -1,0 +1,146 @@
+/*  box-shadow: 0 .0rem 1rem rgba(0, 0, 0, .15) !important;*/
+
+
+.btn-addCompra{
+
+     background-color: var(--corPrimaria)
+     ;margin-left: 6px;
+     margin-bottom: 10px;
+     margin-top: -5px;
+     color: #fff;
+     border-radius: 0 !important;
+     font-size: 1.1em;
+}
+
+.bordarDiv{
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.baixarTexto{
+   
+    display: block;
+    position: relative;
+    bottom: -10px;
+   
+}
+
+.formularioNotas{
+    display: flex !important
+    ;
+}
+
+.colorirBTN{
+    background-color: #00000000 !important
+    ;color: var(--corPrimaria) !important
+    ;
+}
+
+.colorirBTN:hover{
+    background-color: #00000000 !important
+    ;
+}
+
+.sombraGrafico{
+    box-shadow: var(--sombraC);
+}
+
+.marginTop{
+    margin-top: -50px;
+}
+
+.configurarBTN{
+    border-radius: 0;
+    padding: 0px 12px !important;
+   
+    
+}
+
+.border-radius-zero{
+    border-radius: 0;
+}
+
+.tranformBTN{
+    transition: all 300ms ease-in-out;
+}
+
+.tranformBTN:hover{
+    transform: scale(1.2);
+}
+
+@media (min-width:768px) and (max-width:992px){
+
+    .arranjarBTN{
+        margin-top:0;
+    }
+
+}
+
+@media (max-width:768px) {
+
+    .arranjarBTN{
+        margin-top:0;
+    }
+
+}
+
+.bordando{
+    margin-top: 33px;
+    padding-top: 5px;
+}
+
+
+.topifincando{
+   margin-top: -35px;
+}
+
+.linhaRem{
+    margin: 8px 0;
+    border-radius: 0 !important;
+}
+
+.borderSem{
+    border: none
+    !important;
+}
+
+.baixarTexto{
+    margin-top: 60px;
+}
+
+.baixarText{
+    bottom: -30px; 
+    position: relative;
+}
+
+.bordarNONE{
+    border: 0 !important;
+}
+
+.baixarH6{
+    display: block;
+    bottom: -17px;
+    position: relative;
+}
+
+.ttt{
+    transition: var(--trasicao);
+}
+
+.ttt:hover{
+    transform: scale(1.2);
+}
+
+.accordion-item{
+    border-top: 4px solid var(--corPrimaria) !important;
+    border-bottom: 4px solid var(--corPrimaria);
+    margin-top: 12px;
+    border-radius: var(--borderRadius) !important;
+    box-shadow: var(--sombra);
+}
+
+.accordion-button{
+    background-color: #00000000 !important
+    ;
+    box-shadow: none !important;
+}

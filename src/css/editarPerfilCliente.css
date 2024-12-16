@@ -1,0 +1,42 @@
+.corpoTab{
+    margin-top: 120px !important;
+
+}
+
+
+.imgPerfil{
+    height: 200px !important;
+    width: 200px !important;
+    display: block;
+    margin: auto;
+    border-radius: var(--borderRadius)
+}
+
+.espacamento {
+    box-shadow: var(--sombra);
+    padding: 25px;
+    border-bottom: 4px solid var(--corPrimaria);
+    border-top: 4px solid var(--corPrimaria) !important;
+    border-radius: var(--borderRadius);
+    margin-bottom: 30px;
+}
+
+.belezaParagrafo{
+    border-bottom: 3px solid var(--corPrimaria) !important;
+    border-radius: var(--borderRadius);
+    padding: 8px;
+    
+}
+
+
+.belezaParagrafo:hover{
+    transform: scale(1.03);
+}
+
+.transitionNone{
+    transition: none !important;
+    background-color: var(--corPrimaria);
+    color: var(--corTerciaria);
+    border: none;
+}
+

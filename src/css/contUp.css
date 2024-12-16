@@ -1,0 +1,65 @@
+
+
+.bgCount{
+ 
+  
+  height: 300px !important;
+  background: var(--linearGradiente),
+    url("../assets/img/StockCake-Centro de Serviços Automotivos_1728680471.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+ 
+ 
+}
+
+
+
+.colStar span{
+    font-size: 1.5em;
+    text-align: center !important;
+}
+
+.status {
+    display: flex;
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;      /* Centraliza verticalmente */
+    height: 300px;            /* Ajuste o valor para definir a altura total da seção */
+}
+
+.colStar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;      /* Centraliza o conteúdo dentro de cada .colStar */
+    justify-content: center;
+    text-align: center;
+}
+
+
+@media (max-width:768px){
+    .colStar span{
+        font-size: 1.2em;
+        text-align: center !important;
+    }
+}
+
+@media (max-width:504px){
+    .colStar span{
+        font-size: 1.08em;
+        text-align: center !important;
+    }
+}
+
+@media (max-width:456px){
+    .colStar span{
+        font-size: 1em !important;
+        text-align: center !important;
+    }
+}
+
+@media (max-width:992px){
+    .colStar span{
+        font-size: 1.4em;
+        text-align: center !important;
+    }
+}

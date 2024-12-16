@@ -1,0 +1,56 @@
+
+
+.bg-agendamento{
+    padding-top: 100px;
+    min-height: 100vh;
+}
+
+
+
+
+.dadoAgendamento{
+   
+    border-radius: var(--borderRadius);
+    box-shadow: var(--sombra) !important;
+    text-shadow: var(--sombraTexto);
+    border-left: 5px solid var(--corPrimaria);
+}
+
+@media (max-width:576px){
+    .bg-agendamento{
+        padding-top: 120px;
+    }
+}
+
+.iconeEditar{
+    text-align: start;
+    background-color: #00000000;
+    border: none;
+    float: right;
+    position: relative;
+    top: -30px;
+}
+
+.corEdite{
+    background-color: var(--corPrimaria);
+    height: 35px !important;
+    border: 0 !important;
+}
+
+.posicionar{
+   
+    text-align: justify;
+}
+
+.itemText:hover{
+    color: var(--corPrimaria);
+    cursor: pointer;
+}
+
+.bordarConfirma{
+
+    border-left: 6px solid var(--corPrimaria);
+    border-right: 6px solid var(--corPrimaria) !important;
+    border-radius: var(--borderRadius);
+    
+}

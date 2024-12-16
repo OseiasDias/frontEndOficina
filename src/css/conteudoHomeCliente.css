@@ -1,0 +1,43 @@
+
+.espacoTop{
+    padding-top: 120px;
+}
+
+.alturaVh{
+    min-height: 100vh;
+}
+
+.pGuia{
+    text-align: justify;
+    font-size: 1.1em;
+}
+
+.passo1{
+    padding: 20px ;
+    border-radius: var(--borderRadius);
+    height: 100% !important;
+    box-shadow: var(--sombra) !important;
+    color: #000000d5;
+    transition: var(--trasicao);
+    text-shadow: var(--sombraTexto);
+                 border-top: 5px solid var(--corPrimaria);
+}
+
+.bordarFotoCad{
+    border-radius: var(--borderRadius);
+    box-shadow: var(--sombra) !important;
+ 
+}
+
+.tirarTransicao:hover{
+    transform: scale(1.0) !important;
+}
+.tirarTransicao{
+    border: none;
+    box-shadow: var(--sombra);
+}
+
+.tamenhoOrdem{
+    font-size: 1.4em;
+    font-weight: 700;
+}

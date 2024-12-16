@@ -1,0 +1,34 @@
+
+
+.modal-content{
+    border-radius: var(--borderRadius) !important;
+}
+.modalBeleza{
+    
+
+    border-bottom: 4px solid var(--corPrimaria);
+    border-top: 4px solid var(--corPrimaria) !important;
+    border-radius: var(--borderRadius);
+    
+  }
+
+.bordarRadius{
+    border-top-left-radius: var(--borderRadius);
+    border-top-right-radius:var(--borderRadius);
+}
+
+.ultimoParagrafo{
+    
+    display: block !important;
+    margin: auto !important;
+}
+
+.melhorarStrong{
+    transition:all 300ms ease-in;
+}
+
+.melhorarStrong:hover{
+    transform: scale(1.1) !important;
+    cursor: pointer;
+    display: inline-block;
+}

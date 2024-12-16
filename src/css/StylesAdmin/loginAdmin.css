@@ -1,0 +1,41 @@
+.AllBodyLogin {
+    background-color: #201F24; /* Cor de fundo */
+    min-height: 100vh; /* Altura mínima da viewport */
+    height: 100%; /* Garante que a altura seja 100% do elemento pai */
+    width: 100% !important;
+    
+}
+
+
+.LoginAdmistrador{
+    border: 4px solid #fff;
+    color: #fff !important;
+    border-radius: var(--borderRadius);
+    background-color: #201F24 !important;
+    
+    
+}
+
+
+
+.TabAcesso{
+
+    left:50% !important;
+    top: 50% !important;
+    transform: translate(-50%,-50%) !important;
+    position: absolute;
+   
+}
+
+/*#000080
+
+f8f5f0
+
+//#292937
+
+//#006699
+
+// #0047AB
+
+201f24*/
+

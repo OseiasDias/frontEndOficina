@@ -1,0 +1,59 @@
+
+
+.seccao-footer{
+    background:var(--linearGradienteA),
+    url("../assets/img/footerB.jpg");
+  background-size: cover;
+  background-position: center;
+  border-top: 6px solid var(--corPrimaria);
+  box-shadow: var(--sombra) !important;
+  overflow-x: hidden;
+  display: block !important;
+}
+
+.seccao-footer p{
+    transition: all 300ms ease-in !important;
+}
+
+
+
+.seccao-footer p:hover{
+    transform: scale(1.1);
+}
+
+@media (max-width:768px){
+    .alinharDiv{
+        left: 40px;
+        position: relative;
+        
+        margin-top: 25px !important;
+    }
+
+    .seccao-footer p:hover{
+        transform: scale(1.06);
+    }
+}
+
+.retirarTrasition{
+    transform: scale(1.0) !important;
+    border-top: 1px solid var(--corTerciaria);
+    padding-top: 15px;
+    font-size: .9em;
+}
+
+.recuar{
+    left: -15px;
+    position: relative;
+}
+
+
+/* Estilo para o footer */
+.fundoCopyright {
+    background-color: var(--corPrimaria);
+    padding-top: 4px !important;
+    padding-bottom: 10px; /* Ajuste a altura do padding conforme necessário */
+    margin-bottom: 0; /* Remove a margem inferior */
+    text-align: center; /* Centraliza o texto */
+    
+    
+}

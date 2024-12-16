@@ -1,0 +1,82 @@
+
+
+.conteuBlog{
+    padding: 20px 20px;
+    box-shadow: var(--sombra);
+    border: 1px solid #dddd;
+    margin-top: 20px;
+    border-radius: var(--borderRadius);
+    border-right: 5px solid var(--corPrimaria) !important;
+    border-left: 5px solid var(--corPrimaria) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transition: none !important;
+    text-align: justify !important;
+}
+
+.conteuBlog:hover{
+    background-color: var(--corPrimaria);
+    color: var(--corTerciaria) !important;
+    border-right: 6px solid var(--corTerciaria) !important;
+    border-left: 6px solid var(--corTerciaria) !important;
+   
+}
+
+.conteuBlog:hover .novo-icon{
+    color: var(--corTerciaria) !important;
+}
+
+.paragrafoBlog{
+    text-align: justify;
+    font-size: 1.1em;
+}
+
+.hDois{
+
+    margin: 15px 0 !important;
+    font-size: 1.3em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.novo-icon{
+    float: right !important;
+    position: relative;
+    font-size: .7em;
+    z-index: -2 !important;
+}
+
+.itemNew{
+    color: var(--corPrimaria);
+    font-size: 1.4em;
+    z-index: -2 !important;
+}
+
+.h1Top{
+    margin-top: 130px;
+    font-size: 2.2em;
+}
+
+.paragrafoConteudo{
+    font-size: 1.1em;
+}
+
+
+.ver-tudo-btn {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: end;
+    margin: auto !important;
+    display: block;
+    color: var(--corPrimaria);
+    font-weight: bold;
+   
+  }
+  
+  .conteuBlog:hover  > .ver-tudo-btn{
+    color: var(--corTerciaria);
+  }
+  

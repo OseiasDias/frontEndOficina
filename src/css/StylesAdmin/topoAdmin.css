@@ -1,0 +1,153 @@
+
+
+.distancia{
+    background-color: #ddd;
+    padding: 6px;
+    cursor: pointer;
+    transition: var(--trasicao);
+    color: var(--corPrimaria);
+    
+}
+
+.distancia:hover{
+    transform: scale(1.1);
+}
+
+.userCor{
+    background-color: var(--corPrimaria);
+    border-radius: 7px;
+    color: #fff !important;
+    transform: none !important;
+}
+
+.opAdmin{
+    box-shadow: var(--sombraAdmin);
+    margin-right: -8px;
+    margin-top: 20px !important;
+    z-index: 90;
+}
+
+@media (max-width:768px){
+    
+.opAdmin{
+   
+    margin-top: 10px !important;
+   
+}
+}
+
+.colorir:hover{
+    color: var(--corPrimaria) !important;
+}
+
+.accor .accordion-item{
+    box-shadow: var(--sombraAdmin) !important;
+}
+
+.accor .accordion-item{
+    border:none !important;
+}
+
+.accor .accordion-header{
+    background-color: #00000000 !important;
+    border: 0 !important;
+    outline: none !important;
+}
+
+
+
+.accor .accordion-button{
+    background-color: var(--corTerciaria) !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.accor .close-button {
+    position: absolute;
+    top: 33px;    /* Distância do topo */
+    right: 70px;  /* Distância da borda direita */
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #dc3545;
+    z-index: 10; 
+  }
+  .close-button:hover {
+    color: #b02a37;      /* Torna o ícone ligeiramente mais escuro ao passar o mouse */
+  }
+
+  .figuraB {
+    background-color: var(--corPrimaria);
+    color: #fff;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px; /* Tamanho padrão para desktop */
+    height: 60px; /* Mesmo valor de width para círculo perfeito */
+    border-radius: 50%; /* Faz o círculo */
+    border: 4px solid var(--corPrimaria);
+    margin: 2px;
+  }
+  
+  /* Ajusta o tamanho em dispositivos menores */
+  @media (max-width: 768px) {
+    .figuraB {
+      width: 80px; /* Ajusta para tablet */
+      height: 80px;
+    }
+    .formatTexto{
+      font-size: 1.2em;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .figuraB {
+      width: 60px; /* Ajusta para celular */
+      height: 60px;
+    }
+  }
+  
+
+  .figuraB:hover{
+    background-color: var(--corTerciaria);
+    color: var(--corPrimaria);
+    border: 4px solid var(--corPrimaria);
+  }
+
+  .figuraB .peca{
+    font-size: 1.5em;
+     margin:10px 0;
+  }
+
+  .clienteA{
+    text-align: center;
+  }
+
+  @media (max-width:992px){
+
+    .clienteA{
+        display: none !important;
+    }
+  }
+
+
+  @media (max-width:992px){
+    .ocultarAccordion{display: none; }
+  }
+
+  .definirCor{
+    background-color: var(--corPrimaria);
+    color: var(--corTerciaria);
+    padding: 1px 5px !important;
+    border: 3px solid var(--corPrimaria);
+    transition: var(--transicao) !important;
+  }
+
+  .definirCor:hover{
+      background-color: var(--corTerciaria) !important;
+      color: var(--corPrimaria);
+  }
+
+  .tituloSh{
+    text-shadow: var(--sombraTexto) !important;
+  }

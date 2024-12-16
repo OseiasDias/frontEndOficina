@@ -1,0 +1,61 @@
+.seccao-cor {
+    padding-top: 70px;
+    background-color:var(--corTerciaria) !important;
+ 
+}
+
+.margem {
+    padding: 20px ;
+    border-radius: var(--borderRadius);
+    height: 100% !important;
+    box-shadow: var(--sombra) !important;
+    color: #000000d5;
+    transition: var(--trasicao);
+    text-shadow: var(--sombraTexto);
+                 border-top: 5px solid var(--corPrimaria);
+               
+}
+
+.margem:hover{
+    transform: var(--transformB);
+}
+
+
+@media (max-width: 992px) {
+    .margem {
+        margin-top: 20px !important;
+    }
+}
+
+.servico-item {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.margem {
+    flex-grow: 1;
+}
+
+.titulo-secao {
+    font-size: 2.6rem; /* Ajuste o tamanho da fonte conforme necessário */
+     /* Cor do texto (pode ser ajustada) */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), /* Sombra mais escura */
+                 -1px -1px 2px rgba(255, 255, 255, 0.8); /* Sombra clara para destaque */
+}
+
+.tamanhoH5{
+    font-size: 1.3em;
+}
+
+.parSer{
+    font-size: 1em;
+}
+
+.sizeAgenda{
+    font-size: .9em;
+}
+
+.corIcone{
+    color: var(--corPrimaria);
+}
