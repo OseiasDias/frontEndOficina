@@ -144,3 +144,7 @@
     ;
     box-shadow: none !important;
 }
+
+.paddingTopTable{
+    padding-top: 60px;
+}

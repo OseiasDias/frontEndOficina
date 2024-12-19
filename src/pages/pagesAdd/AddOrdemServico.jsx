@@ -7,10 +7,11 @@ import { Modal, Button } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
-import { FaCalendarAlt, FaCar, FaClipboard, FaCreditCard, FaDollarSign, FaFileAlt, FaHeading, FaHome, FaStickyNote, FaTint, FaTools, FaUpload, FaUser, FaUserCog } from "react-icons/fa";
+import { FaCalendarAlt, FaCar, FaClipboard, FaDollarSign, FaFileAlt, FaHeading, FaHome, FaStickyNote, FaTint, FaTools, FaUpload, FaUser, FaUserCog } from "react-icons/fa";
 import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
+import { AiOutlineFieldNumber } from "react-icons/ai";
 
 
 
@@ -109,9 +110,9 @@ const ServiceAddForm = () => {
             <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="jobno">
-                  <Form.Label>Número do cartão de trabalho <span className="text-danger">*</span></Form.Label>
+                  <Form.Label>Nº Ordem de Reparação <span className="text-danger">*</span></Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text"><FaCreditCard fontSize={20} color="#0070fa" /></span>
+                    <span className="input-group-text"><AiOutlineFieldNumber fontSize={20} color="#0070fa" /></span>
                     <Form.Control type="text" value="J000005" readOnly />
                   </div>
                 </Form.Group>
@@ -205,27 +206,6 @@ const ServiceAddForm = () => {
                   </div>
                 </Form.Group>
               </Col>
-
-              <Col xs={12} md={6}>
-                <Form.Group controlId="AssigneTo">
-                  <Form.Label>Atribuir a <span className="text-danger">*</span></Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text"><FaUserCog fontSize={20} color="#0070fa" /></span>
-
-                    <Form.Control as="select" required>
-                      <option value="">-- Selecione Atribuir a --</option>
-                      <option value="2">Julia Jeremias</option>
-                      <option value="4">Silvana Alfredo</option>
-                      <option value="5">Augusto Da Silva</option>
-                      <option value="10">Firmino Yundula Kiala João</option>
-                      <option value="11">Paulo Pedro Bassunga</option>
-                    </Form.Control>
-                  </div>
-                </Form.Group>
-              </Col>
-            </Row>
-
-            <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="service_type">
                   <Form.Label>Tipo de serviço <span className="text-danger">*</span></Form.Label>
@@ -239,6 +219,12 @@ const ServiceAddForm = () => {
                   />
                 </Form.Group>
               </Col>
+
+            
+            </Row>
+
+            <Row className="mb-3">
+             
 
               <Col xs={12} md={6}>
                 <Form.Group controlId="charge_required">
@@ -255,9 +241,6 @@ const ServiceAddForm = () => {
                   </div>
                 </Form.Group>
               </Col>
-            </Row>
-
-            <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="branch">
                   <Form.Label>Galho <span className="text-danger">*</span></Form.Label>
@@ -270,6 +253,10 @@ const ServiceAddForm = () => {
                   </div>
                 </Form.Group>
               </Col>
+            </Row>
+
+            <Row className="mb-3">
+             
 
               <Col xs={12} md={6}>
                 <Form.Group controlId="details">
@@ -580,7 +567,7 @@ const AddFuncionarios = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Adicionar Ordem de Serviço" leftSeta={<FaArrowLeftLong />} leftR="/listarOrdemServico" />
+            <TopoAdmin entrada="Adicionar Ordem de Reparação" leftSeta={<FaArrowLeftLong />} leftR="/listarOrdemServico" />
             <div className="vh-100 alturaPereita">
               <ServiceAddForm />
             </div>

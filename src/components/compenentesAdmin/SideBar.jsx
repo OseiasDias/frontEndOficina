@@ -56,7 +56,7 @@ const routes = [
       { path: "/listarCorVeiculos", name: "Cores de Veículos", icon: <IoIosColorPalette /> },
     ],
   },
-  { path: "/listarOrdemServico", name: <><strong>{"Ordem de Serviço"}</strong></>, icon: <MdAssignmentAdd  /> },
+  { path: "/listarOrdemServico", name: <><strong>{"Ordem de Reparação"}</strong></>, icon: <MdAssignmentAdd  /> },
   { path: "/cotacaoPage", name: "Contação", icon: <MdPriceChange /> },
   { path: "/faturaList", name: "Faturas", icon: <IoNewspaperSharp /> },
 

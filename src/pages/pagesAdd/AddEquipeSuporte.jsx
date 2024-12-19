@@ -110,7 +110,7 @@ const FormularioEquipeSuporte = () => {
     <Form
       id="formulario_adicionar_funcionario"
       method="post"
-      action="https://biturbomotors.com/garage/employee/store"
+    
       encType="multipart/form-data"
       className="form-horizontal upperform employeeAddForm"
       onSubmit={handleEnvio}
@@ -741,7 +741,7 @@ const FormularioEquipeSuporte = () => {
       </Modal>
 
       {/* Botão Enviar */}
-      <Button type="submit" variant="success" className="botaoSubmitEquipeSuportemt-5 links-acessos w-25 px-5 mx-auto d-block">
+      <Button type="submit" variant="success" className="botaoSubmitEquipeSuporte mt-5 links-acessos w-25 px-5 mx-auto d-block">
         Cadastrar
       </Button>
     </Form>
@@ -760,7 +760,7 @@ const AddFuncionarios = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Adicionar Equipe de Suporte" leftSeta={<FaArrowLeftLong />} leftR="/funcionariosList" />
+            <TopoAdmin entrada="Adicionar Equipe de Suporte" leftSeta={<FaArrowLeftLong />} leftR="/equipeSuportePage" />
             <div className="vh-100 alturaPereita">
               <FormularioEquipeSuporte />
             </div>
