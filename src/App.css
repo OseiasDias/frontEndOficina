@@ -148,3 +148,37 @@
 .paddingTopTable{
     padding-top: 60px;
 }
+
+.topBarraVer{
+    background-color: var(--corPrimaria);
+    margin: 15px 0;
+    padding: 20px 30px;
+}
+
+.divFoto{
+
+    height: 130px;
+    width: 130px;
+    background-color: var(--corSecodaria) !important;
+    border: 6px solid #fff;
+    border-radius: 25px;
+    box-shadow: var(--sombra);
+    
+}
+
+.ajusteParagrafo{
+    margin-top:-10px;
+}
+
+.especuraTexto{
+    font-weight: 600;
+}
+
+.h5emGeral{
+    border-bottom: 3px solid var(--corPrimaria);
+    display: inline-block;
+    padding-bottom: 5px;
+    font-weight: 700;
+    margin-top: 20px;
+    
+}

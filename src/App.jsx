@@ -74,6 +74,8 @@ import AddRenda from './pages/pagesAdd/AddRenda.jsx';
 import AddDispesas from './pages/pagesAdd/AddDispesas.jsx';
 import AddPecas from "./pages/pagesAdd/AddPecas.jsx";
 import AddGalho from "./pages/pagesAdd/AddFilial.jsx";
+import VerEquipeSuporte from "./pages/pageVer/VerEquipeSuporte.jsx";
+import VerBlog from "./pages/pageVer/VerBlog.jsx";
 
 
 
@@ -646,17 +648,40 @@ const App = () => {
 
               } />
 
+
+
+
               {/**Routes de Add de Entidades */}
               <Route path="/addGalho" element={
-
                 <ProtectedRouteAdmin>
                   <AddGalho />
                 </ProtectedRouteAdmin>
-
               } />
 
 
+            
 
+
+
+
+
+
+
+              
+              {/**Routes de Add de Entidades */}
+              <Route path="/verEquipeSuporte/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerEquipeSuporte />
+                </ProtectedRouteAdmin>
+              } />
+
+
+                  {/**Routes de Add de Entidades */}
+                  <Route path="/verBlog/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerBlog />
+                </ProtectedRouteAdmin>
+              } />
 
 
 

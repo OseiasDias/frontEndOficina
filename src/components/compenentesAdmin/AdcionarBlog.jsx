@@ -5,24 +5,30 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner'; // Spinner importado
 import { useNavigate } from 'react-router-dom'; // Importando useNavigate
-import { IoImage } from 'react-icons/io5'; // Importing an icon for image upload
-import { MdTextFields } from "react-icons/md";import { BsChatRightTextFill } from "react-icons/bs";
-
+import { IoImage } from 'react-icons/io5'; // Icone para upload de imagem
+import { MdTextFields } from "react-icons/md";
+import { BsChatRightTextFill } from "react-icons/bs";
 
 export default function CadastroBlog() {
   const [formValues, setFormValues] = useState({
     titulo: '',
     conteudo: '',
+    foto: null, // Foto será armazenada aqui
     data_publicacao: new Date().toISOString(),
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
-  const navigation = useNavigate(); // Navegação após sucesso
+  const navigate = useNavigate(); // Navegação após sucesso
 
   // Função para lidar com as mudanças nos campos
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
+  };
+
+  // Função para lidar com a mudança da foto
+  const handleFileChange = (e) => {
+    setFormValues({ ...formValues, foto: e.target.files[0] });
   };
 
   // Validação do formulário
@@ -44,33 +50,41 @@ export default function CadastroBlog() {
   const handleCadastro = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    
+
     setIsLoading(true); // Ativa o spinner ao iniciar o processo de envio
     
+    const formData = new FormData();
+    formData.append("titulo", formValues.titulo);
+    formData.append("conteudo", formValues.conteudo);
+
+    // Verifica se há uma foto e adiciona ao FormData
+    if (formValues.foto) {
+      formData.append("foto", formValues.foto);
+    }
+
     try {
-      const response = await fetch('http://localhost:5000/api/blogs', {
+      const response = await fetch('http://127.0.0.1:8000/api/blogs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formValues),
+        body: formData,
       });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(`Publicação não realizado: ${errorData.message || 'Erro desconhecido.'}`);
-        setIsLoading(false); // Desativa o spinner em caso de erro
-        return;
-      }
-
-      // Caso o cadastro seja bem sucedido
-      toast.success("Blog publicado com sucesso!");
+      const result = await response.json();
       
-      setTimeout(() => {
-        navigation('/blogList');
-      }, 5000);
+      if (response.ok) {
+        // Sucesso
+        toast.success("Blog publicado com sucesso!");
+        setTimeout(() => {
+          navigate('/blogList'); // Redireciona para a lista de blogs após 5 segundos
+        }, 5000);
+      } else {
+        // Erro no backend
+        toast.error(`Erro ao publicar: ${result.message || 'Erro desconhecido.'}`);
+      }
 
     } catch (error) {
       toast.error('Erro ao conectar ao servidor: ' + error.message);
-      setIsLoading(false); // Desativa o spinner em caso de erro
+    } finally {
+      setIsLoading(false); // Desativa o spinner
     }
   };
 
@@ -123,7 +137,7 @@ export default function CadastroBlog() {
               type="file" 
               accept="image/*"
               name="foto"
-              
+              onChange={handleFileChange} 
             />
           </div>
         </Form.Group>
@@ -150,5 +164,3 @@ export default function CadastroBlog() {
     </>
   );
 }
-
-

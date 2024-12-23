@@ -14,6 +14,7 @@ import { InputGroup } from 'react-bootstrap';
 import { useEffect } from 'react';
 
 
+
 const FormularioEquipeSuporte = () => {
   const [dadosFormulario, setDadosFormulario] = useState({
     nome: '',
@@ -27,7 +28,6 @@ const FormularioEquipeSuporte = () => {
     dataAdmissao: '2024-11-25',
     cargo: '',
     dataSaida: '',
-    // senha: '',
     dataNascimento: '',
     nomeExibicao: '',
     telefoneFixo: '',
@@ -38,34 +38,28 @@ const FormularioEquipeSuporte = () => {
     imagem: null,
   });
 
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [novoCargo, setNovoCargo] = useState('');
+  const [cargos, setCargos] = useState(['Gerente', 'Assistente', 'Analista', 'Desenvolvedor', 'Coordenador']);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Função para alterar os dados do formulário
   const handleAlteracao = (e) => {
     const { name, value } = e.target;
     setDadosFormulario({ ...dadosFormulario, [name]: value });
   };
 
+  // Função para mudar a imagem
   const handleMudancaArquivo = (e) => {
     setDadosFormulario({ ...dadosFormulario, imagem: e.target.files[0] });
   };
 
-  const handleEnvio = (e) => {
-    e.preventDefault();
-    console.log(dadosFormulario);
-  };
-
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [novoCargo, setNovoCargo] = useState('');
-  const [cargos, setCargos] = useState([
-    'Gerente',
-    'Assistente',
-    'Analista',
-    'Desenvolvedor',
-    'Coordenador',
-  ]);
-
+  // Função para alterar o novo cargo
   const handleAlteracaoNovoCargo = (e) => {
     setNovoCargo(e.target.value);
   };
 
+  // Adicionar um novo cargo
   const handleAdicionarCargo = () => {
     if (novoCargo) {
       setCargos([...cargos, novoCargo]);
@@ -76,46 +70,86 @@ const FormularioEquipeSuporte = () => {
     }
   };
 
-  const handleMudanca = (e) => {
-    const { name, value } = e.target;
-    setDadosFormulario((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-
-  const [showPassword, setShowPassword] = useState(false); // Para alternar a visibilidade da senha
-  //const [errors, setErrors] = useState({}); // Para lidar com erros de validação
-
-  // Função para gerar uma senha aleatória
+  // Gerar senha aleatória de forma segura
   const generateRandomPassword = () => {
-    let password = Math.random().toString(36).slice(-10);  // Gera uma senha aleatória de pelo menos 8 caracteres
-    return password.length < 8 ? password + Math.random().toString(36).slice(-2) : password;  // Garantir que a senha tenha no mínimo 8 caracteres
+    const length = 10;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      password += charset[randomIndex];
+    }
+    return password;
   };
 
-  // Gera a senha ao carregar o componente
+  // Definir senha ao montar o componente
   useEffect(() => {
     const senhaGerada = generateRandomPassword();
     setDadosFormulario((prevValues) => ({
       ...prevValues,
       senha: senhaGerada,
     }));
-    console.log('Senha gerada:', senhaGerada); // Exibe a senha gerada no console
-  }, []); // Executa apenas uma vez, quando o componente for montado
+    console.log('Senha gerada:', senhaGerada); 
+  }, []); 
 
+  // Enviar os dados do formulário
+  const handleEnvio = async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('nome', dadosFormulario.nome);
+    formData.append('sobrenome', dadosFormulario.sobrenome);
+    formData.append('genero', dadosFormulario.genero);
+    formData.append('email', dadosFormulario.email);
+    formData.append('senha', dadosFormulario.senha);
+    formData.append('celular', dadosFormulario.celular);
+    formData.append('telefone_fixo', dadosFormulario.telefoneFixo);
+    formData.append('filial', dadosFormulario.filial);
+    formData.append('cargo', dadosFormulario.cargo);
+    formData.append('nome_exibicao', dadosFormulario.nomeExibicao);
+    formData.append('data_admissao', dadosFormulario.dataAdmissao);
+    formData.append('pais', dadosFormulario.pais);
+    formData.append('provincia', dadosFormulario.estado);
+    formData.append('municipio', dadosFormulario.cidade);
+    formData.append('endereco', dadosFormulario.endereco);
+    formData.append('data_nascimento', dadosFormulario.dataNascimento);
+    
+    // Verificar se a imagem foi escolhida
+    if (dadosFormulario.imagem) {
+      formData.append('imagem', dadosFormulario.imagem);
+    }
+  
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/equipe-suporte/', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Cadastro realizado com sucesso:', result);
+        alert('Cadastro realizado com sucesso!');
+      } else {
+        const error = await response.json();
+        console.error('Erro ao cadastrar:', error);
+        alert('Ocorreu um erro ao cadastrar. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro de rede ou outro erro:', error);
+      alert('Ocorreu um erro. Verifique sua conexão e tente novamente.');
+    }
+  };
+  
 
 
   return (
     <Form
       id="formulario_adicionar_funcionario"
       method="post"
-    
       encType="multipart/form-data"
       className="form-horizontal upperform employeeAddForm"
       onSubmit={handleEnvio}
     >
-      {/* Dados Pessoais */}
       <div className="col-md-12 mt-5">
         <h6>INFORMAÇÕES PESSOAIS</h6>
         <hr />
@@ -127,7 +161,6 @@ const FormularioEquipeSuporte = () => {
             <Form.Label>Primeiro nome <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="text"
                 name="nome"
@@ -144,7 +177,6 @@ const FormularioEquipeSuporte = () => {
             <Form.Label>Último nome <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="text"
                 name="sobrenome"
@@ -164,7 +196,6 @@ const FormularioEquipeSuporte = () => {
             <Form.Label>Data de Nascimento</Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="date"
                 name="dataNascimento"
@@ -179,7 +210,6 @@ const FormularioEquipeSuporte = () => {
             <Form.Label>E-mail <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaEnvelope fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="email"
                 name="email"
@@ -192,8 +222,7 @@ const FormularioEquipeSuporte = () => {
           </Form.Group>
         </Col>
       </Row>
-
-      <Row>
+ <Row>
         <Col>
           <Form.Group controlId="uploadArquivo">
             <Form.Label>Foto</Form.Label>
@@ -249,7 +278,6 @@ const FormularioEquipeSuporte = () => {
                 placeholder="Senha gerada automaticamente"
                 name="senha"
                 value={dadosFormulario.senha}
-                onChange={handleMudanca}
                 disabled
               />
 
@@ -324,6 +352,7 @@ const FormularioEquipeSuporte = () => {
                 onChange={handleAlteracao}
               >
                 <option value="1">Filial Principal</option>
+                <option value="2">Filial A</option>
               </Form.Control>
             </div>
           </Form.Group>
@@ -416,6 +445,7 @@ const FormularioEquipeSuporte = () => {
               >
                 <option value="">Selecione o país</option>
                 <option value="5">Andorra</option>
+                <option value="6">Angola</option>
                 <option value="8">Antártica</option>
                 <option value="9">Antígua e Barbuda</option>
                 <option value="10">Argentina</option>
@@ -747,7 +777,6 @@ const FormularioEquipeSuporte = () => {
     </Form>
   );
 };
-
 
 
 

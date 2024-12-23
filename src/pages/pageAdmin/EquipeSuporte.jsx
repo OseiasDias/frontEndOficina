@@ -2,7 +2,6 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
@@ -10,10 +9,10 @@ import { Dropdown } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
 import { IoEye } from "react-icons/io5";
+import { Modal, Button } from "react-bootstrap";
 
+import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 
-
-import {  Modal, Button } from "react-bootstrap";
 
 // Estilos personalizados para a tabela
 
@@ -31,19 +30,21 @@ const customStyles = {
   },
 };
 
+
 export function TabelaVizualizarEquipeSuporte() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showViewModal, setShowViewModal] = useState(false); // Estado para controlar a modal de visualização
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para controlar a modal de exclusão
   const [selectedUser, setSelectedUser] = useState(null); // Estado para armazenar o usuário selecionado
 
-  // Função para abrir a modal de visualização
+  const navigate = useNavigate(); // Hook do React Router para navegação
+
+  // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (user) => {
-    setSelectedUser(user); // Definir o usuário selecionado
-    setShowViewModal(true); // Mostrar a modal de visualização
+    // Redireciona para a rota de visualização passando o ID
+    navigate(`/verEquipeSuporte/${user.id}`);
   };
 
   // Função para abrir a modal de confirmação de exclusão
@@ -127,7 +128,6 @@ export function TabelaVizualizarEquipeSuporte() {
     <div className="homeDiv">
       <div className="search row d-flex justify-content-between">
         <div className="col-12 col-md-6 col-lg-6">
-          <h4>Lista de Equipe de Suporte</h4>
         </div>
         <div className="col-12 col-md-6 col-lg-6">
           <input
@@ -160,40 +160,6 @@ export function TabelaVizualizarEquipeSuporte() {
         paginationPerPage={10}
         footer={<div>Exibindo {records.length} registros no total</div>}
       />
-
-      {/* Modal de Visualização */}
-      <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="xl" scrollable>
-        <Modal.Header closeButton>
-          <Modal.Title>Visualizar Detalhes</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedUser && (
-            <div>
-              <p><strong>ID:</strong> {selectedUser.id}</p>
-              <p><strong>Nome:</strong> {selectedUser.nome}</p>
-              <p><strong>Sobrenome:</strong> {selectedUser.sobrenome}</p>
-              <p><strong>Data de Nascimento:</strong> {selectedUser.data_nascimento}</p>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Foto:</strong> <img src={`http://127.0.0.1:8000/storage/${selectedUser.foto}`} alt="Foto" width="100" /></p>
-              <p><strong>Gênero:</strong> {selectedUser.genero}</p>
-              <p><strong>Senha (Hash):</strong> {selectedUser.senha}</p>
-              <p><strong>Celular:</strong> {selectedUser.celular}</p>
-              <p><strong>Telefone Fixo:</strong> {selectedUser.telefone_fixo}</p>
-              <p><strong>Filial:</strong> {selectedUser.filial}</p>
-              <p><strong>Cargo:</strong> {selectedUser.cargo}</p>
-              <p><strong>Nome Exibido:</strong> {selectedUser.nome_exibicao}</p>
-              <p><strong>Data de Admissão:</strong> {selectedUser.data_admissao}</p>
-              <p><strong>País:</strong> {selectedUser.pais}</p>
-              <p><strong>Província:</strong> {selectedUser.provincia}</p>
-              <p><strong>Município:</strong> {selectedUser.municipio}</p>
-              <p><strong>Endereço:</strong> {selectedUser.endereco}</p>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowViewModal(false)}>Fechar</Button>
-        </Modal.Footer>
-      </Modal>
 
       {/* Modal de Confirmação de Exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} >
