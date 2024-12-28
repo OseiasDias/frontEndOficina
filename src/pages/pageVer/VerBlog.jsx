@@ -8,14 +8,17 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong, FaUserGear } from "react-icons/fa6";
 import { FaBlogger, FaRegEdit, FaUserShield } from 'react-icons/fa';
-import { IoCall, IoDocumentTextSharp } from 'react-icons/io5';
-import { MdTitle } from 'react-icons/md';
+import {  IoDocumentTextSharp } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 
 export default function VerBlog() {
     const { id } = useParams(); // Captura o id da URL
     const [userData, setUserData] = useState(null); // Estado para armazenar os dados do usuário
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+      const navigate = useNavigate(); // Hook do React Router para navegação
+    
 
     // Função para buscar os dados do blog com o id
     const fetchBlogData = async () => {
@@ -36,6 +39,12 @@ export default function VerBlog() {
     // Verifica se os dados estão sendo carregados ou se ocorreu algum erro
     if (loading) return <div>Carregando...</div>;
     if (error) return <div>{error}</div>;
+
+    const handleViewEdit = (id) => {
+        // Redireciona para a rota de visualização passando o ID
+        navigate(`/editarBlog/${id}`);
+      };
+    
 
     return (
         <div className="container-fluid">
@@ -95,7 +104,9 @@ export default function VerBlog() {
                                         <p>Autor <br />
                                             <b>{userData.autor}</b>
                                         </p>
-                                        <p className=" d-flex justify-content-between  " ><span></span> <span><FaRegEdit  fontSize={38}  className='links-acessos p-2'/></span></p>
+                                        <p className=" d-flex justify-content-between  " ><span></span> <span><FaRegEdit  fontSize={38}  className='links-acessos p-2'
+                                        
+                                        onClick={() => handleViewEdit(id)}/></span></p>
 
                                     </div>
 

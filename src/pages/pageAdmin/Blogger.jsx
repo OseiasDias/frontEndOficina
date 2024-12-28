@@ -44,8 +44,14 @@ export function TabelaVizualizarBlogs() {
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (blog) => {
     // Redireciona para a rota de visualização passando o ID
+    navigate(`/verBlog/${blog.id}`);
+  };
+
+  const handleViewEdit = (blog) => {
+    // Redireciona para a rota de visualização passando o ID
     navigate(`/editarBlog/${blog.id}`);
   };
+
 
   // Função para abrir a modal de confirmação de exclusão
   const handleDelete = (blog) => {
@@ -93,7 +99,7 @@ export function TabelaVizualizarBlogs() {
               <IoEye fontSize={20} />
               &nbsp;&nbsp;Visualizar
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleView(row)}>
+            <Dropdown.Item onClick={() => handleViewEdit(row)}>
               <AiOutlineEdit fontSize={20} />
               &nbsp;&nbsp;Editar
             </Dropdown.Item>
