@@ -24,7 +24,7 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
     titulo: '',
     conteudo: '',
     foto: null,
-    data_publicacao: '',
+    data_publicacao: format(new Date(), 'yyyy-MM-dd HH:mm:ss'), 
     autor: 'Bitrubo Motors', // Autor fixo
   });
 
@@ -89,33 +89,37 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
   
     if (!validateForm()) return;
   
-    setIsSubmitting(true); // Inicia o carregamento
+    setIsSubmitting(true); // Ativa o estado de carregamento
   
-    const formData = new FormData();
-    formData.append("titulo", formValues.titulo);
-    formData.append("conteudo", formValues.conteudo);
-    formData.append("autor", formValues.autor);
-    formData.append("data_publicacao", formValues.data_publicacao);
+    // Crie o corpo como um objeto JSON em vez de usar FormData
+    const blogData = {
+      titulo: formValues.titulo,
+      conteudo: formValues.conteudo,
+      autor: formValues.autor,
+      data_publicacao: formValues.data_publicacao,
+    };
   
-    // Verifica se há uma foto e adiciona ao FormData
+    // Se uma foto for fornecida, pode ser necessário enviar apenas o URL ou uma string de caminho para a foto
     if (formValues.foto) {
-      formData.append("foto", formValues.foto);
+      blogData.foto = formValues.foto;
     }
   
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/blogs/${id}`, {
         method: 'PUT', // Usamos PUT para edição
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json', // Certifique-se de enviar os dados como JSON
+        },
+        body: JSON.stringify(blogData),
       });
   
       const result = await response.json();
-  
       console.log("Resposta da API:", result);
   
       if (response.ok) {
         toast.success("Blog editado com sucesso!");
         setTimeout(() => {
-          navigate('/blogList'); // Redireciona para a lista de blogs após 5 segundos
+          navigate('/blogList');
         }, 5000);
       } else {
         toast.error(`Erro ao editar: ${result.error || 'Erro desconhecido.'}`);
@@ -123,7 +127,7 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
     } catch (error) {
       toast.error('Erro ao conectar ao servidor: ' + error.message);
     } finally {
-      setIsSubmitting(false); // Finaliza o carregamento
+      setIsSubmitting(false); // Desativa o estado de carregamento
     }
   };
   
