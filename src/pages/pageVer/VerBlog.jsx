@@ -7,9 +7,9 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong, FaUserGear } from "react-icons/fa6";
-import { BiSolidPhoneCall } from 'react-icons/bi';
-import { FaEnvelopeOpenText, FaMapMarkerAlt } from 'react-icons/fa';
-import { IoCall } from 'react-icons/io5';
+import { FaBlogger, FaRegEdit, FaUserShield } from 'react-icons/fa';
+import { IoCall, IoDocumentTextSharp } from 'react-icons/io5';
+import { MdTitle } from 'react-icons/md';
 
 export default function VerBlog() {
     const { id } = useParams(); // Captura o id da URL
@@ -46,7 +46,7 @@ export default function VerBlog() {
                         entrada={<>Blog: {userData?.titulo || "Sem título"}</>}
                         leftSeta={<FaArrowLeftLong />}
                         icone={<IoIosAdd />}
-                        leftR="/BlogPage"
+                        leftR="/blogList"
                     />
 
                     <div className="vh-100 alturaPereita">
@@ -57,24 +57,28 @@ export default function VerBlog() {
                                     <div className="row">
                                         <div className="topBarraVer w-100 d-flex">
                                             <div className="divFoto">
-                                                <img
-                                                    src={userData.foto ? `http://127.0.0.1:8000/storage/${userData.foto}` : '/images/sem-foto.jpg'}
-                                                    alt={userData.titulo}
-                                                    className="img-fluid mt-4 mx-auto"
-                                                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                                                />
+                                                {
+                                                    userData.foto ? (
+                                                        <img
+                                                            src={`http://127.0.0.1:8000/storage/${userData.foto}`}
+                                                            alt={userData.titulo}
+                                                            className="img-fluid mt-4 mx-auto"
+                                                            style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                                                        />
+                                                    ) : (
+                                                        <FaBlogger style={{ fontSize: '100px', color: '#fff' ,margin: 'auto', display:'block'}} className='mt-2' />
+                                                    )
+                                                }
                                             </div>
 
                                             <div className="divInfo mt-4 ms-3 text-white">
-                                                <h5 className="fs-5 especuraTexto">{userData.titulo}</h5>
+                                                <h5 className="fs-5 especuraTexto"><IoDocumentTextSharp fontSize={18} className="me-2" />{userData.titulo}</h5>
+
                                                 <p className="ajusteParagrafo">
-                                                    <span className="me-2"><FaEnvelopeOpenText fontSize={17} className="me-2" />{userData.email}</span>
-                                                    <span className="ms-2"><BiSolidPhoneCall fontSize={18} /> {userData.telefone_fixo}</span>
-                                                </p>
-                                                <p className="ajusteParagrafo">
-                                                    <span className="ms-1"><FaMapMarkerAlt fontSize={18} className="me-2" />{userData.endereco}</span>
+                                                    <span><FaUserShield fontSize={18} className="me-2" />{userData.autor}</span>
                                                 </p>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -83,14 +87,16 @@ export default function VerBlog() {
                                 <div className="user-details">
                                     <h6 className="h5emGeral px-2">EM GERAL</h6>
 
-                                    <div className="col-lg-9 d-flex justify-content-between">
+                                    <div className="col-lg-12 d-flex justify-content-between">
                                         <p>Mostrar título <br /><b>{userData.titulo}</b></p>
                                         <p>Data de publicação <br />
                                             <b>{new Date(userData.data_publicacao).toLocaleDateString()}</b>
                                         </p>
-                                        <p>Categoria <br />
-                                            <b>{userData.categoria}</b>
+                                        <p>Autor <br />
+                                            <b>{userData.autor}</b>
                                         </p>
+                                        <p className=" d-flex justify-content-between  " ><span></span> <span><FaRegEdit  fontSize={38}  className='links-acessos p-2'/></span></p>
+
                                     </div>
 
                                     <div className="user-info row">

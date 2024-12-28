@@ -44,7 +44,7 @@ export function TabelaVizualizarBlogs() {
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (blog) => {
     // Redireciona para a rota de visualização passando o ID
-    navigate(`/verBlog/${blog.id}`);
+    navigate(`/editarBlog/${blog.id}`);
   };
 
   // Função para abrir a modal de confirmação de exclusão
@@ -66,25 +66,23 @@ export function TabelaVizualizarBlogs() {
     }
   };
 
-  // Colunas da tabela
   const columns = [
-    { name: "Título", selector: (row) => row.titulo || "Sem título" },
-    { name: "Conteúdo", selector: (row) => row.conteudo.slice(0, 50) + "..." || "Sem conteúdo" },
     {
-      name: "Foto",
-      selector: (row) => (
-        row.foto ? (
-          <img
-            src={`http://127.0.0.1:8000/storage/${row.foto}`} // Ajuste para caminho correto da foto
-            alt="Foto do Blog"
-            style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-          />
-        ) : (
-          "Sem foto"
-        )
-      ),
+      name: "Título",
+      selector: (row) => row.titulo || "Sem título"
     },
-    { name: "Data de Publicação", selector: (row) => new Date(row.data_publicacao).toLocaleDateString() || "Sem data" },
+    {
+      name: "Conteúdo",
+      selector: (row) => row.conteudo.slice(0, 50) + "..." || "Sem conteúdo"
+    },
+    {
+      name: "Autor",
+      selector: (row) => row.autor || "Autor desconhecido"  // Exibe o nome do autor
+    },
+    {
+      name: "Data de Publicação",
+      selector: (row) => new Date(row.data_publicacao).toLocaleDateString() || "Sem data"
+    },
     {
       name: "Ações",
       cell: (row) => (
@@ -110,12 +108,15 @@ export function TabelaVizualizarBlogs() {
   ];
 
   // Função para buscar os dados da API
+  // Função para buscar os dados da API e ordenar pela data de publicação
   const fetchData = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/blogs");
       if (Array.isArray(response.data)) {
-        setRecords(response.data);
-        setOriginalRecords(response.data);
+        // Ordena os blogs pela data de publicação (mais recente primeiro)
+        const sortedBlogs = response.data.sort((a, b) => new Date(b.data_publicacao) - new Date(a.data_publicacao));
+        setRecords(sortedBlogs);
+        setOriginalRecords(sortedBlogs); // Atualiza os registros originais com os dados ordenados
       } else {
         console.error("Os dados retornados não contêm um array de blogs:", response.data);
         throw new Error("Os dados retornados não contêm um array de blogs.");
@@ -127,6 +128,7 @@ export function TabelaVizualizarBlogs() {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchData();
@@ -166,12 +168,13 @@ export function TabelaVizualizarBlogs() {
       <DataTable
         className="paddingTopTable"
         columns={columns}
-        data={records}
+        data={records} // Agora, "records" já estará ordenado pela data de publicação
         customStyles={customStyles}
         pagination
         paginationPerPage={10}
         footer={<div>Exibindo {records.length} registros no total</div>}
       />
+
 
       {/* Modal de Confirmação de Exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} >
@@ -202,7 +205,7 @@ const Blog = () => {
             <TopoAdmin entrada="Blogs" icone={<IoIosAdd />} direccao="/addBlogs" />
 
             <div className="vh-100 alturaPereita">
-            <TabelaVizualizarBlogs />
+              <TabelaVizualizarBlogs />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />

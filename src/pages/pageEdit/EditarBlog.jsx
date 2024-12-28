@@ -1,27 +1,62 @@
-import { useState } from "react";
+import "../../css/StylesAdmin/homeAdministrador.css";
+import SideBar from "../../components/compenentesAdmin/SideBar";
+import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
+import { IoIosAdd } from "react-icons/io";
+import { FaArrowLeftLong } from "react-icons/fa6";
+
+import { useState, useEffect } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Spinner from 'react-bootstrap/Spinner'; // Spinner importado
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+import Spinner from 'react-bootstrap/Spinner';
+import { useNavigate, useParams } from 'react-router-dom'; // Para pegar os parâmetros da URL
 import { IoImage } from 'react-icons/io5'; // Icone para upload de imagem
 import { MdTextFields } from "react-icons/md";
 import { BsChatRightTextFill } from "react-icons/bs";
 import { format } from 'date-fns'; // Para formatar a data corretamente
 
-export default function CadastroBlog() {
+ function EditarBlog() {
+  const { id } = useParams(); // Obtém o ID do blog a partir da URL
+  const navigate = useNavigate();
+  
   const [formValues, setFormValues] = useState({
     titulo: '',
     conteudo: '',
-    foto: null, // Foto será armazenada aqui
-    data_publicacao: format(new Date(), 'yyyy-MM-dd HH:mm:ss'), // Formato de data ajustado
+    foto: null,
+    data_publicacao: '',
     autor: 'Bitrubo Motors', // Autor fixo
   });
 
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
-  const navigate = useNavigate(); // Navegação após sucesso
+  //const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
+  const [isSubmitting, setIsSubmitting] = useState(false); // Para verificar se estamos submetendo o formulário
+
+  // Carregar os dados do blog ao inicializar a página
+  useEffect(() => {
+    const fetchBlogData = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/blogs/${id}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setFormValues({
+            titulo: data.titulo,
+            conteudo: data.conteudo,
+            foto: data.foto || null, // Exibe a foto atual, se houver
+            data_publicacao: format(new Date(data.data_publicacao), 'yyyy-MM-dd HH:mm:ss'),
+            autor: data.autor || 'Bitrubo Motors', // Se o autor estiver disponível, usá-lo
+          });
+        } else {
+          toast.error("Erro ao carregar os dados do blog.");
+        }
+      } catch (error) {
+        toast.error('Erro ao conectar ao servidor: ' + error.message);
+      }
+    };
+
+    fetchBlogData();
+  }, [id]);
 
   // Função para lidar com as mudanças nos campos
   const handleInputChange = (e) => {
@@ -37,11 +72,9 @@ export default function CadastroBlog() {
   // Validação do formulário
   const validateForm = () => {
     const newErrors = {};
-    // Validação do título
     if (!formValues.titulo) {
       newErrors.titulo = 'Título é obrigatório.';
     }
-    // Validação do conteúdo
     if (!formValues.conteudo) {
       newErrors.conteudo = 'Conteúdo é obrigatório.';
     }
@@ -49,55 +82,59 @@ export default function CadastroBlog() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função de envio do cadastro
-  const handleCadastro = async (e) => {
+  // Função para editar o blog
+ // Função para editar o blog
+ const handleEditBlog = async (e) => {
     e.preventDefault();
+  
     if (!validateForm()) return;
-
-    setIsLoading(true); // Ativa o spinner ao iniciar o processo de envio
-    
+  
+    setIsSubmitting(true); // Inicia o carregamento
+  
     const formData = new FormData();
     formData.append("titulo", formValues.titulo);
     formData.append("conteudo", formValues.conteudo);
-    formData.append("autor", formValues.autor); // Adiciona o autor fixo
-    formData.append("data_publicacao", formValues.data_publicacao); // Adiciona a data de publicação
-
+    formData.append("autor", formValues.autor);
+    formData.append("data_publicacao", formValues.data_publicacao);
+  
     // Verifica se há uma foto e adiciona ao FormData
     if (formValues.foto) {
       formData.append("foto", formValues.foto);
     }
-
+  
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/blogs', {
-        method: 'POST',
+      const response = await fetch(`http://127.0.0.1:8000/api/blogs/${id}`, {
+        method: 'PUT', // Usamos PUT para edição
         body: formData,
       });
-      
+  
       const result = await response.json();
-      
+  
+      console.log("Resposta da API:", result);
+  
       if (response.ok) {
-        // Sucesso
-        toast.success("Blog publicado com sucesso!");
+        toast.success("Blog editado com sucesso!");
         setTimeout(() => {
           navigate('/blogList'); // Redireciona para a lista de blogs após 5 segundos
         }, 5000);
       } else {
-        // Exibe a mensagem de erro
-        toast.error(`Erro ao publicar: ${result.message || 'Erro desconhecido.'}`);
+        toast.error(`Erro ao editar: ${result.error || 'Erro desconhecido.'}`);
       }
-
     } catch (error) {
       toast.error('Erro ao conectar ao servidor: ' + error.message);
     } finally {
-      setIsLoading(false); // Desativa o spinner
+      setIsSubmitting(false); // Finaliza o carregamento
     }
   };
-
+  
+  
+  
   return (
     <>
-      <h6 className="mt-5 fw-bold">PUBLICAR BLOG</h6>
+      <h6 className="mt-5 fw-bold">EDITAR BLOG</h6>
       <hr />
-      <Form onSubmit={handleCadastro} className="row">
+     
+      <Form onSubmit={handleEditBlog} className="row">
         {/* Título */}
         <Form.Group className="col-12 my-2" controlId="formTitulo">
           <Form.Label className="fw-bold">Título</Form.Label>
@@ -147,18 +184,18 @@ export default function CadastroBlog() {
           </div>
         </Form.Group>
 
-        {/* Botão para cadastrar */}
+        {/* Botão para editar */}
         <div className="btnEv w-100">
           <Button 
             variant="primary" 
             type="submit" 
             className="mt-4 d-block mx-auto links-acessos px-5" 
-            disabled={isLoading}
+            disabled={isSubmitting}
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
             ) : (
-              "Publicar Blog"
+              "Salvar Alterações"
             )}
           </Button>
         </div>
@@ -169,3 +206,35 @@ export default function CadastroBlog() {
     </>
   );
 }
+
+
+
+
+export default function EditarBlogger() {
+  return (
+    <>
+      <div className="container-fluid">
+        <div className="d-flex">
+          <SideBar />
+          <div className="flexAuto w-100 ">
+            <TopoAdmin entrada="  Editar Blog" 
+            leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} 
+            leftR="/blogList" />
+            <div className="vh-100 alturaPereita">
+                <EditarBlog />
+            </div>
+            <div className="div text-center np pt-2 mt-2 ppAr">
+              <hr />
+              <p className="text-center">
+                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
+                reservados.
+                <br />
+                Desenvolvido por: <b>Oseias Dias</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

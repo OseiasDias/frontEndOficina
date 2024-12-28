@@ -36,7 +36,6 @@ import Faturas from "./pages/pageAdmin/Faturas.jsx";
 import PerfilFuncionario from "./pages/pageAdmin/PerfilFuncionario.jsx";
 import AgendamentoHistorico from "./pages/pageAdmin/AgendamentoHistorico.jsx";
 import AdiarAgendamento from "./pages/pageAdmin/AdiarAgendemento.jsx";
-import EditarBlogger from "./pages/pageAdmin/EditarBlogger.jsx";
 import EditarVeiculo from "./pages/pageAdmin/EditarVeiculo.jsx";
 import Deficnicoes from "./pages/pageAdmin/Definicoes.jsx";
 import Fornecedor from "./pages/pageAdmin/Fornecedor.jsx";
@@ -76,6 +75,8 @@ import AddPecas from "./pages/pagesAdd/AddPecas.jsx";
 import AddGalho from "./pages/pagesAdd/AddFilial.jsx";
 import VerEquipeSuporte from "./pages/pageVer/VerEquipeSuporte.jsx";
 import VerBlog from "./pages/pageVer/VerBlog.jsx";
+import EditarBlog from "./pages/pageEdit/EditarBlog.jsx";
+
 
 
 
@@ -271,10 +272,10 @@ const App = () => {
                   <AdiarAgendamento />
                 </ProtectedRouteAdmin>
               } />
-              <Route path="/editarBlog/:idBlog" element={
+              <Route path="/editarBlog/:id" element={
 
                 <ProtectedRouteAdmin>
-                  <EditarBlogger />
+                  <EditarBlog />
                 </ProtectedRouteAdmin>
               } />
               <Route path="/editarVeiculo/:idVeiculo" element={
