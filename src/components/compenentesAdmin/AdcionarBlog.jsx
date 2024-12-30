@@ -3,12 +3,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Spinner from 'react-bootstrap/Spinner'; // Spinner importado
+import Spinner from 'react-bootstrap/Spinner'; // Importando o Spinner
 import { useNavigate } from 'react-router-dom'; // Importando useNavigate
 import { IoImage } from 'react-icons/io5'; // Icone para upload de imagem
 import { MdTextFields } from "react-icons/md";
 import { BsChatRightTextFill } from "react-icons/bs";
 import { format } from 'date-fns'; // Para formatar a data corretamente
+
 
 export default function CadastroBlog() {
   const [formValues, setFormValues] = useState({
@@ -84,13 +85,13 @@ export default function CadastroBlog() {
       } else {
         // Exibe a mensagem de erro
         toast.error(`Erro ao publicar: ${result.message || 'Erro desconhecido.'}`);
+        setIsLoading(false);
       }
 
     } catch (error) {
       toast.error('Erro ao conectar ao servidor: ' + error.message);
-    } finally {
-      setIsLoading(false); // Desativa o spinner
-    }
+      setIsLoading(false);
+    } 
   };
 
   return (
@@ -135,7 +136,7 @@ export default function CadastroBlog() {
 
         {/* Foto Upload */}
         <Form.Group className="col-12 my-2" controlId="formFoto">
-          <Form.Label className="fw-bold">Carregar Foto (opcional)</Form.Label>
+          <Form.Label className="fw-bold" >Carregar Foto (opcional)</Form.Label>
           <div className="input-group">
             <span className="input-group-text"><IoImage fontSize={22} color="#0070fa" /></span>
             <Form.Control 
@@ -143,24 +144,25 @@ export default function CadastroBlog() {
               accept="image/*"
               name="foto"
               onChange={handleFileChange} 
+              disabled
             />
           </div>
         </Form.Group>
 
         {/* Botão para cadastrar */}
         <div className="btnEv w-100">
-          <Button 
-            variant="primary" 
-            type="submit" 
-            className="mt-4 d-block mx-auto links-acessos px-5" 
-            disabled={isLoading}
-          >
+
+        <div className="w-100">
+          <Button variant="primary" type="submit" className="mt-4 d-block mx-auto links-acessos px-5" disabled={isLoading}>
             {isLoading ? (
               <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
             ) : (
               "Publicar Blog"
             )}
           </Button>
+        </div>
+
+          
         </div>
       </Form>
 

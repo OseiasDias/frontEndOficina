@@ -3,6 +3,7 @@ import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { IoIosAdd } from "react-icons/io";
 
+import { toast, ToastContainer } from 'react-toastify';
 
 
 import "../../css/StylesAdmin/homeAdministrador.css";
@@ -66,6 +67,7 @@ export function TabelaVizualizarBlogs() {
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((blog) => blog.id !== selectedBlog.id));
       setShowDeleteModal(false);
+      toast.success("Blog apagado com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir o blog:", error);
       setError("Erro ao excluir o blog.");
@@ -75,7 +77,7 @@ export function TabelaVizualizarBlogs() {
   const columns = [
     {
       name: "Título",
-      selector: (row) => row.titulo || "Sem título"
+      selector: (row) => row.titulo.slice(0, 60)  || "Sem título"
     },
     {
       name: "Conteúdo",
@@ -195,6 +197,9 @@ export function TabelaVizualizarBlogs() {
           <Button variant="danger" onClick={confirmDelete}>Excluir</Button>
         </Modal.Footer>
       </Modal>
+
+      <ToastContainer position="top-center" />
+
     </div>
   );
 }

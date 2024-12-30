@@ -30,7 +30,8 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
 
   const [errors, setErrors] = useState({});
   //const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
-  const [isSubmitting, setIsSubmitting] = useState(false); // Para verificar se estamos submetendo o formulário
+  // const [isSubmitting, setIsSubmitting] = useState(false); // Para verificar se estamos submetendo o formulário
+  const [isLoading, setIsLoading] = useState(false); // Estado de carregamento
 
   // Carregar os dados do blog ao inicializar a página
   useEffect(() => {
@@ -89,7 +90,8 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
   
     if (!validateForm()) return;
   
-    setIsSubmitting(true); // Ativa o estado de carregamento
+    //setIsSubmitting(true); // Ativa o estado de carregamento
+    setIsLoading(true);
   
     // Crie o corpo como um objeto JSON em vez de usar FormData
     const blogData = {
@@ -123,11 +125,13 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
         }, 5000);
       } else {
         toast.error(`Erro ao editar: ${result.error || 'Erro desconhecido.'}`);
+        setIsLoading(false);
       }
     } catch (error) {
       toast.error('Erro ao conectar ao servidor: ' + error.message);
+      setIsLoading(false);
     } finally {
-      setIsSubmitting(false); // Desativa o estado de carregamento
+      //setIsSubmitting(false); // Desativa o estado de carregamento
     }
   };
   
@@ -169,6 +173,7 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
               value={formValues.conteudo} 
               onChange={handleInputChange} 
               isInvalid={!!errors.conteudo} 
+             
             />
           </div>
           <Form.Control.Feedback type="invalid">{errors.conteudo}</Form.Control.Feedback>
@@ -184,25 +189,25 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
               accept="image/*"
               name="foto"
               onChange={handleFileChange} 
+              disabled
             />
           </div>
         </Form.Group>
 
         {/* Botão para editar */}
-        <div className="btnEv w-100">
-          <Button 
-            variant="primary" 
-            type="submit" 
-            className="mt-4 d-block mx-auto links-acessos px-5" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
+
+        
+        <div className="w-100">
+          <Button variant="primary" type="submit" className="mt-4 d-block mx-auto links-acessos px-5" disabled={isLoading}>
+            {isLoading ? (
               <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
             ) : (
               "Salvar Alterações"
             )}
           </Button>
         </div>
+
+       
       </Form>
 
       {/* Container para brindes de sucesso ou erro */}

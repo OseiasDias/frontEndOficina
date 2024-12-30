@@ -52,7 +52,7 @@ export default function VerBlog() {
                 <SideBar />
                 <div className="flexAuto w-100">
                     <TopoAdmin
-                        entrada={<>Blog: {userData?.titulo || "Sem título"}</>}
+                        entrada="  Visualização de Blog"
                         leftSeta={<FaArrowLeftLong />}
                         icone={<IoIosAdd />}
                         leftR="/blogList"
