@@ -8,14 +8,18 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong, FaUserGear } from "react-icons/fa6";
 import { BiSolidPhoneCall } from 'react-icons/bi';
-import { FaEnvelopeOpenText, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelopeOpenText, FaMapMarkerAlt, FaRegEdit } from 'react-icons/fa';
 import { IoCall } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+
 
 export default function VerEquipeSuporte() {
     const { id } = useParams(); // Captura o id da URL
     const [userData, setUserData] = useState(null); // Estado para armazenar os dados do usuário
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Navegação após sucesso
+
 
     // Função para buscar os dados do usuário com o id
     const fetchUserData = async () => {
@@ -37,6 +41,11 @@ export default function VerEquipeSuporte() {
     if (loading) return <div>Carregando...</div>;
     if (error) return <div>{error}</div>;
 
+    const handleViewEdit = (id) => {
+        // Redireciona para a rota de visualização passando o ID
+        navigate(`/editarBlog/${id}`);
+    };
+
     return (
         <div className="container-fluid">
             <div className="d-flex">
@@ -57,7 +66,9 @@ export default function VerEquipeSuporte() {
                                             </div>
 
                                             <div className="divInfo mt-4 ms-3 text-white">
-                                                <p className='fs-5 especuraTexto'> {userData.nome_exibicao} {userData.sobrenome}</p>
+                                                <p className='fs-5 especuraTexto'> {userData.nome_exibicao} {userData.sobrenome} <span><FaRegEdit fontSize={38} className='links-acessos bg-CorNone p-2'
+                                                
+                                                                                            onClick={() => handleViewEdit(id)} /></span></p>
                                                 <p className='ajusteParagrafo'> <span className='me-2'><IoCall fontSize={18} /> {userData.telefone_fixo}</span>
                                                     <span className='ms-2' ><FaEnvelopeOpenText fontSize={17} className='me-2' />{userData.email} </span></p>
                                                 <p className='ajusteParagrafo'>

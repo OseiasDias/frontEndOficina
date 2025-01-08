@@ -76,6 +76,7 @@ import AddGalho from "./pages/pagesAdd/AddFilial.jsx";
 import VerEquipeSuporte from "./pages/pageVer/VerEquipeSuporte.jsx";
 import VerBlog from "./pages/pageVer/VerBlog.jsx";
 import EditarBlog from "./pages/pageEdit/EditarBlog.jsx";
+import EditarEquipeSuporte from "./pages/pageEdit/EditarEquipeSuporte.jsx";
 
 
 
@@ -660,7 +661,6 @@ const App = () => {
               } />
 
 
-            
 
 
 
@@ -668,7 +668,8 @@ const App = () => {
 
 
 
-              
+
+
               {/**Routes de Add de Entidades */}
               <Route path="/verEquipeSuporte/:id" element={
                 <ProtectedRouteAdmin>
@@ -677,12 +678,22 @@ const App = () => {
               } />
 
 
-                  {/**Routes de Add de Entidades */}
-                  <Route path="/verBlog/:id" element={
+              {/**Routes de Add de Entidades */}
+              <Route path="/verBlog/:id" element={
                 <ProtectedRouteAdmin>
                   <VerBlog />
                 </ProtectedRouteAdmin>
               } />
+
+
+
+              {/**Routes de Add de Entidades */}
+              <Route path="/editarEquipeSuportar/:id" element={
+                <ProtectedRouteAdmin>
+                  <EditarEquipeSuporte  />
+                </ProtectedRouteAdmin>
+              } />
+
 
 
 

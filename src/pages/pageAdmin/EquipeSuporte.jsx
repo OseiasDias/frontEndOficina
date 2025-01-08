@@ -10,13 +10,13 @@ import { MdDelete } from "react-icons/md";
 import { AiOutlineEdit } from "react-icons/ai";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
-
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 
+// Importar ToastContainer e toast do react-toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
 
 // Estilos personalizados para a tabela
-
-
 const customStyles = {
   headCells: {
     style: {
@@ -30,7 +30,6 @@ const customStyles = {
   },
 };
 
-
 export function TabelaVizualizarEquipeSuporte() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -43,7 +42,6 @@ export function TabelaVizualizarEquipeSuporte() {
 
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (user) => {
-    // Redireciona para a rota de visualização passando o ID
     navigate(`/verEquipeSuporte/${user.id}`);
   };
 
@@ -53,6 +51,13 @@ export function TabelaVizualizarEquipeSuporte() {
     setShowDeleteModal(true); // Mostrar a modal de confirmação de exclusão
   };
 
+  const handleViewEdit = (user) => {
+    // Redireciona para a rota de visualização passando o ID
+    navigate(`/editarEquipeSuportar/${user.id}`);
+  };
+
+
+
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
@@ -60,9 +65,14 @@ export function TabelaVizualizarEquipeSuporte() {
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((user) => user.id !== selectedUser.id));
       setShowDeleteModal(false);
+
+      // Exibir notificação de sucesso usando o toast
+      toast.success('Usuário excluído com sucesso!');
     } catch (error) {
       console.error("Erro ao excluir o usuário:", error);
       setError("Erro ao excluir o usuário.");
+      // Exibir notificação de erro usando o toast
+      toast.error('Erro ao excluir o usuário!');
     }
   };
 
@@ -84,7 +94,7 @@ export function TabelaVizualizarEquipeSuporte() {
               <IoEye fontSize={20} />
               &nbsp;&nbsp;Visualizar
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleView(row)}>
+            <Dropdown.Item onClick={() =>handleViewEdit(row)}>
               <AiOutlineEdit fontSize={20} />
               &nbsp;&nbsp;Editar
             </Dropdown.Item>
@@ -123,6 +133,7 @@ export function TabelaVizualizarEquipeSuporte() {
 
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>{error}</div>;
+
 
   return (
     <div className="homeDiv">
@@ -174,6 +185,9 @@ export function TabelaVizualizarEquipeSuporte() {
           <Button variant="danger" onClick={confirmDelete}>Excluir</Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Toast Container para mostrar as notificações */}
+      <ToastContainer position="top-center"/>
     </div>
   );
 }
@@ -190,14 +204,12 @@ const EquipeSuporte = () => {
             <TopoAdmin entrada="Lista de Equipe de Suporte" direccao="/addEquipeSuporte" icone={<IoIosAdd />} leftR="/equipeSuportePage" />
 
             <div className="vh-100 alturaPereita">
-
               <TabelaVizualizarEquipeSuporte />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
 
               <p className="text-center">
-
                 Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
                 reservados.
                 <br />

@@ -114,7 +114,7 @@ function VizualizarListaCor({ setShowModal }) {
     <div className="homeDiv">
       <div className="search row d-flex justify-content-between">
         <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
-          <h4 className="me-5">Lista Marcas de Veículos</h4>
+          <h4 className="me-5">Lista Cores de Veículos</h4>
           <RiAddLargeFill
             className="links-acessos arranjarBTN p-2 border-radius-zero"
             fontSize={35}
@@ -125,7 +125,7 @@ function VizualizarListaCor({ setShowModal }) {
           <input
             type="text"
             className="w-100 my-2 zIndex"
-            placeholder="Pesquisa Marcas de Veículos"
+            placeholder="Pesquisa Coress de Veículos"
             onChange={handleSearch}
           />
         </div>
@@ -146,7 +146,7 @@ function VizualizarListaCor({ setShowModal }) {
   );
 }
 
-export default function ListarMarcasVeiculos() {
+export default function ListarCoressVeiculos() {
   const [showModal, setShowModal] = useState(false); // Estado para controlar se o modal está visível ou não
   const [novocor, setNovocor] = useState(""); // Estado para o novo cor
  // const [corSelecionado, setcorSelecionado] = useState(""); // Estado para o cor de veículo selecionado
@@ -176,7 +176,7 @@ export default function ListarMarcasVeiculos() {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Marcas de Veículos" icone={<IoIosAdd />} />
+            <TopoAdmin entrada="Cores de Veículos" icone={<IoIosAdd />} />
             <div className="vh-100 alturaPereita">
               <VizualizarListaCor setShowModal={setShowModal} /> {/* Passando a função de abrir o modal */}
             </div>
@@ -200,7 +200,7 @@ export default function ListarMarcasVeiculos() {
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="novocor">
-              <Form.Label>Marca do Veículo</Form.Label>
+              <Form.Label>Cores do Veículo</Form.Label>
 
               {/* Campo para digitar novo cor */}
               <div className="input-group">
@@ -208,7 +208,7 @@ export default function ListarMarcasVeiculos() {
 
                 <Form.Control
                   type="text"
-                  placeholder="Digite a marca"
+                  placeholder="Digite o nome da cor"
                   value={novocor}
                   onChange={handleNovocorChange}
                 />

@@ -182,3 +182,13 @@
     margin-top: 20px;
     
 }
+
+.bg-CorNone{
+    background-color: var(--corSecodaria) !important
+    ;
+    border-radius: 0;
+}
+.bg-CorNone:hover{
+    background-color: var(--corPrimaria) !important
+    ;
+}

@@ -7,7 +7,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
-import { FaCalendarAlt, FaCar, FaClipboard, FaDollarSign, FaFileAlt, FaHeading, FaHome, FaStickyNote, FaTint, FaTools, FaUpload, FaUser, FaUserCog } from "react-icons/fa";
+import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileAlt, FaFileSignature,  FaHome, FaRegFileAlt, FaStickyNote, FaTint, FaTools, FaUpload, FaUser, FaUserCog } from "react-icons/fa";
 import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
@@ -164,21 +164,20 @@ const ServiceAddForm = () => {
               </Col>
 
               <Col xs={12} md={6}>
-                <Form.Group controlId="p_date">
-                  <Form.Label>Encontro <span className="text-danger">*</span></Form.Label>
+                <Form.Group controlId="data_inicial_entrada">
+                  <Form.Label>Data Inicial de Entrada <span className="text-danger">*</span></Form.Label>
                   <div className="input-group">
                     <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
-
                     <Form.Control
                       type="datetime-local"
-                      name="date"
-                      defaultValue="2024-11-27T21:21:28"
+                      name="data_inicial_entrada"
                       required
                     />
                   </div>
                 </Form.Group>
               </Col>
             </Row>
+
 
             <Row className="mb-3">
               <Col xs={12} md={6}>
@@ -207,24 +206,20 @@ const ServiceAddForm = () => {
                 </Form.Group>
               </Col>
               <Col xs={12} md={6}>
-                <Form.Group controlId="service_type">
-                  <Form.Label>Tipo de serviço <span className="text-danger">*</span></Form.Label>
-                  <Form.Check
-                    type="radio"
-                    label="Pago"
-                    name="service_type"
-                    value="paid"
-                    checked
-                    required
-                  />
+                <Form.Group controlId="km_entrada">
+                  <Form.Label>KM de Entrada <span className="text-danger">*</span></Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaCar fontSize={20} color="#0070fa" /></span>
+                    <Form.Control type="number" name="km_entrada" required placeholder="Digite o KM de Entrada" />
+                  </div>
                 </Form.Group>
               </Col>
 
-            
+
             </Row>
 
             <Row className="mb-3">
-             
+
 
               <Col xs={12} md={6}>
                 <Form.Group controlId="charge_required">
@@ -255,19 +250,129 @@ const ServiceAddForm = () => {
               </Col>
             </Row>
 
-            <Row className="mb-3">
-             
+            <Row>
 
               <Col xs={12} md={6}>
-                <Form.Group controlId="details">
-                  <Form.Label>Detalhes</Form.Label>
+                <Form.Group controlId="status">
+                  <Form.Label>Status <span className="text-danger">*</span></Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text"><FaClipboard fontSize={20} color="#0070fa" /></span>
+                    <span className="input-group-text"><FaCircle fontSize={20} color="#0070fa" /></span>
 
-                    <Form.Control as="textarea" name="details" maxLength="100" />
+                    <Form.Control as="select" required>
+                      <option value="">Selecione o Status</option>
+                      <option value="pendente">Pendente</option>
+                      <option value="em andamento">Em Andamento</option>
+                      <option value="concluido">Concluído</option>
+                    </Form.Control>
                   </div>
                 </Form.Group>
               </Col>
+              <Col xs={12} md={6}>
+                <Form.Group controlId="garantia_dias">
+                  <Form.Label>Garantia de Quantos Dias? <span className="text-danger">*</span></Form.Label>
+
+                  <div className="input-group">
+                    <span className="input-group-text"><FaFileSignature  fontSize={20} color="#0070fa" /></span>
+                    <Form.Control type="number" name="garantia_dias" required placeholder="Digite a garantia em dias" />
+
+                  </div></Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="mb-3">
+
+
+              <Col xs={12} md={6}>
+                <Form.Group controlId="data_final_saida">
+                  <Form.Label>Data Final de Saída <span className="text-danger">*</span></Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
+                    <Form.Control
+                      type="datetime-local"
+                      name="data_final_saida"
+                      required
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
+
+
+            </Row>
+
+
+            <h6 className="mt-5">DETALHES ADICIONAIS</h6>
+            <hr />
+
+            <Row className="my-5">
+           
+
+
+              <Col xs={12} md={6}>
+                <Form.Group controlId="details">
+                  <Form.Label>Descrição do veículo ou produto</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaClipboard fontSize={20} color="#0070fa" /></span>
+
+                    <Form.Control as="textarea" placeholder="Digite a Descrição do veículo ou produto" rows={7} name="details" maxLength="100" />
+                  </div>
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} md={6}>
+                <Form.Group controlId="defeito_ou_servico">
+                  <Form.Label>Defeito ou Serviço <span className="text-danger">*</span></Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaExclamationCircle fontSize={20} color="#0070fa" /></span>
+                    <Form.Control as="textarea" rows={7} name="defeito_ou_servico" required placeholder="Descreva o defeito ou serviço realizado" />
+
+                  </div></Form.Group>
+              </Col>
+            </Row>
+
+            <Row className="mb-3">
+              <Col xs={12} md={6}>
+                <Form.Group controlId="observacoes">
+                  <Form.Label>Observações</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaRegFileAlt fontSize={20} color="#0070fa" /></span>
+
+
+                    <Form.Control as="textarea" rows={7} name="observacoes" placeholder="Adicione observações adicionais" />
+                  </div>
+                </Form.Group>
+              </Col>
+
+              <Col xs={12} md={6} >
+                <Form.Group controlId="laudo_tecnico">
+                  <Form.Label>Laudo Técnico</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaCogs fontSize={20} color="#0070fa" /></span>
+
+                    <Form.Control as="textarea" rows={7} name="laudo_tecnico" placeholder="Informe o laudo técnico" />
+                  </div>
+                </Form.Group>
+              </Col>
+            </Row>
+
+            
+            <Row className="my-5">
+        
+              <Col xs={12} md={6}>
+                <Form.Group controlId="images">
+                  <Form.Label>Selecione várias imagens</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><FaUpload fontSize={20} color="#0070fa" /></span>
+
+                    <Form.Control
+                      type="file"
+                      name="image[]"
+                      multiple
+                      data-max-file-size="5M"
+                    /></div>
+                </Form.Group>
+              </Col>
+
+         
             </Row>
 
             <h6>DETALHES ADCIONAS</h6>
@@ -307,6 +412,8 @@ const ServiceAddForm = () => {
               )}
             </Row>
 
+            
+
             {/* Teste MOT */}
             <Row className="mb-3">
               <Col xs={12} md={6}>
@@ -343,39 +450,8 @@ const ServiceAddForm = () => {
                 </Col>
               )}
             </Row>
-            <hr />
-            <Row className="mb-3">
-              <Col xs={12} md={6}>
-                <Form.Group controlId="images">
-                  <Form.Label>Selecione várias imagens</Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text"><FaUpload fontSize={20} color="#0070fa" /></span>
-
-                    <Form.Control
-                      type="file"
-                      name="image[]"
-                      multiple
-                      data-max-file-size="5M"
-                    /></div>
-                </Form.Group>
-              </Col>
-
-              <Col xs={12} md={6}>
-                <Form.Group controlId="title">
-                  <Form.Label>Título</Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text"><FaHeading fontSize={20} color="#0070fa" /></span>
-
-                    <Form.Control
-                      type="text"
-                      name="title"
-                      placeholder="Digite o título"
-                      maxLength="50"
-                    />
-                  </div>
-                </Form.Group>
-              </Col>
-            </Row>
+         
+          
 
             <div className="note-row">
               <div className="d-flex justify-content-between">

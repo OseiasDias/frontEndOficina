@@ -8,7 +8,7 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong, FaUserGear } from "react-icons/fa6";
 import { FaBlogger, FaRegEdit, FaUserShield } from 'react-icons/fa';
-import {  IoDocumentTextSharp } from 'react-icons/io5';
+import { IoDocumentTextSharp } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 
 export default function VerBlog() {
@@ -17,8 +17,8 @@ export default function VerBlog() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-      const navigate = useNavigate(); // Hook do React Router para navegação
-    
+    const navigate = useNavigate(); // Hook do React Router para navegação
+
 
     // Função para buscar os dados do blog com o id
     const fetchBlogData = async () => {
@@ -43,8 +43,8 @@ export default function VerBlog() {
     const handleViewEdit = (id) => {
         // Redireciona para a rota de visualização passando o ID
         navigate(`/editarBlog/${id}`);
-      };
-    
+    };
+
 
     return (
         <div className="container-fluid">
@@ -75,7 +75,7 @@ export default function VerBlog() {
                                                             style={{ width: '100px', height: '100px', objectFit: 'cover' }}
                                                         />
                                                     ) : (
-                                                        <FaBlogger style={{ fontSize: '100px', color: '#fff' ,margin: 'auto', display:'block'}} className='mt-2' />
+                                                        <FaBlogger style={{ fontSize: '100px', color: '#fff', margin: 'auto', display: 'block' }} className='mt-2' />
                                                     )
                                                 }
                                             </div>
@@ -87,7 +87,7 @@ export default function VerBlog() {
                                                     <span><FaUserShield fontSize={18} className="me-2" />{userData.autor}</span>
                                                 </p>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -104,9 +104,9 @@ export default function VerBlog() {
                                         <p>Autor <br />
                                             <b>{userData.autor}</b>
                                         </p>
-                                        <p className=" d-flex justify-content-between  " ><span></span> <span><FaRegEdit  fontSize={38}  className='links-acessos p-2'
-                                        
-                                        onClick={() => handleViewEdit(id)}/></span></p>
+                                        <p className=" d-flex justify-content-between  " ><span></span> <span><FaRegEdit fontSize={38} className='links-acessos p-2'
+
+                                            onClick={() => handleViewEdit(id)} /></span></p>
 
                                     </div>
 

@@ -21,7 +21,7 @@ function FormularioFatura() {
     data: '2024-12-02',
     filial: '1',
     status: '',
-    totalGeral: '',
+ 
     valorPago: '',
     tipoPagamento: '',
     detalhes: '',
@@ -204,18 +204,33 @@ function FormularioFatura() {
             </Col>
 
             <Col md={6}>
-              <Form.Group controlId="valorTotal">
-                <Form.Label>Valor Total (R$) <span className="text-danger">*</span></Form.Label>
+              <Form.Group controlId="valorPago">
+                <Form.Label>Valor a Pagar (KZ) <span className="text-danger">*</span></Form.Label>
                 <div className="input-group">
-                    <span className="input-group-text"><FaDollarSign fontSize={20} color="#0070fa" /></span>
+                    <span className="input-group-text"><FaMoneyBillWave fontSize={20} color="#0070fa" /></span>
 
                 <Form.Control
                   type="text"
-                  name="valorTotal"
-                  value={formData.valorTotal}
-                  readOnly
+                  name="valorPago"
+                  value={formData.valorPago}
+                  onChange={handleChange}
                 />
                 </div>
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group controlId="desconto">
+                <Form.Label>Desconto (%)</Form.Label>
+                <div className="input-group">
+                    <span className="input-group-text"><FaPercent fontSize={20} color="#0070fa" /></span>
+
+                <Form.Control
+                  type="text"
+                  name="desconto"
+                  value={formData.desconto}
+                  onChange={handleChange}
+                /></div>
               </Form.Group>
             </Col>
 
@@ -289,42 +304,6 @@ function FormularioFatura() {
                 </div>
               </Form.Group>
             </Col>
-
-            <Col md={6}>
-              <Form.Group controlId="totalGeral">
-                <Form.Label>Total Geral (R$) <span className="text-danger">*</span></Form.Label>
-                <div className="input-group">
-                    <span className="input-group-text"><FaCalculator fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  type="text"
-                  name="totalGeral"
-                  value={formData.totalGeral}
-                  readOnly
-                />
-                </div>
-              </Form.Group>
-            </Col>
-
-            {/* Seção: Valor Pago e Tipo de Pagamento */}
-            <div className="di"><h6 className="text-uppercase mt-3">Valor Pago e Tipo de Pagamento</h6>
-              <hr /></div>
-            <Col md={6}>
-              <Form.Group controlId="valorPago">
-                <Form.Label>Valor Pago (KZ) <span className="text-danger">*</span></Form.Label>
-                <div className="input-group">
-                    <span className="input-group-text"><FaMoneyBillWave fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  type="text"
-                  name="valorPago"
-                  value={formData.valorPago}
-                  onChange={handleChange}
-                />
-                </div>
-              </Form.Group>
-            </Col>
-
             <Col md={6}>
               <Form.Group controlId="tipoPagamento">
                 <Form.Label>Tipo de Pagamento <span className="text-danger">*</span></Form.Label>
@@ -348,6 +327,30 @@ function FormularioFatura() {
               </Form.Group>
             </Col>
 
+          
+            {/* Seção: Valor Pago e Tipo de Pagamento */}
+            <div className="di"><h6 className="text-uppercase mt-3">Valor Pago e Tipo de Pagamento</h6>
+              <hr /></div>
+
+              <Col md={6}>
+              <Form.Group controlId="valorTotal">
+                <Form.Label>Valor Total (KZ) <span className="text-danger">*</span></Form.Label>
+                <div className="input-group">
+                    <span className="input-group-text"><FaDollarSign fontSize={20} color="#0070fa" /></span>
+
+                <Form.Control
+                  type="text"
+                  name="valorTotal"
+                  value={formData.valorTotal}
+                  readOnly
+                />
+                </div>
+              </Form.Group>
+              
+            </Col>
+            
+          
+
             <div className="di">
               {/* Seção: Detalhes Adicionais */}
               <h6 className="text-uppercase mt-3">Detalhes Adicionais</h6>
@@ -369,20 +372,7 @@ function FormularioFatura() {
               </Form.Group>
             </Col>
 
-            <Col md={6}>
-              <Form.Group controlId="desconto">
-                <Form.Label>Desconto (%)</Form.Label>
-                <div className="input-group">
-                    <span className="input-group-text"><FaPercent fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  type="text"
-                  name="desconto"
-                  value={formData.desconto}
-                  onChange={handleChange}
-                /></div>
-              </Form.Group>
-            </Col>
+        
           </>
         )}
       </Row>

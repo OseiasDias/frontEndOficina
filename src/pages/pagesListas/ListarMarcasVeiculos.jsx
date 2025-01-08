@@ -178,7 +178,7 @@ export default function ListarMarcasVeiculos() {
       {/* Modal de Adicionar Tipo de Veículo */}
       <Modal show={showModal} onHide={() => setShowModal(false)} scrollable>
         <Modal.Header closeButton>
-          <Modal.Title><h5>Adicionar Tipo de Veículo</h5></Modal.Title>
+          <Modal.Title><h5>Adicionar Marca de Veículo</h5></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>

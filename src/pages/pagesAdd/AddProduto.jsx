@@ -11,11 +11,14 @@ import { AiOutlineFieldNumber } from "react-icons/ai";
 function FormularioProduto() {
   const [showCorModal, setShowCorModal] = useState(false); // Modal para cores
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
+
   //const [unidadeMedida, setUnidadeMedida] = useState(""); // Estado para o select
   const [unidades, setUnidades] = useState([
     { id: 1, nome: 'Dúzia' },
     { id: 2, nome: 'Litro' },
   ]); // Unidades de medida
+
+  
 
   const [novaCor, setNovaCor] = useState({ nome: '', hex: '' });
 
@@ -32,11 +35,22 @@ function FormularioProduto() {
     { nome: 'Marrom', hex: '#6f4f37' },
   ]);
 
+  const [showFabricanteModal, setShowFabricanteModal] = useState(false);
+  const [novoFabricante, setNovaFabricante] = useState('');
+ 
+ const [fabricante, setFabricante] = useState([
+    { id: 1, nome: 'Fabricante 1' },
+    { id: 2, nome: 'Fabricante 2' },
+    // Adicione mais fabricantes conforme necessário
+  ]);
+
   const handleShowCorModal = () => setShowCorModal(true);
   const handleCloseCorModal = () => setShowCorModal(false);
 
   const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
+
+  
 
   const handleAddCor = () => {
     if (novaCor.nome && novaCor.hex) {
@@ -135,6 +149,39 @@ function FormularioProduto() {
   };
 
 
+ 
+
+  // Função para manipular a mudança no formulário
+  /*const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduto((prevProduto) => ({ ...prevProduto, [name]: value }));
+  };*/
+
+  // Função para mostrar a modal
+  const handleShowFabricanteModalNome = () => setShowFabricanteModal(true);
+
+  // Função para fechar a modal
+  const handleCloseFabricanteModalNome = () => setShowFabricanteModal(false);
+
+  // Função para adicionar um novo fabricante
+  const handleAddfabricante = () => {
+    if (novoFabricante.trim()) {
+      setFabricante((prevFabricante) => [
+        ...prevFabricante,
+        { id: Date.now(), nome: novoFabricante },
+      ]);
+      setNovaFabricante('');
+    }
+  };
+
+  // Função para remover um fabricante
+  const handleRemoveFabricante = (id) => {
+    setFabricante((prevFabricante) =>
+      prevFabricante.filter((fab) => fab.id !== id)
+    );
+  };
+
+
   return (
     <>
 
@@ -221,30 +268,39 @@ function FormularioProduto() {
 
         {/* Fabricante */}
         <Row>
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="fabricante">
-              <Form.Label className="fortificarLetter">Nome do Fabricante <span className="text-danger">*</span></Form.Label>
-              <div className="d-flex">
-                <div className="input-group">
-                  <span className="input-group-text"><MdBusiness fontSize={22} color="#0070fa" /></span>
-                  <Form.Control
-                    as="select"
-                    name="fabricante"
-                    value={produto.fabricante}
-                    onChange={handleChange}
-                    className="mr-2"
-                  >
-                    <option value="">--Selecione o nome da fabricação--</option>
-                    <option value="1">Filips</option>
-                    <option value="2">Alemanha</option>
-                  </Form.Control>
-                  <button onClick={handleShowUnidadeModal} className="btn btn-primary ms-3 links-acessos">Adicionar/remover</button>
-                </div>
-              </div>
-            </Form.Group>
-
-          </Col>
-
+        <Col xs={12} md={6}>
+        <Form.Group controlId="fabricante">
+          <Form.Label>
+            Nome do Fabricante <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="d-flex">
+            <div className="input-group">
+              <span className="input-group-text">
+                <MdBusiness fontSize={22} color="#0070fa" />
+              </span>
+              <Form.Control
+                as="select"
+                name="fabricante"
+                value={produto.fabricante}
+                onChange={handleChange}
+              >
+                <option value="">--Selecione o nome da fabricação--</option>
+                {fabricante.map((fabricante) => (
+                  <option key={fabricante.id} value={fabricante.id}>
+                    {fabricante.nome}
+                  </option>
+                ))}
+              </Form.Control>
+              <Button
+                onClick={handleShowFabricanteModalNome}
+                className="btn btn-primary ms-3 links-acessos"
+              >
+                Adicionar/remover
+              </Button>
+            </div>
+          </div>
+        </Form.Group>
+      </Col>
           {/* Preço */}
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="preco">
@@ -578,6 +634,54 @@ function FormularioProduto() {
           </table>
         </Modal.Body>
       </Modal>
+
+
+        {/* Modal para adicionar nova unidade */}
+       {/* Modal para adicionar/remover fabricante */}
+       <Modal
+        show={showFabricanteModal}
+        onHide={handleCloseFabricanteModalNome}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Adicionar Nome do Fabricante</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <div className="d-flex">
+              <Form.Group className="mb-3 w-100">
+                <Form.Control
+                  type="text"
+                  value={novoFabricante}
+                  onChange={(e) => setNovaFabricante(e.target.value)}
+                  placeholder="Nome do Fabricante"
+                  maxLength="30"
+                />
+              </Form.Group>
+              <Button className="h-25 ms-2" onClick={handleAddfabricante}>
+                Enviar
+              </Button>
+            </div>
+          </Form>
+
+          <table className="table unitproductname mt-3">
+            <tbody>
+              {fabricante.map((fabricante) => (
+                <tr key={fabricante.id}>
+                  <td>{fabricante.nome}</td>
+                  <td>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleRemoveFabricante(fabricante.id)}
+                    >
+                      <MdDeleteForever fontSize={26} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
@@ -598,7 +702,7 @@ export default function AddProdutos() {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Adicionar Produtos" direccao="/AddProdutos" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/produtosPage" />
+            <TopoAdmin entrada="  Adicionar Produtos" direccao="/AddProdutos" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/produtosPage" />
 
             <div className="vh-100 alturaPereita">
               <FormularioProduto />

@@ -11,7 +11,7 @@ const AddServiAdicionarServiços = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Adicionar novo Serviços" leftSeta={<FaArrowLeftLong />} leftR="/servicosList"  />
+            <TopoAdmin entrada="  Adicionar novo Serviços" leftSeta={<FaArrowLeftLong />} leftR="/servicosList"  />
 
             <div className="vh-100 alturaPereita">
             <AdicionarServiços />

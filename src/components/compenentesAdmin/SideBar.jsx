@@ -22,7 +22,7 @@ import { FcCustomerSupport } from "react-icons/fc";
 import { SiToyota } from "react-icons/si";
 import { IoIosColorPalette } from "react-icons/io";
 import { AiFillCalculator } from "react-icons/ai";
-import { BsTools } from "react-icons/bs";
+//import { BsTools } from "react-icons/bs";
 
 const routes = [
   { path: "/homeAdministrador", name: "Painel de Controle", icon: <FaHome /> },
@@ -57,7 +57,7 @@ const routes = [
     ],
   },
   { path: "/listarOrdemServico", name: <><strong>{"Ordem de Reparação"}</strong></>, icon: <MdAssignmentAdd  /> },
-  { path: "/cotacaoPage", name: "Contação", icon: <MdPriceChange /> },
+  { path: "/cotacaoPage", name: "Teste MOT", icon: <MdPriceChange /> },
   { path: "/faturaList", name: "Faturas", icon: <IoNewspaperSharp /> },
 
   {
@@ -84,7 +84,7 @@ const routes = [
   { path: "/servicosList", name: "Nossos Serviços", icon: <GrServices /> },
 
 
-  { path: "/vendasPage", name: "Vendas de Peças", icon: <BsTools /> },
+    /** { path: "/vendasPage", name: "Vendas de Peças", icon: <BsTools /> },*/
   /** { path: "/conformidadePage", name: "Conformidade", icon: <MdVerified /> },*/
   { path: "/relatoriosPage", name: "Relatórios", icon: <TbReportSearch /> },
   { path: "/templatesEmailPages", name: "Notificação", icon: <MdAttachEmail /> },

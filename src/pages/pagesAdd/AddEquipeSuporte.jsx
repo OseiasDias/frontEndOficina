@@ -833,7 +833,7 @@ const FormularioEquipeSuporte = () => {
   );
 };
 
-const AddFuncionarios = () => {
+const AddEquipeSup = () => {
   return (
     <>
       <div className="container-fluid">
@@ -864,4 +864,4 @@ const AddFuncionarios = () => {
   );
 };
 
-export default AddFuncionarios;
+export default AddEquipeSup;

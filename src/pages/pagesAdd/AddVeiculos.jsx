@@ -8,14 +8,14 @@ import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
 import { MdArrowDropDown, MdDateRange, MdDeleteForever, MdFileCopy, MdSpeed } from "react-icons/md";
 import { FaCar, FaCarSide, FaDollarSign, FaHashtag, FaImages, FaKey, FaPalette, FaRegIdCard, FaTag } from "react-icons/fa";
-import { GiGearStick} from "react-icons/gi";
+import { GiGearStick } from "react-icons/gi";
 import { PiEngineBold } from "react-icons/pi";
-import { AiOutlineEdit,  AiOutlineFileText } from "react-icons/ai";
+import { AiOutlineEdit, AiOutlineFileText } from "react-icons/ai";
 import { RiAddLargeFill } from "react-icons/ri";
 
 
 
-export function FormularioVeiculo(){
+export function FormularioVeiculo() {
   const [dadosFormulario, setDadosFormulario] = useState({
     veiculoPara: "0", // Serviço selecionado por padrão
     tipoVeiculo: "",
@@ -37,7 +37,7 @@ export function FormularioVeiculo(){
     motor: "",
     numeroChassi: "",
     imagens: [],
-    descricao: [""], // Array para várias descrições
+    descricao: "", // Array para várias descrições
     cor: ""
   });
 
@@ -52,26 +52,13 @@ export function FormularioVeiculo(){
 
 
   const [descricao, setDescricao] = useState([{ text: '' }]);
-  const [cor, setCor] = useState([{ cor: '' }]);
   const [notas, setNotas] = useState([{ text: '', internal: false, shared: false, file: [] }]);
 
-  const handleDescricaoChange = (index, value) => {
-    const updatedDescricao = descricao.map((desc, i) => i === index ? { ...desc, text: value } : desc);
-    setDescricao(updatedDescricao);
-  };
 
-  const handleAddDescricao = () => {
-    setDescricao([...descricao, { text: '' }]);
-  };
 
-  const handleCorChange = (index, value) => {
-    const updatedCor = cor.map((color, i) => i === index ? { ...color, cor: value } : color);
-    setCor(updatedCor);
-  };
 
-  const handleAddCor = () => {
-    setCor([...cor, { cor: '' }]);
-  };
+
+
 
   const handleNotaChange = (index, field, value) => {
     const updatedNotas = notas.map((nota, i) => i === index ? { ...nota, [field]: value } : nota);
@@ -162,7 +149,7 @@ export function FormularioVeiculo(){
                 className="links-acessos px-2 border-radius-zero"
                 onClick={handleShowModal}
               >
-               <RiAddLargeFill />
+                <RiAddLargeFill />
               </Button>
             </div>
           </Form.Group>
@@ -205,7 +192,7 @@ export function FormularioVeiculo(){
                 className="links-acessos px-2 border-radius-zero"
                 onClick={handleShowModal}
               >
-               <RiAddLargeFill />
+                <RiAddLargeFill />
               </Button>
             </div>
           </Form.Group>
@@ -249,7 +236,7 @@ export function FormularioVeiculo(){
                 className="links-acessos px-2 border-radius-zero"
                 onClick={handleShowModal}
               >
-               <RiAddLargeFill />
+                <RiAddLargeFill />
               </Button>
             </div>
           </Form.Group>
@@ -274,16 +261,16 @@ export function FormularioVeiculo(){
           </Form.Group>
         </Col>
 
-        
+
         <Col lg={6}>
           <Form.Group controlId="nomeModelo">
-          <Form.Label>Tipo de combustível <span className="text-danger">*</span></Form.Label>
-          <div className="d-flex justify-content-between">
+            <Form.Label>Tipo de combustível <span className="text-danger">*</span></Form.Label>
+            <div className="d-flex justify-content-between">
               <div className="input-group">
                 <span className="input-group-text"><MdArrowDropDown fontSize={20} color="#0070fa" /></span>
 
                 <Form.Control as="select" name="nomeModelo" required onChange={handleChange}>
-                <option value="">Selecione o combustível</option>
+                  <option value="">Selecione o combustível</option>
                   <option value="1">Diesel</option>
                   <option value="2">Gasolina</option>
                   <option value="3">Gasóleo</option>
@@ -293,13 +280,13 @@ export function FormularioVeiculo(){
                 className="links-acessos px-2 border-radius-zero"
                 onClick={handleShowModal}
               >
-               <RiAddLargeFill />
+                <RiAddLargeFill />
               </Button>
             </div>
           </Form.Group>
         </Col>
 
-        
+
 
         <Col lg={12}>
           <div className="mt-4">
@@ -332,7 +319,7 @@ export function FormularioVeiculo(){
           <Form.Group controlId="anoModelo">
             <Form.Label>Ano do Modelo</Form.Label>
             <div className="input-group">
-              <span className="input-group-text"><MdDateRange  fontSize={20} color="#0070fa" /></span>
+              <span className="input-group-text"><MdDateRange fontSize={20} color="#0070fa" /></span>
 
               <Form.Control
                 type="text"
@@ -349,7 +336,7 @@ export function FormularioVeiculo(){
           <Form.Group controlId="leituraOdometro">
             <Form.Label>Leitura de odômetro</Form.Label>
             <div className="input-group">
-              <span className="input-group-text"><MdSpeed  fontSize={20} color="#0070fa" /></span>
+              <span className="input-group-text"><MdSpeed fontSize={20} color="#0070fa" /></span>
 
               <Form.Control
                 type="text"
@@ -520,7 +507,7 @@ export function FormularioVeiculo(){
           </Form.Group>
         </Col>
 
-      
+
 
 
       </Row>
@@ -537,41 +524,35 @@ export function FormularioVeiculo(){
             <div className="col-lg-6 col-md-12 col-12">
               <div className="d-flex justify-content-between">
                 <h6 className="fw-700  mt-4">Descrição do veículo</h6>
-
-                <Button type="button" className="configurarBTN links-acessos" variant="outline-secondary" onClick={handleAddDescricao}>+</Button>
+                {/*                <Button type="button" className="configurarBTN links-acessos" variant="outline-secondary" onClick={handleAddDescricao}>+</Button>
+*/}
               </div>
               <div className="table-responsive mt-3">
                 <table className="table table-bordered">
                   <thead>
                     <tr>
                       <th>Descrição</th>
-                      <th>Ação</th>
+                      
                     </tr>
                   </thead>
                   <tbody>
-                    {descricao.map((desc, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="input-group">
-                            <span className="input-group-text"><AiOutlineFileText fontSize={20} color="#0070fa" /></span>
 
-                            <textarea
-                              className="form-control"
-                              value={desc.text}
-                              onChange={(e) => handleDescricaoChange(index, e.target.value)}
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <button type="button" onClick={() => {
-                            const updatedDescricao = descricao.filter((_, i) => i !== index);
-                            setDescricao(updatedDescricao);
-                          }} className="d-block mx-auto mt-2 colorirBTN border-0 tranformBTN">
-                            <MdDeleteForever fontSize={30} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr >
+                      <td>
+                        <div className="input-group">
+                          <span className="input-group-text"><AiOutlineFileText fontSize={20} color="#0070fa" /></span>
+
+                          <textarea
+                            className="form-control"// Array para várias descrições
+
+                            value={dadosFormulario.descricao}
+
+                          />
+                        </div>
+                      </td>
+
+                    </tr>
+
                   </tbody>
                 </table>
               </div>
@@ -583,8 +564,8 @@ export function FormularioVeiculo(){
               <div className="d-flex justify-content-between">
                 <h6 className="fw-700  mt-4">Cor do veículo</h6>
 
-                <Button type="button" className="configurarBTN links-acessos" variant="outline-secondary" onClick={handleAddCor}>+</Button>
-
+                {/*                <Button type="button" className="configurarBTN links-acessos" variant="outline-secondary" onClick={handleAddCor}>+</Button>
+*/}
               </div>
 
               <div className="table-responsive mt-3">
@@ -592,39 +573,32 @@ export function FormularioVeiculo(){
                   <thead>
                     <tr>
                       <th>Cores</th>
-                      <th>Ação</th>
+
                     </tr>
                   </thead>
                   <tbody>
-                    {cor.map((color, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="input-group">
-                            <span className="input-group-text"><FaPalette fontSize={20} color="#0070fa" /></span>
 
-                            <select
-                              className="form-control"
-                              value={color.cor}
-                              onChange={(e) => handleCorChange(index, e.target.value)}
-                            >
-                              <option value="">Selecione a cor</option>
-                              <option value="preto">Preta</option>
-                              <option value="branco">Branca</option>
-                              <option value="azul">Azul</option>
-                              {/* Adicione mais opções conforme necessário */}
-                            </select>
-                          </div>
-                        </td>
-                        <td>
-                          <button type="button" onClick={() => {
-                            const updatedDescricao = descricao.filter((_, i) => i !== index);
-                            setDescricao(updatedDescricao);
-                          }} className="d-block mx-auto mt-2 colorirBTN border-0 tranformBTN">
-                            <MdDeleteForever fontSize={30} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    <tr >
+                      <td>
+                        <div className="input-group">
+                          <span className="input-group-text"><FaPalette fontSize={20} color="#0070fa" /></span>
+
+                          <select
+                            className="form-control"
+                            value={dadosFormulario.cor}
+
+                          >
+                            <option value="">Selecione a cor</option>
+                            <option value="preto">Preta</option>
+                            <option value="branco">Branca</option>
+                            <option value="azul">Azul</option>
+                            {/* Adicione mais opções conforme necessário */}
+                          </select>
+                        </div>
+                      </td>
+
+                    </tr>
+
                   </tbody>
                 </table>
               </div>
@@ -659,11 +633,11 @@ export function FormularioVeiculo(){
                       />
                     </div>
                   </Col>
-                  
+
                   <Col lg={3}>
-                  <h6>Arquivo</h6>
+                    <h6>Arquivo</h6>
                     <div className="input-group">
-                    
+
                       <span className="input-group-text"><MdFileCopy fontSize={20} color="#0070fa" /></span>
 
                       <input
@@ -707,7 +681,7 @@ export function FormularioVeiculo(){
         </Col>
       </Row>
       {/* Modal */}
-      <Modal show={showModal} onHide={handleCloseModal}  centered>
+      <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title><h5>Adicionar ou Remover Tipo de Veículo</h5></Modal.Title>
         </Modal.Header>
@@ -763,7 +737,7 @@ export function FormularioVeiculo(){
 
 
 
- 
+
 
 
 

@@ -154,15 +154,15 @@ const FormularioCotacao = () => {
     return (
         <Container>
             <div className="col-md-12 mt-5">
-                <h6 className="text-uppercase">INFORMAÇÕES Cotação  </h6>
+                <h6 className="text-uppercase">INFORMAÇÕES Teste MOT  </h6>
                 <hr />
             </div>
             <Form onSubmit={handleSubmit}>
-                {/* Número da Cotação */}
+                {/* Número da Teste MOT */}
                 <Row className="mb-3">
                     <Col xs={12} md={6}>
                         <Form.Group controlId="jobno">
-                            <Form.Label>Número da Cotação <span className="text-danger">*</span></Form.Label>
+                            <Form.Label>Número da Teste MOT <span className="text-danger">*</span></Form.Label>
                             <div className="d-flex">
                                 <div className="input-group">
                                     <span className="input-group-text">
@@ -983,7 +983,7 @@ export default function AddCompras() {
                 <div className="d-flex">
                     <SideBar />
                     <div className="flexAuto w-100 ">
-                        <TopoAdmin entrada="Adicionar Cotação" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/cotacaoPage" />
+                        <TopoAdmin entrada="Fazer Teste MOT" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/cotacaoPage" />
                         <div className="vh-100 alturaPereita">
                             <FormularioCotacao />
                         </div>
