@@ -18,7 +18,7 @@ function FormularioProduto() {
     { id: 2, nome: 'Litro' },
   ]); // Unidades de medida
 
-  
+
 
   const [novaCor, setNovaCor] = useState({ nome: '', hex: '' });
 
@@ -37,8 +37,8 @@ function FormularioProduto() {
 
   const [showFabricanteModal, setShowFabricanteModal] = useState(false);
   const [novoFabricante, setNovaFabricante] = useState('');
- 
- const [fabricante, setFabricante] = useState([
+
+  const [fabricante, setFabricante] = useState([
     { id: 1, nome: 'Fabricante 1' },
     { id: 2, nome: 'Fabricante 2' },
     // Adicione mais fabricantes conforme necessário
@@ -50,7 +50,7 @@ function FormularioProduto() {
   const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
 
-  
+
 
   const handleAddCor = () => {
     if (novaCor.nome && novaCor.hex) {
@@ -149,7 +149,7 @@ function FormularioProduto() {
   };
 
 
- 
+
 
   // Função para manipular a mudança no formulário
   /*const handleChange = (e) => {
@@ -196,7 +196,7 @@ function FormularioProduto() {
             <Form.Group controlId="numeroProduto">
               <Form.Label className="fortificarLetter">Número de Produto <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
-                <span className="input-group-text"><AiOutlineFieldNumber  fontSize={22} color="#0070fa" /></span>
+                <span className="input-group-text"><AiOutlineFieldNumber fontSize={22} color="#0070fa" /></span>
                 <Form.Control
                   type="text"
                   name="numeroProduto"
@@ -268,39 +268,39 @@ function FormularioProduto() {
 
         {/* Fabricante */}
         <Row>
-        <Col xs={12} md={6}>
-        <Form.Group controlId="fabricante">
-          <Form.Label>
-            Nome do Fabricante <span className="text-danger">*</span>
-          </Form.Label>
-          <div className="d-flex">
-            <div className="input-group">
-              <span className="input-group-text">
-                <MdBusiness fontSize={22} color="#0070fa" />
-              </span>
-              <Form.Control
-                as="select"
-                name="fabricante"
-                value={produto.fabricante}
-                onChange={handleChange}
-              >
-                <option value="">--Selecione o nome da fabricação--</option>
-                {fabricante.map((fabricante) => (
-                  <option key={fabricante.id} value={fabricante.id}>
-                    {fabricante.nome}
-                  </option>
-                ))}
-              </Form.Control>
-              <Button
-                onClick={handleShowFabricanteModalNome}
-                className="btn btn-primary ms-3 links-acessos"
-              >
-                Adicionar/remover
-              </Button>
-            </div>
-          </div>
-        </Form.Group>
-      </Col>
+          <Col xs={12} md={6}>
+            <Form.Group controlId="fabricante">
+              <Form.Label>
+                Nome do Fabricante <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="d-flex">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <MdBusiness fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    as="select"
+                    name="fabricante"
+                    value={produto.fabricante}
+                    onChange={handleChange}
+                  >
+                    <option value="">--Selecione o nome da fabricação--</option>
+                    {fabricante.map((fabricante) => (
+                      <option key={fabricante.id} value={fabricante.id}>
+                        {fabricante.nome}
+                      </option>
+                    ))}
+                  </Form.Control>
+                  <Button
+                    onClick={handleShowFabricanteModalNome}
+                    className="btn btn-primary ms-3 links-acessos"
+                  >
+                    Adicionar/remover
+                  </Button>
+                </div>
+              </div>
+            </Form.Group>
+          </Col>
           {/* Preço */}
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="preco">
@@ -368,35 +368,8 @@ function FormularioProduto() {
 
         {/* Cor */}
         <Row>
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="cor">
-              <Form.Label className="fortificarLetter">Cor</Form.Label>
-              <div className="d-flex align-items-center">
-                <div className="w-100">
-                  <div className="input-group">
-                    <span className="input-group-text"><MdPalette fontSize={22} color="#0070fa" /></span>
-                    <Form.Select
-                      value={produto.cor}
+        
 
-                    >
-                      <option value="">-- Selecione a cor --</option>
-                      {cores.map((cor) => (
-                        <option key={cor.hex} value={cor.hex} style={{ backgroundColor: cor.hex }}>
-                          {cor.nome}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </div>
-                </div>
-                <button
-                  onClick={handleShowCorModal}
-                  className="btn btn-primary ms-3 links-acessos"
-                >
-                  Adicionar/Remover
-                </button>
-              </div>
-            </Form.Group>
-          </Col>
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="garantia">
               <Form.Label className="fortificarLetter">Garantia</Form.Label>
@@ -413,15 +386,6 @@ function FormularioProduto() {
               </div>
             </Form.Group>
           </Col>
-        </Row>
-
-        {/* Garantia */}
-        <Row>
-
-        </Row>
-
-        {/* Imagem */}
-        <Row>
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="imagem">
               <Form.Label className="fortificarLetter">Imagem</Form.Label>
@@ -431,6 +395,7 @@ function FormularioProduto() {
                   type="file"
                   name="imagem"
                   onChange={handleImageChange}
+                  disabled
                 />
               </div>
               {produto.imagem && (
@@ -443,6 +408,8 @@ function FormularioProduto() {
             </Form.Group>
           </Col>
         </Row>
+
+     
 
         {/* Notas */}
 
@@ -636,9 +603,9 @@ function FormularioProduto() {
       </Modal>
 
 
-        {/* Modal para adicionar nova unidade */}
-       {/* Modal para adicionar/remover fabricante */}
-       <Modal
+      {/* Modal para adicionar nova unidade */}
+      {/* Modal para adicionar/remover fabricante */}
+      <Modal
         show={showFabricanteModal}
         onHide={handleCloseFabricanteModalNome}
       >

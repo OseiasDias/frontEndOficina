@@ -55,11 +55,6 @@ export function FormularioVeiculo() {
   const [notas, setNotas] = useState([{ text: '', internal: false, shared: false, file: [] }]);
 
 
-
-
-
-
-
   const handleNotaChange = (index, field, value) => {
     const updatedNotas = notas.map((nota, i) => i === index ? { ...nota, [field]: value } : nota);
     setNotas(updatedNotas);
@@ -68,9 +63,6 @@ export function FormularioVeiculo() {
   const handleAddNota = () => {
     setNotas([...notas, { text: '', internal: false, shared: false, file: [] }]);
   };
-
-
-
 
   const [showModal, setShowModal] = useState(false);
   const [tipoVeiculo, setTipoVeiculo] = useState("");
@@ -108,6 +100,121 @@ export function FormularioVeiculo() {
 
   const handleRemoveTipo = (id) => {
     setTiposVeiculos(tiposVeiculos.filter((tipo) => tipo.id !== id));
+  };
+
+  /**Configuracoes Add Marca */
+  const [showModalMarca, setShowModalMarca] = useState(false);
+  const [novoMarca, setNovoMarca] = useState('');
+  const [marcasVeiculos, setMarcasVeiculos] = useState([
+    { id: 1, nome: 'FORD' },
+    { id: 2, nome: 'TOYOTA' },
+    { id: 3, nome: 'HYUNDAI' }
+  ]);
+
+  // Função para abrir a modal
+  const handleShowModalMarca = () => setShowModalMarca(true);
+
+  // Função para fechar a modal
+  const handleCloseModalMarca = () => setShowModalMarca(false);
+
+  // Função para lidar com a mudança do novo nome da marca
+  const handleNovoMarcaChange = (event) => {
+    setNovoMarca(event.target.value);
+  };
+
+  // Função para enviar o novo nome da marca
+  const handleSubmitMarca = (event) => {
+    event.preventDefault();
+    // Lógica para adicionar a nova marca (adicionar ao array de marcas)
+    setMarcasVeiculos([
+      ...marcasVeiculos,
+      { id: marcasVeiculos.length + 1, nome: novoMarca }
+    ]);
+    setNovoMarca(''); // Limpar campo de entrada
+    handleCloseModal(); // Fechar a modal após adicionar a marca
+  };
+
+  // Função para remover uma marca
+  const handleRemoveMarca = (id) => {
+    setMarcasVeiculos(marcasVeiculos.filter((marca) => marca.id !== id));
+  };
+
+
+  /*Configuracoes do modelo*/
+
+  // Estado para controlar a visibilidade da modal
+  const [showModalModelo, setShowModalModelo] = useState(false);
+  const [novoModelo, setNovoModelo] = useState('');
+  const [modeloVeiculosModelo, setModeloVeiculos] = useState([
+    { id: 9, nome: 'Explorer' },
+    { id: 11, nome: 'Fiesta' },
+    { id: 14, nome: 'Edge' },
+    { id: 36, nome: 'EcoSport' },
+    { id: 37, nome: 'Hilux' }
+  ]);
+
+  // Função para abrir a modal
+  const handleShowModalModelo = () => setShowModalModelo(true);
+
+  // Função para fechar a modal
+  const handleCloseModalModelo = () => setShowModalModelo(false);
+
+  // Função para lidar com a mudança do novo nome do modelo
+  const handleNovoModeloChange = (event) => {
+    setNovoModelo(event.target.value);
+  };
+
+  // Função para enviar o novo nome do modelo
+  const handleSubmitModelo = (event) => {
+    event.preventDefault();
+    // Lógica para adicionar o novo modelo (adicionar ao array de modelos)
+    setModeloVeiculos([
+      ...modeloVeiculosModelo,
+      { id: modeloVeiculosModelo.length + 1, nome: novoModelo }
+    ]);
+    setNovoModelo(''); // Limpar campo de entrada
+    handleCloseModal(); // Fechar a modal após adicionar o modelo
+  };
+
+  // Função para remover um modelo
+  const handleRemoveModelo = (id) => {
+    setModeloVeiculos(modeloVeiculosModelo.filter((modelo) => modelo.id !== id));
+  };
+
+
+  const [showModalCombustivel, setShowModalCombustivel] = useState(false);
+  const [novoCombustivel, setNovoCombustivel] = useState('');
+  const [combustivelVeiculosCombustivel, setCombustivelVeiculosCombustivel] = useState([]);
+
+  // Função para abrir a modal
+  const handleShowModalCombustivel = () => setShowModalCombustivel(true);
+
+  // Função para fechar a modal
+  const handleCloseModalCombustivel = () => {
+    setShowModalCombustivel(false);
+    setNovoCombustivel(''); // Limpa o campo ao fechar
+  };
+
+  // Função para lidar com mudanças no campo de novo combustível
+  const handleNovoCombustivelChange = (e) => {
+    setNovoCombustivel(e.target.value);
+  };
+
+  // Função para adicionar um novo combustível
+  const handleSubmitCombustivel = (e) => {
+    e.preventDefault();
+    if (novoCombustivel.trim() === '') {
+      alert('Por favor, insira um nome válido para o combustível.');
+      return;
+    }
+    // Adiciona novo combustível à lista
+    setCombustivelVeiculosCombustivel([...combustivelVeiculosCombustivel, { id: Date.now(), nome: novoCombustivel }]);
+    setNovoCombustivel(''); // Limpa o campo após adicionar
+  };
+
+  // Função para remover um combustível existente
+  const handleRemoveCombustivel = (id) => {
+    setCombustivelVeiculosCombustivel(combustivelVeiculosCombustivel.filter(combustivel => combustivel.id !== id));
   };
 
 
@@ -180,8 +287,7 @@ export function FormularioVeiculo() {
             <div className="d-flex justify-content-between">
               <div className="input-group">
                 <span className="input-group-text"><FaTag fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control as="select" name="marcaVeiculo" required onChange={handleChange}>
+                <Form.Control as="select" name="marcaVeiculo" required>
                   <option value="">Selecione a marca</option>
                   <option value="4">FORD</option>
                   <option value="5">TOYOTA</option>
@@ -190,7 +296,7 @@ export function FormularioVeiculo() {
               </div>
               <Button
                 className="links-acessos px-2 border-radius-zero"
-                onClick={handleShowModal}
+                onClick={handleShowModalMarca}
               >
                 <RiAddLargeFill />
               </Button>
@@ -198,9 +304,10 @@ export function FormularioVeiculo() {
           </Form.Group>
         </Col>
 
+
         <Col lg={6}>
           <Form.Group controlId="preco">
-            <Form.Label>Preço ($) <span className="text-danger">*</span></Form.Label>
+            <Form.Label>Preço (KZ) <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaDollarSign fontSize={20} color="#0070fa" /></span>
 
@@ -216,6 +323,7 @@ export function FormularioVeiculo() {
           </Form.Group>
         </Col>
 
+
         <Col lg={6}>
           <Form.Group controlId="nomeModelo">
             <Form.Label>Nome do Modelo <span className="text-danger">*</span></Form.Label>
@@ -223,7 +331,7 @@ export function FormularioVeiculo() {
               <div className="input-group">
                 <span className="input-group-text"><FaCarSide fontSize={20} color="#0070fa" /></span>
 
-                <Form.Control as="select" name="nomeModelo" required onChange={handleChange}>
+                <Form.Control as="select" name="nomeModelo" required onChange={handleNovoModeloChange}>
                   <option value="">Selecione o modelo</option>
                   <option value="9">Explorer</option>
                   <option value="11">Fiesta</option>
@@ -234,7 +342,7 @@ export function FormularioVeiculo() {
               </div>
               <Button
                 className="links-acessos px-2 border-radius-zero"
-                onClick={handleShowModal}
+                onClick={handleShowModalModelo}
               >
                 <RiAddLargeFill />
               </Button>
@@ -261,15 +369,13 @@ export function FormularioVeiculo() {
           </Form.Group>
         </Col>
 
-
         <Col lg={6}>
-          <Form.Group controlId="nomeModelo">
+          <Form.Group controlId="nomeCombustivel">
             <Form.Label>Tipo de combustível <span className="text-danger">*</span></Form.Label>
             <div className="d-flex justify-content-between">
               <div className="input-group">
                 <span className="input-group-text"><MdArrowDropDown fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control as="select" name="nomeModelo" required onChange={handleChange}>
+                <Form.Control as="select" name="nomeCombustivel" required onChange={(e) => console.log(e.target.value)}>
                   <option value="">Selecione o combustível</option>
                   <option value="1">Diesel</option>
                   <option value="2">Gasolina</option>
@@ -278,15 +384,13 @@ export function FormularioVeiculo() {
               </div>
               <Button
                 className="links-acessos px-2 border-radius-zero"
-                onClick={handleShowModal}
+                onClick={handleShowModalCombustivel}
               >
                 <RiAddLargeFill />
               </Button>
             </div>
           </Form.Group>
         </Col>
-
-
 
         <Col lg={12}>
           <div className="mt-4">
@@ -532,7 +636,7 @@ export function FormularioVeiculo() {
                   <thead>
                     <tr>
                       <th>Descrição</th>
-                      
+
                     </tr>
                   </thead>
                   <tbody>
@@ -583,19 +687,20 @@ export function FormularioVeiculo() {
                         <div className="input-group">
                           <span className="input-group-text"><FaPalette fontSize={20} color="#0070fa" /></span>
 
-                          <select
+                          {/* Input para seleção de cor */}
+                          <input
+                            type="color"
                             className="form-control"
                             value={dadosFormulario.cor}
-
-                          >
-                            <option value="">Selecione a cor</option>
-                            <option value="preto">Preta</option>
-                            <option value="branco">Branca</option>
-                            <option value="azul">Azul</option>
-                            {/* Adicione mais opções conforme necessário */}
-                          </select>
+                            onChange={(e) => {
+                              // Atualiza o estado com a nova cor selecionada
+                              setDadosFormulario({ ...dadosFormulario, cor: e.target.value });
+                            }}
+                            aria-label="Escolha a cor"
+                          />
                         </div>
                       </td>
+
 
                     </tr>
 
@@ -730,6 +835,161 @@ export function FormularioVeiculo() {
           </Form>
         </Modal.Body>
       </Modal>
+
+      {/* Modal para adicionar ou remover marcas */}
+      <Modal show={showModalMarca} onHide={handleCloseModalMarca} centered>
+        <Modal.Header closeButton>
+          <Modal.Title><h5>Adicionar ou Remover marca de Veículo</h5></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitMarca}>
+            {/* Campo para adicionar um novo marca */}
+            <Form.Group controlId="novoMarca">
+              <div className="d-flex justify-content-between">
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o nova marca"
+                  value={novoMarca}
+                  onChange={handleNovoMarcaChange}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="ml-2 links-acessos border-radius-zero"
+                >
+                  Enviar
+                </Button>
+              </div>
+            </Form.Group>
+
+            {/* Lista de marcas de veículos existentes com botão para remover */}
+            <Form.Group controlId="removerMarcas">
+              <Form.Label className="mt-2">Marcas de veículos existentes</Form.Label>
+              <ul className="list-unstyled">
+                {marcasVeiculos.map((Marca) => (
+                  <li key={Marca.id} className="d-flex border p-2 my-2 justify-content-between align-items-center">
+                    <span>{Marca.nome}</span>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleRemoveMarca(Marca.id)}
+                      className="border-radius-zero"
+                    >
+                      <MdDeleteForever fontSize={22} />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Form.Group>
+
+            <hr />
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Modal para adicionar ou remover modelos */}
+      <Modal show={showModalModelo} onHide={handleCloseModalModelo} centered>
+        <Modal.Header closeButton>
+          <Modal.Title><h5>Adicionar ou Remover Modelo de Veículo</h5></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitModelo}>
+            {/* Campo para adicionar um novo modelo */}
+            <Form.Group controlId="novoModelo">
+              <div className="d-flex justify-content-between">
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o novo Modelo"
+                  value={novoModelo}
+                  onChange={handleNovoModeloChange}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="ml-2 links-acessos border-radius-zero"
+                >
+                  Enviar
+                </Button>
+              </div>
+            </Form.Group>
+
+            {/* Lista de modelos de veículos existentes com botão para remover */}
+            <Form.Group controlId="removerModelo">
+              <Form.Label className="mt-2">Modelos de veículos existentes</Form.Label>
+              <ul className="list-unstyled">
+                {modeloVeiculosModelo.map((modelo) => (
+                  <li key={modelo.id} className="d-flex border p-2 my-2 justify-content-between align-items-center">
+                    <span>{modelo.nome}</span>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleRemoveModelo(modelo.id)}
+                      className="border-radius-zero"
+                    >
+                      <MdDeleteForever fontSize={22} />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Form.Group>
+
+            <hr />
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+
+
+      {/* Modal para adicionar ou remover Combustível */}
+      <Modal show={showModalCombustivel} onHide={handleCloseModalCombustivel} centered>
+        <Modal.Header closeButton>
+          <Modal.Title><h5>Adicionar ou Remover Combustível de Veículo</h5></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmitCombustivel}>
+            {/* Campo para adicionar um novo Combustível */}
+            <Form.Group controlId="novoCombustivel">
+              <div className="d-flex justify-content-between">
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o novo Combustível"
+                  value={novoCombustivel}
+                  onChange={handleNovoCombustivelChange}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="ml-2 links-acessos border-radius-zero"
+                >
+                  Enviar
+                </Button>
+              </div>
+            </Form.Group>
+
+            {/* Lista de Combustíveis de veículos existentes com botão para remover */}
+            <Form.Group controlId="removerCombustivel">
+              <Form.Label className="mt-2">Combustíveis de veículos existentes</Form.Label>
+              <ul className="list-unstyled">
+                {combustivelVeiculosCombustivel.map((combustivel) => (
+                  <li key={combustivel.id} className="d-flex border p-2 my-2 justify-content-between align-items-center">
+                    <span>{combustivel.nome}</span>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleRemoveCombustivel(combustivel.id)}
+                      className="border-radius-zero"
+                    >
+                      <MdDeleteForever fontSize={22} />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Form.Group>
+
+            <hr />
+          </Form>
+        </Modal.Body>
+      </Modal>
     </Form >
   );
 };
@@ -752,7 +1012,7 @@ const AddClientes = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Adicionar Veículos" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/clienteList" />
+            <TopoAdmin entrada="  Adicionar Veículos" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/clienteList" />
 
             <div className="vh-100 alturaPereita">
               <FormularioVeiculo />
