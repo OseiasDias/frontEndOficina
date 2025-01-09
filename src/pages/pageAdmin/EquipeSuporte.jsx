@@ -7,7 +7,6 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import { Dropdown } from "react-bootstrap";
 import { MdDelete } from "react-icons/md";
-import { AiOutlineEdit } from "react-icons/ai";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
@@ -15,6 +14,7 @@ import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para
 // Importar ToastContainer e toast do react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
+import { FaLock } from "react-icons/fa";
 
 // Estilos personalizados para a tabela
 const customStyles = {
@@ -95,11 +95,12 @@ export function TabelaVizualizarEquipeSuporte() {
               &nbsp;&nbsp;Visualizar
             </Dropdown.Item>
             <Dropdown.Item onClick={() =>handleViewEdit(row)}>
-              <AiOutlineEdit fontSize={20} />
-              &nbsp;&nbsp;Editar
+              <FaLock fontSize={20} />
+              &nbsp;&nbsp;Bloquear
             </Dropdown.Item>
+          
             <Dropdown.Item onClick={() => handleDelete(row)}>
-              <MdDelete fontSize={20} />
+              <MdDelete fontSize={23} />
               &nbsp;&nbsp;Apagar
             </Dropdown.Item>
           </Dropdown.Menu>

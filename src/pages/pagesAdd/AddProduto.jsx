@@ -5,7 +5,7 @@ import { IoIosAdd, IoMdAddCircle } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useState } from 'react';
 import { Form, Button, Col, Row, Modal } from 'react-bootstrap';
-import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdPalette, MdSecurity, MdStore, MdStraighten, MdTextFields } from "react-icons/md";
+import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdSecurity, MdStore, MdStraighten, MdTextFields } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 
 function FormularioProduto() {
@@ -44,7 +44,7 @@ function FormularioProduto() {
     // Adicione mais fabricantes conforme necessário
   ]);
 
-  const handleShowCorModal = () => setShowCorModal(true);
+  //const handleShowCorModal = () => setShowCorModal(true);
   const handleCloseCorModal = () => setShowCorModal(false);
 
   const handleShowUnidadeModal = () => setShowUnidadeModal(true);

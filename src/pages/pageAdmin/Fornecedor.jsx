@@ -14,7 +14,9 @@ const Fornecedor = () => {
             <TopoAdmin entrada="Fornecedores" direccao="/addFornecedorPage" icone={<IoIosAdd />} leftR="/FornecedorList" />
 
             <div className="vh-100 alturaPereita">
-              <h3>Fornecedores</h3>            </div>
+              <h3>Fornecedores</h3>           
+              
+             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
               <p className="text-center">

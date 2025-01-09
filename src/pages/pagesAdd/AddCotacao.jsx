@@ -983,7 +983,7 @@ export default function AddCompras() {
                 <div className="d-flex">
                     <SideBar />
                     <div className="flexAuto w-100 ">
-                        <TopoAdmin entrada="Fazer Teste MOT" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/cotacaoPage" />
+                        <TopoAdmin entrada="  Fazer Teste MOT" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/cotacaoPage" />
                         <div className="vh-100 alturaPereita">
                             <FormularioCotacao />
                         </div>

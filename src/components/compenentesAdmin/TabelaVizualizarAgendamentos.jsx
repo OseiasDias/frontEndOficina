@@ -59,7 +59,7 @@ export default function TabelaAgendamento() {
         } else if (row.status === 0) {
           return "Cancelado";
         }
-        return row.status || "Sem status"; // Caso não tenha status definido
+        return "Sem status"; // Caso não tenha status definido
       }
     },
     {
@@ -92,16 +92,19 @@ export default function TabelaAgendamento() {
   // Função para abrir a modal de visualização com os dados do agendamento
   const handleVisualizar = async (row) => {
     try {
-      const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${row.id_cliente}`);
-      const veiculoResponse = await fetch(`http://localhost:5000/api/veiculos/${row.id_veiculo}`);
+      const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${row.id_cliente}`);
+      const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${row.id_veiculo}`);
+      const servicoResponse = await fetch(`http://127.0.0.1:8000/api/servicos/${row.id_servico}`);
 
       const clienteData = await clienteResponse.json();
       const veiculoData = await veiculoResponse.json();
+      const servicoData = await servicoResponse.json();
 
       setAgendamentoDetails({
         agendamento: row,
         cliente: clienteData,
-        veiculo: veiculoData
+        veiculo: veiculoData,
+        servico: servicoData,
       });
 
       setShowVisualizarModal(true);
@@ -180,26 +183,27 @@ export default function TabelaAgendamento() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/agendamentos");
+      const response = await fetch("http://127.0.0.1:8000/api/agendamentos");
       if (!response.ok) throw new Error("Erro ao buscar dados dos agendamentos");
       const data = await response.json();
 
       const dataWithDetails = await Promise.all(
         data.map(async (agendamento) => {
-          const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${agendamento.id_cliente}`);
-          const veiculoResponse = await fetch(`http://localhost:5000/api/veiculos/${agendamento.id_veiculo}`);
+          // Fetch de cliente e veículo de acordo com as novas rotas
+          const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${agendamento.id_cliente}`);
+          const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`);
 
           const clienteData = await clienteResponse.json();
           const veiculoData = await veiculoResponse.json();
 
           return {
             ...agendamento,
-            nome_cliente: clienteData.nome,
+            nome_cliente: clienteData.nome_exibicao || "Sem nome",
             veiculo: {
-              marca: veiculoData.marca,
-              modelo: veiculoData.modelo,
-              ano: veiculoData.ano,
-              placa: veiculoData.placa || "Sem placa"
+              marca: veiculoData.marca_veiculo || "Sem marca",
+              modelo: veiculoData.modelo_veiculo || "Sem modelo",
+              ano: veiculoData.ano_modelo || "Sem ano",
+              placa: veiculoData.numero_placa || "Sem placa",
             },
           };
         })
@@ -208,158 +212,91 @@ export default function TabelaAgendamento() {
       // Filtra os agendamentos para exibir apenas os que não passaram da data atual
       const today = new Date();
       const upcomingAgendamentos = dataWithDetails.filter((agendamento) => {
-        const agendamentoDate = new Date(agendamento.data);  // Data do agendamento
-        return agendamentoDate >= today; // Filtra agendamentos que não passaram
+        const agendamentoDate = new Date(agendamento.data);
+        return agendamentoDate >= today;
       });
 
-      setRecords(upcomingAgendamentos);  // Atualiza o estado com os agendamentos válidos
-      setOriginalRecords(upcomingAgendamentos);  // Atualiza o estado original também
-    } catch (err) {
-      setError(err.message);
+      setRecords(upcomingAgendamentos);
+      setOriginalRecords(upcomingAgendamentos);
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData(); // Carrega os dados assim que o componente for montado
   }, []);
 
-  if (loading) return <p>Carregando...</p>;
-  if (error) return <p>Erro: {error}</p>;
-
   return (
-    <div className="my-4 homeDiv">
-      <div className="search row d-flex justify-content-between">
-        <div className="col-12 col-md-6 col-lg-4">
-          <h4>Lista de Agendamentos</h4>
-        </div>
-        <div className="col-12 col-md-6 col-lg-4">
-          <input
-            type="text"
-            className="w-100 my-2 zIndex"
-            placeholder="Pesquisa nome do cliente ou marca do veículo"
-            onChange={(e) => {
-              const query = e.target.value.toLowerCase();
+    <div className="container">
+      <ToastContainer />
+      <h2 className="mt-4">Lista de Agendamentos</h2>
 
-              if (!query) {
-                setRecords(originalRecords); // Se não houver filtro, exibe todos os registros
-              } else {
-                const filteredRecords = originalRecords.filter((item) => {
-                  // Filtrando por status (convertendo para string)
-                  const statusMatch = item.status !== undefined && item.status.toString().includes(query);
-
-                  // Filtrando por nome do cliente
-                  const clienteMatch = item.nome_cliente && item.nome_cliente.toLowerCase().includes(query);
-
-                  // Filtrando por marca do veículo (se o veículo existir)
-                  const veiculoMarcaMatch = item.veiculo && item.veiculo.marca.toLowerCase().includes(query);
-
-                  // Retorna true se algum dos critérios de pesquisa for atendido
-                  return statusMatch || clienteMatch || veiculoMarcaMatch;
-                });
-
-                setRecords(filteredRecords); // Atualiza os registros com os itens filtrados
-              }
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="container">
-        <div className="row">
-          <div className="col-12">
-          <DataTable
-        columns={columns}
-        data={records}
-        customStyles={customStyles}
-        pagination
-        responsive
-        paginationPerPage={10}
-        paginationRowsPerPageOptions={[10]}
-        noDataComponent={<p>Nenhum agendamento encontrado.</p>}
-        footer={<div>Exibindo {records.length} registros no total</div>}
-      />
-          </div>
-        </div>
-      </div>
+      {loading ? (
+        <div>Carregando...</div>
+      ) : error ? (
+        <div className="alert alert-danger">{error}</div>
+      ) : (
+        <DataTable
+          title="Agendamentos"
+          columns={columns}
+          data={records}
+          customStyles={customStyles}
+          pagination
+        />
+      )}
 
       {/* Modal de Visualização */}
-      <Modal show={showVisualizarModal} onHide={() => setShowVisualizarModal(false)} scrollable centered size="xl">
+      <Modal show={showVisualizarModal} onHide={() => setShowVisualizarModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes do Agendamento</Modal.Title>
+          <Modal.Title>Visualizar Agendamento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {agendamentoDetails ? (
             <>
               <div className="row">
-                <p className="col-12 col-md-6 col-lg-4"><strong>Nome:</strong> {agendamentoDetails.cliente.nome || "Sem nome"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Email:</strong> {agendamentoDetails.cliente.email || "Sem email"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Telefone:</strong> {agendamentoDetails.cliente.telefone || "Sem telefone"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Endereço:</strong> {agendamentoDetails.cliente.endereco || "Sem endereço"}</p>
-
-                <p className="col-12 col-md-6 col-lg-4"><strong>Marca:</strong> {agendamentoDetails.veiculo.marca || "Sem marca"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Modelo:</strong> {agendamentoDetails.veiculo.modelo || "Sem modelo"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Ano:</strong> {agendamentoDetails.veiculo.ano || "Sem ano"}</p>
-                <p className="col-12 col-md-6 col-lg-4"><strong>Placa:</strong> {agendamentoDetails.veiculo.placa || "Sem placa"}</p>
-
-                <p className="col-12 col-md-6 col-lg-4"><strong>Data:</strong> {new Date(agendamentoDetails.agendamento.data).toLocaleDateString()}</p>
-                <p className="col-12 col-md-6 col-lg-4">
-  <strong>Status:</strong> 
-  {agendamentoDetails.agendamento.status === 1 ? "Confirmado" : agendamentoDetails.agendamento.status === 0 ? "Cancelado" : "Sem status"}
-</p>
-                <p className="col-12 col-md-12 col-lg-12"><strong>Descrição:</strong> {agendamentoDetails.agendamento.descricao || "Sem descrição"}</p>
+                <p><strong>Cliente:</strong> {agendamentoDetails.cliente.nome_exibicao}</p>
+                <p><strong>Veículo:</strong> {`${agendamentoDetails.veiculo.marca} ${agendamentoDetails.veiculo.modelo} (${agendamentoDetails.veiculo.ano})`}</p>
+                <p><strong>Placa:</strong> {agendamentoDetails.veiculo.placa}</p>
+                <p><strong>Serviço:</strong> {agendamentoDetails.servico.descricao}</p>
+                <p><strong>Data:</strong> {new Date(agendamentoDetails.agendamento.data).toLocaleDateString()}</p>
+                <p><strong>Status:</strong> {agendamentoDetails.agendamento.status === 1 ? "Confirmado" : "Cancelado"}</p>
               </div>
             </>
           ) : (
-            <p>Carregando detalhes...</p>
+            <p>Carregando...</p>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" className="links-acessos px-5" onClick={() => navigate(`/agendamentoAdiar/${agendamentoDetails.agendamento.id_agendamento}`)}>
-            Adiar
-          </Button>
-        
-        </Modal.Footer>
-      </Modal>
-
-      {/* Modal de Confirmação de Status */}
-      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Status</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Tem certeza que deseja {agendamentoToConfirm?.novoStatus === 1 ? "confirmar" : "cancelar"} este agendamento?</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="primary" onClick={handleConfirmCancel}>
-            Confirmar
-          </Button>
+          <Button variant="secondary" onClick={() => setShowVisualizarModal(false)}>Fechar</Button>
         </Modal.Footer>
       </Modal>
 
       {/* Modal de Exclusão */}
       <Modal show={showExcluirModal} onHide={() => setShowExcluirModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmar Exclusão</Modal.Title>
+          <Modal.Title>Excluir Agendamento</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>Tem certeza que deseja excluir este agendamento?</p>
-        </Modal.Body>
+        <Modal.Body>Você tem certeza que deseja excluir este agendamento?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowExcluirModal(false)}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Excluir
-          </Button>
+          <Button variant="secondary" onClick={() => setShowExcluirModal(false)}>Cancelar</Button>
+          <Button variant="danger" onClick={handleDelete}>Excluir</Button>
         </Modal.Footer>
       </Modal>
 
-      <ToastContainer position="top-center" autoClose={3000} />
+      {/* Modal de Confirmação de Status */}
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"} Agendamento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Tem certeza de que deseja {agendamentoToConfirm?.novoStatus === 1 ? "confirmar" : "cancelar"} este agendamento?
+          </Modal.Body>
+          <Modal.Footer>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

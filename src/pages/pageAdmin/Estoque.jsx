@@ -2,7 +2,9 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-import TabelaVizualizarEstoque from "../../components/compenentesAdmin/TabelaVizualizarEstoque";
+//import TabelaVizualizarEstoque from "../../components/compenentesAdmin/TabelaVizualizarEstoque";
+import {TabelaVizualizarCompras} from "../pageAdmin/Compra.jsx";
+
 
 const Estoque = () => {
   return (
@@ -15,7 +17,7 @@ const Estoque = () => {
             <TopoAdmin entrada="Estoque" icone={<IoIosAdd />}  leftR="/estoqueList" direccao="/addCompras"/>
 
             <div className="vh-100 alturaPereita">
-            <TabelaVizualizarEstoque />
+            <TabelaVizualizarCompras />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
