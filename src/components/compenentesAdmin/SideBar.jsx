@@ -20,10 +20,10 @@ import { MdAssignmentAdd, MdAttachEmail,  MdInventory,  MdPayment, MdPriceChange
 import { Modal, Button } from 'react-bootstrap';
 import { FcCustomerSupport } from "react-icons/fc";
 import { SiToyota } from "react-icons/si";
-import { IoIosColorPalette } from "react-icons/io";
+//import { IoIosColorPalette } from "react-icons/io";
 import { AiFillCalculator } from "react-icons/ai";
 //import { BsTools } from "react-icons/bs";
-
+ 
 const routes = [
   { path: "/homeAdministrador", name: "Painel de Controle", icon: <FaHome /> },
   { path: "/agendamentoList", name: "Agendamentos", icon: <FaCalendarDays /> },
@@ -58,7 +58,7 @@ const routes = [
     ],
   },
   { path: "/listarOrdemServico", name: <><strong>{"Ordem de Reparação"}</strong></>, icon: <MdAssignmentAdd  /> },
-  { path: "/cotacaoPage", name: "Teste MOT", icon: <MdPriceChange /> },
+  //{ path: "/cotacaoPage", name: "Teste MOT", icon: <MdPriceChange /> },
   { path: "/faturaList", name: "Faturas", icon: <IoNewspaperSharp /> },
 
   {

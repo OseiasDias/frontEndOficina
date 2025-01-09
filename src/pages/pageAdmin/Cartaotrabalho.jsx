@@ -2,6 +2,10 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
+import {TabelaVizualizarOrdensServico} from "../pagesListas/ListarOrdemServico.jsx";
+
+
+
 
 const CartaoTrabalho = () => {
   return (
@@ -14,7 +18,9 @@ const CartaoTrabalho = () => {
             <TopoAdmin entrada="Cartão de Trabalho" direccao="/addOrdemServico" icone={<IoIosAdd />} leftR="/cartaoTrabalhoPage"/>
 
             <div className="vh-100 alturaPereita">
-            <h3>Cartao de Trabalho</h3>            </div>
+           
+            <TabelaVizualizarOrdensServico />
+                    </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
               <p className="text-center">
