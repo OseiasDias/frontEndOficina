@@ -12,6 +12,7 @@ import axios from "axios";
 import { MdDelete, MdEditNote } from "react-icons/md";
 import { IoEye } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom'; // Hook do React Router para navegação
+import { RiAddLargeFill } from "react-icons/ri";
 
 // Estilos personalizados para a tabela
 const customStyles = {
@@ -27,7 +28,7 @@ const customStyles = {
   },
 };
 
-export function TabelaVizualizarTiposVeiculos() {
+export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -123,7 +124,16 @@ export function TabelaVizualizarTiposVeiculos() {
   return (
     <div className="homeDiv">
       <div className="search row d-flex justify-content-between">
-        <div className="col-12 col-md-6 col-lg-6"></div>
+   
+        <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
+          <h4 className="me-5">Listar Tipos de Veículos</h4>
+          <RiAddLargeFill
+            className="links-acessos arranjarBTN p-2 border-radius-zero"
+            fontSize={35}
+            onClick={() => setShowModal(true)} // Aqui abrimos o modal ao clicar
+          />
+        
+        </div>
         <div className="col-12 col-md-6 col-lg-6">
           <input
             type="text"
@@ -177,21 +187,15 @@ export function TabelaVizualizarTiposVeiculos() {
 export default function ListarTiposVeiculos() {
   const [showModal, setShowModal] = useState(false); // Estado para controlar se o modal está visível ou não
   const [novoTipo, setNovoTipo] = useState(""); // Estado para o novo tipo
-  const [tiposVeiculos, setTiposVeiculos] = useState([
-    { id: 1, nome: "Turismo" },
-    { id: 2, nome: "SUV" },
-  ]);
 
   const handleNovoTipoChange = (e) => setNovoTipo(e.target.value);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (novoTipo.trim()) {
-      setTiposVeiculos([
-        ...tiposVeiculos,
-        { id: tiposVeiculos.length + 1, nome: novoTipo },
-      ]);
+      // Aqui você pode adicionar lógica para adicionar o novo tipo
       setNovoTipo(""); // Limpar após envio
+      setShowModal(false); // Fechar a modal após o envio
     }
   };
 

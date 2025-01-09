@@ -53,7 +53,8 @@ const routes = [
       { path: "/veiculosPageItens", name: "Lista de veículos", icon: <FaListOl /> },
       { path: "/tipoVeiculosPage", name: "Tipos de veículos", icon: <IoCarSportSharp /> },
       { path: "/listarTiposVeiculos", name: "Marcas de veículos", icon: <SiToyota /> },
-      { path: "/listarCorVeiculos", name: "Cores de Veículos", icon: <IoIosColorPalette /> },
+    //      { path: "/listarCorVeiculos", name: "Cores de Veículos", icon: <IoIosColorPalette /> },
+
     ],
   },
   { path: "/listarOrdemServico", name: <><strong>{"Ordem de Reparação"}</strong></>, icon: <MdAssignmentAdd  /> },
