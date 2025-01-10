@@ -148,7 +148,7 @@ export default function ListarMarcasVeiculos() {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Marcas de Veículos" icone={<IoIosAdd />} />
+            <TopoAdmin entrada=" Marcas de Veículos" icone={<IoIosAdd />} />
             <div className="vh-100 alturaPereita">
               <div className="homeDiv">
                 <div className="search row d-flex justify-content-between">

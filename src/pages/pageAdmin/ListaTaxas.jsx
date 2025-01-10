@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import {  RiAddFill, RiArrowDownSLine } from "react-icons/ri";
+import {  RiAddFill } from "react-icons/ri";
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { FaIdCard, FaPercent, FaRegFileAlt } from 'react-icons/fa';
 import axios from "axios";
@@ -110,7 +110,7 @@ export function ListarTaxas() {
     },
     {
       name: "Valor",
-      selector: (row) => row.tax,
+      selector: (row) => row.tax+" Kz",
       sortable: true,
     },
     {
@@ -135,7 +135,7 @@ export function ListarTaxas() {
 
   return (
     <>
-      <div className="container-fluid">
+      <div className="contain">
         <div className="d-flex">
           <div className="flexAuto w-100">
             <div className="vh-100 alturaPereita">

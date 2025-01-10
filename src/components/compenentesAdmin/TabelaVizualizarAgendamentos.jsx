@@ -7,7 +7,7 @@ import "../../css/StylesAdmin/tbvCliente.css";
 import { FaRegEye } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { MdDeleteOutline } from "react-icons/md";
-import { useNavigate } from "react-router-dom";  // Importando o hook useNavigate
+ //import { useNavigate } from "react-router-dom";  Importando o hook useNavigate
 
 // Definição de estilos personalizados para a tabela
 const customStyles = {
@@ -39,7 +39,7 @@ export default function TabelaAgendamento() {
   const [agendamentoToConfirm, setAgendamentoToConfirm] = useState(null); // Agendamento para Confirmar/Cancelar
   const [agendamentoDetails, setAgendamentoDetails] = useState(null); // Detalhes do agendamento para a modal de visualização
 
-  const navigate = useNavigate();  // Inicializa o hook para navegação
+  // const navigate = useNavigate();  Inicializa o hook para navegação
 
   // Definição das colunas da tabela
   const columns = [
@@ -120,7 +120,7 @@ export default function TabelaAgendamento() {
     setShowConfirmModal(true);  // Exibe a modal de confirmação
   };
 
-  const handleConfirmCancel = async () => {
+ /* const handleConfirmCancel = async () => {
     if (!agendamentoToConfirm) return;
 
     const { id, novoStatus } = agendamentoToConfirm;
@@ -152,7 +152,7 @@ export default function TabelaAgendamento() {
     } catch (err) {
       toast.error("Erro ao atualizar status do agendamento.");
     }
-  };
+  };*/
 
   const openDeleteModal = (id) => {
     setAgendamentoIdToDelete(id);  // Define o agendamento a ser excluído
@@ -230,9 +230,9 @@ export default function TabelaAgendamento() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="cont">
       <ToastContainer />
-      <h2 className="mt-4">Lista de Agendamentos</h2>
+    
 
       {loading ? (
         <div>Carregando...</div>
@@ -240,7 +240,7 @@ export default function TabelaAgendamento() {
         <div className="alert alert-danger">{error}</div>
       ) : (
         <DataTable
-          title="Agendamentos"
+        
           columns={columns}
           data={records}
           customStyles={customStyles}

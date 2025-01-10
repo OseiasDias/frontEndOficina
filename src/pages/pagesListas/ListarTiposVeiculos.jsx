@@ -28,6 +28,7 @@ const customStyles = {
   },
 };
 
+// eslint-disable-next-line react/prop-types
 export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -205,7 +206,7 @@ export default function ListarTiposVeiculos() {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Tipos de Veículos" icone={<IoIosAdd />} />
+            <TopoAdmin entrada=" Tipos de Veículos" icone={<IoIosAdd />} />
             <div className="vh-100 alturaPereita">
               <TabelaVizualizarTiposVeiculos setShowModal={setShowModal} /> {/* Passando a função de abrir o modal */}
             </div>

@@ -15,7 +15,7 @@ import { FaUsers } from "react-icons/fa6";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaCalendarDays, FaSackDollar } from "react-icons/fa6";
 import { TbReportSearch } from "react-icons/tb";
-import { MdAssignmentAdd, MdAttachEmail,  MdInventory,  MdPayment, MdPriceChange } from "react-icons/md";
+import { MdAssignmentAdd, MdAttachEmail,  MdInventory,  MdPayment } from "react-icons/md";
 // Importando o componente Modal do React Bootstrap
 import { Modal, Button } from 'react-bootstrap';
 import { FcCustomerSupport } from "react-icons/fc";

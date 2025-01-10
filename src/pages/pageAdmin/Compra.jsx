@@ -200,7 +200,7 @@ const Compras = () => {
             <TopoAdmin entrada="Compras" direccao="/addCompras" icone={<IoIosAdd />} leftR="/ComprasList"/>
 
             <div className="vh-100 alturaPereita">
-            <h3>Compras</h3> 
+            
             <TabelaVizualizarCompras  />   
                   </div>
             <div className="div text-center np pt-2 mt-2 ppAr">

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import Form from "react-bootstrap/Form"; 
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Spinner from 'react-bootstrap/Spinner';
@@ -555,6 +555,7 @@ function EditarDadosDaEmpresa() {
         return;
       }
 
+      // eslint-disable-next-line no-unused-vars
       const data = await response.json();
       toast.success("Empresa atualizada com sucesso!");
 
