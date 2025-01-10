@@ -10,6 +10,8 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -32,16 +34,23 @@ const customStyles = {
 };
 
 export function ListarRendas() {
-   const [rendas, setRendas] = useState([]); // Lista de rendas
+  const [rendas, setRendas] = useState([]); // Lista de rendas
+  const [loading, setLoading] = useState(true); // Variável de estado para carregamento
+  const [error, setError] = useState(null); // Variável de estado para erro
 
   // Buscar rendas da API
   const fetchRendas = async () => {
+    setLoading(true);  // Ativa o estado de carregamento
+    setError(null);    // Reseta qualquer erro anterior
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/rendas");
       setRendas(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error("Erro ao carregar as rendas:", error);
+      setError("Erro ao carregar as rendas."); // Define a mensagem de erro
       toast.error("Erro ao carregar as rendas.");
+    } finally {
+      setLoading(false); // Desativa o estado de carregamento
     }
   };
 
@@ -50,9 +59,6 @@ export function ListarRendas() {
     fetchRendas();
   }, []);
 
-
-
-
   // Função de busca para filtrar as rendas
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
@@ -60,7 +66,8 @@ export function ListarRendas() {
       fetchRendas();
     } else {
       const filteredRecords = rendas.filter((item) =>
-        item.rotulo_principal.toLowerCase().includes(query) || item.rotulo_renda.toLowerCase().includes(query)
+        item.rotulo_principal.toLowerCase().includes(query) ||
+        item.rotulo_renda.toLowerCase().includes(query)
       );
       setRendas(filteredRecords);
     }
@@ -87,7 +94,7 @@ export function ListarRendas() {
     },
     {
       name: "Valor Pendente",
-      selector: (row) => row.valor_pendente+" Kz",
+      selector: (row) => row.valor_pendente + " Kz",
       sortable: true,
     },
     {
@@ -102,7 +109,7 @@ export function ListarRendas() {
     },
     {
       name: "Entrada de Renda",
-      selector: (row) => row.entrada_renda+" Kz",
+      selector: (row) => row.entrada_renda + " Kz",
       sortable: true,
     },
     {
@@ -125,6 +132,26 @@ export function ListarRendas() {
     },
   ];
 
+  // Exibe a tela de carregamento
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  // Exibe mensagem de erro
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="contai">
@@ -134,7 +161,7 @@ export function ListarRendas() {
               <div className="homeDiv">
                 <div className="search row d-flex justify-content-between">
                   <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
-                   
+                    {/* Espaço vazio para futuras funcionalidades */}
                   </div>
                   <div className="col-12 col-md-6 col-lg-6">
                     <input
@@ -161,11 +188,10 @@ export function ListarRendas() {
           </div>
         </div>
       </div>
-
-    
     </>
   );
 }
+
 
 const Rendas = () => {
   return (

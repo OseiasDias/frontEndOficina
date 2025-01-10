@@ -14,6 +14,7 @@ import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Hook do React Router para navegação
 import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
 // Importar ToastContainer e toast do react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
@@ -78,8 +79,8 @@ export function TabelaVizualizarFuncionarios() {
     { name: "Cargo", selector: (row) => row.cargo || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
-   /* { name: "Filial", selector: (row) => row.filial || "Sem informação" },*/
-  
+    /* { name: "Filial", selector: (row) => row.filial || "Sem informação" },*/
+
     { name: "Endereço", selector: (row) => row.endereco || "Sem informação" },
     {
       name: "Ações",
@@ -128,18 +129,22 @@ export function TabelaVizualizarFuncionarios() {
     fetchData();
   }, []);
 
- 
-if (loading) {
-  return (
-    <div className="text-center">
-      <h4>Carregando...</h4>
-      <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
-    </div>
-  );
-}
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
 
 
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="homeDiv">
@@ -209,10 +214,10 @@ const Funcionarios = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Funcionários" direccao="/addFuncionarios" icone={<IoIosAdd />} leftR="/funcionariosList"/>
+            <TopoAdmin entrada="Funcionários" direccao="/addFuncionarios" icone={<IoIosAdd />} leftR="/funcionariosList" />
 
             <div className="vh-100 alturaPereita">
-            <TabelaVizualizarFuncionarios />
+              <TabelaVizualizarFuncionarios />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />

@@ -13,6 +13,7 @@ import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 import imgN from "../../assets/not-found.png";
 // Importar ToastContainer e toast do react-toastify
+import imgErro from "../../assets/error.webp";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
 
@@ -134,7 +135,11 @@ export function TabelaVizualizarClient() {
     );
   }
   
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="homeDiv">

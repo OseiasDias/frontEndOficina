@@ -15,6 +15,8 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { FaCar } from "react-icons/fa";
 import imgN from "../../assets/not-found.png";
 
+import imgErro from "../../assets/error.webp";
+
 // Estilos customizados para a tabela
 const customStyles = {
   headCells: {
@@ -155,7 +157,11 @@ export  function ListarMarcasVeiculos() {
     );
   }
 
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <>

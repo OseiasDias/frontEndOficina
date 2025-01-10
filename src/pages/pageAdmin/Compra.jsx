@@ -10,7 +10,7 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import { Dropdown } from "react-bootstrap";
 import { MdDelete, MdEditNote } from "react-icons/md";
-
+import imgErro from "../../assets/error.webp";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
@@ -136,7 +136,11 @@ export function TabelaVizualizarCompras() {
     );
   }
   
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="homeDiv">

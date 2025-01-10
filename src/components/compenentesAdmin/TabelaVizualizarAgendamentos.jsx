@@ -7,7 +7,8 @@ import "../../css/StylesAdmin/tbvCliente.css";
 import { FaRegEye } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { MdDeleteOutline } from "react-icons/md";
-//import {imgN} from "../../assets/naoEncontrado.webp";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
  //import { useNavigate } from "react-router-dom";  Importando o hook useNavigate
 
 // Definição de estilos personalizados para a tabela
@@ -237,9 +238,14 @@ export default function TabelaAgendamento() {
     
 
       {loading ? (
-        <div>Carregando...</div>
+            <div className="text-center">
+            <h4>Carregando...</h4>
+            <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+          </div>
       ) : error ? (
-        <div className="alert alert-danger">{error}</div>
+        <div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>
       ) : (
         <DataTable
         

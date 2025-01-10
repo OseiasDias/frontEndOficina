@@ -11,6 +11,7 @@ import { MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify"; // Para notificações
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do Toast
 import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
 
 
 
@@ -164,7 +165,11 @@ export function TabelaVizualizarOrdensServico() {
       </div>
     );
   }
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="homeDiv">

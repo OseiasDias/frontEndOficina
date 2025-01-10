@@ -15,6 +15,7 @@ import imgN from "../../assets/not-found.png";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
 import { FaLock } from "react-icons/fa";
+import imgErro from "../../assets/error.webp";
 
 // Estilos personalizados para a tabela
 const customStyles = {
@@ -143,7 +144,11 @@ export function TabelaVizualizarEquipeSuporte() {
   }
   
   
-  if (error) return <div>{error}</div>;
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
 
   return (

@@ -11,7 +11,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
-
+import imgErro from "../../assets/error.webp";
 // Estilos customizados para a tabela
 import "../../css/StylesAdmin/homeAdministrador.css";
 import 'react-toastify/dist/ReactToastify.css';
@@ -180,13 +180,11 @@ export function ListarFacturas() {
       </div>
     );
   }
-
-  if (error) return (
-    <div className="text-center">
-      <h4>{error}</h4>
-      <img src={imgN} alt="Erro" className="w-75 d-block mx-auto" />
-    </div>
-  );
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="contain">

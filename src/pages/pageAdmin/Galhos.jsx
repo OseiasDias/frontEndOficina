@@ -10,6 +10,12 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
+
+
+// Estilos customizados para a tabela
+
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -33,15 +39,20 @@ const customStyles = {
 
 export function ListarFiliais() {
   const [filiais, setFiliais] = useState([]); // Lista de filiais
+  const [loading, setLoading] = useState(true); // Controle de carregamento
+  const [error, setError] = useState(null); // Armazenamento de erro
 
   // Buscar filiais da API
   const fetchFiliais = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/filiais");
       setFiliais(response.data); // Preenche a lista com os dados recebidos
+      setLoading(false); // Desativa o estado de carregamento
     } catch (error) {
       console.error("Erro ao carregar as filiais:", error);
       toast.error("Erro ao carregar as filiais.");
+      setError("Erro ao carregar as filiais.");
+      setLoading(false); // Desativa o estado de carregamento
     }
   };
 
@@ -54,7 +65,7 @@ export function ListarFiliais() {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
-      fetchFiliais();
+      fetchFiliais(); // Refaz a busca se a pesquisa estiver vazia
     } else {
       const filteredRecords = filiais.filter((item) =>
         item.nome_filial.toLowerCase().includes(query) || 
@@ -62,7 +73,7 @@ export function ListarFiliais() {
         item.numero_contato.includes(query) ||
         item.email.toLowerCase().includes(query)
       );
-      setFiliais(filteredRecords);
+      setFiliais(filteredRecords); // Exibe os registros filtrados
     }
   };
 
@@ -70,7 +81,7 @@ export function ListarFiliais() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/filiais/${id}`);
-      setFiliais(filiais.filter((item) => item.id !== id)); // Remove a filial excluída
+      setFiliais(filiais.filter((item) => item.id !== id)); // Remove a filial excluída da lista
       toast.success("Filial excluída com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir a filial:", error);
@@ -120,6 +131,22 @@ export function ListarFiliais() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+
+ if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
+
   return (
     <>
       <div className="contai">
@@ -159,6 +186,7 @@ export function ListarFiliais() {
     </>
   );
 }
+
 
 const Filiais = () => {
   return (

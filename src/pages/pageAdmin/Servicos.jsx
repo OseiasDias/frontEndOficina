@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect } from 'react';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
@@ -10,6 +10,11 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
+
+
+// Estilos customizados para a tabela
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -33,15 +38,20 @@ const customStyles = {
 
 export function ListarServicos() {
   const [servicos, setServicos] = useState([]); // Lista de serviços
+  const [loading, setLoading] = useState(true); // Controle de carregamento
+  const [error, setError] = useState(null); // Armazenamento de erro
 
-  // Buscar serviços da API
+  // Função para buscar serviços da API
   const fetchServicos = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/servicos");
+      const response = await axios.get('http://127.0.0.1:8000/api/servicos');
       setServicos(response.data); // Preenche a lista com os dados recebidos
+      setLoading(false); // Desativa o estado de carregamento
     } catch (error) {
-      console.error("Erro ao carregar os serviços:", error);
-      toast.error("Erro ao carregar os serviços.");
+      console.error('Erro ao carregar os serviços:', error);
+      toast.error('Erro ao carregar os serviços.');
+      setError('Erro ao carregar os serviços.');
+      setLoading(false); // Desativa o estado de carregamento
     }
   };
 
@@ -50,16 +60,17 @@ export function ListarServicos() {
     fetchServicos();
   }, []);
 
-  // Função para capturar os dados da nova despesa
+  // Função para capturar os dados da nova pesquisa
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
-      fetchServicos();
+      fetchServicos(); // Refaz a busca se a pesquisa estiver vazia
     } else {
       const filteredRecords = servicos.filter((item) =>
-        item.nome_servico.toLowerCase().includes(query) || item.descricao.toLowerCase().includes(query)
+        item.nome_servico.toLowerCase().includes(query) ||
+        item.descricao.toLowerCase().includes(query)
       );
-      setServicos(filteredRecords);
+      setServicos(filteredRecords); // Exibe os registros filtrados
     }
   };
 
@@ -67,28 +78,28 @@ export function ListarServicos() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/servicos/${id}`);
-      setServicos(servicos.filter((item) => item.id !== id)); // Remove o serviço excluído
-      toast.success("Serviço excluído com sucesso!");
+      setServicos(servicos.filter((item) => item.id !== id)); // Remove o serviço excluído da lista
+      toast.success('Serviço excluído com sucesso!');
     } catch (error) {
-      console.error("Erro ao excluir o serviço:", error);
-      toast.error("Erro ao excluir o serviço.");
+      console.error('Erro ao excluir o serviço:', error);
+      toast.error('Erro ao excluir o serviço.');
     }
   };
 
   // Colunas da tabela
   const columns = [
     {
-      name: "Nome do Serviço",
+      name: 'Nome do Serviço',
       selector: (row) => row.nome_servico,
       sortable: true,
     },
     {
-      name: "Descrição",
+      name: 'Descrição',
       selector: (row) => row.descricao,
       sortable: true,
     },
     {
-      name: "Ações",
+      name: 'Ações',
       cell: (row) => (
         <Dropdown className="btnDrop" drop="up">
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
@@ -107,6 +118,26 @@ export function ListarServicos() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
+
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
   return (
     <>
       <div className="cont">
@@ -116,7 +147,7 @@ export function ListarServicos() {
               <div className="homeDiv">
                 <div className="search row d-flex justify-content-between">
                   <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
-                  
+                    {/* Adicionar algum conteúdo ou botão aqui, se necessário */}
                   </div>
                   <div className="col-12 col-md-6 col-lg-6">
                     <input

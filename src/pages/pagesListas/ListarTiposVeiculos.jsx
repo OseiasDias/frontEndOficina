@@ -15,6 +15,8 @@ import { useNavigate } from 'react-router-dom'; // Hook do React Router para nav
 import { RiAddLargeFill } from "react-icons/ri";
 import imgN from "../../assets/not-found.png";
 
+import imgErro from "../../assets/error.webp";
+
 // Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
@@ -129,7 +131,12 @@ export function TabelaVizualizarTiposVeiculos({setShowModal}) {
     );
   }
   
-  if (error) return <div>{error}</div>;
+ 
+  if (error) {
+    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+    </div>);
+  };
 
   return (
     <div className="homeDiv">

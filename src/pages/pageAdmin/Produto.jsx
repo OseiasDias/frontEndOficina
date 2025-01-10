@@ -2,7 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-
+import imgErro from "../../assets/error.webp";
 
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { useEffect, useState } from "react";
@@ -139,7 +139,11 @@ export function TabelaVizualizarProdutos() {
   }
   
  
-  if (error) return <div>{error}</div>;
+  if (error) {
+     return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
+       <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+     </div>);
+   };
 
   return (
     <div className="homeDiv">

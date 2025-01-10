@@ -2,7 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { IoIosAdd } from "react-icons/io";
-
+import imgN from "../../assets/not-found.png";
 import { toast, ToastContainer } from 'react-toastify';
 
 
@@ -17,7 +17,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
-
+import imgErro from "../../assets/error.webp";
 // Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
@@ -142,8 +142,22 @@ export function TabelaVizualizarBlogs() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+    if (error) {
+      return (
+        <div className="text-center">
+          <h3 className="text-danger">{error}</h3>
+          <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+        </div>
+      );
+    }
 
   return (
     <div className="homeDiv">

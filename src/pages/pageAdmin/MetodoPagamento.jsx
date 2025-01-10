@@ -11,6 +11,8 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline, MdOutlinePayments } from "react-icons/md";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -36,15 +38,22 @@ export function ListarMetodosPagamento() {
   const [showModal, setShowModal] = useState(false); // Modal de adicionar pagamento
   const [novoMetodo, setNovoMetodo] = useState({ payment_method_name: "" }); // Dados do novo método de pagamento
   const [metodosPagamento, setMetodosPagamento] = useState([]); // Lista de métodos de pagamento
+  const [loading, setLoading] = useState(true); // Variável de carregamento
+  const [error, setError] = useState(null); // Variável de erro
 
   // Buscar métodos de pagamento da API
   const fetchMetodosPagamento = async () => {
+    setLoading(true); // Ativa o carregamento
+    setError(null); // Reseta qualquer erro anterior
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/payment-methods");
       setMetodosPagamento(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error("Erro ao carregar os métodos de pagamento:", error);
+      setError("Erro ao carregar os métodos de pagamento."); // Define a mensagem de erro
       toast.error("Erro ao carregar os métodos de pagamento.");
+    } finally {
+      setLoading(false); // Desativa o carregamento após a resposta
     }
   };
 
@@ -133,6 +142,26 @@ export function ListarMetodosPagamento() {
     },
   ];
 
+  // Exibe a tela de carregamento
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  // Exibe mensagem de erro
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="contain">
@@ -191,12 +220,12 @@ export function ListarMetodosPagamento() {
 
               <Col md={12}>
                 <div className="input-group">
-                  <span className="input-group-text"><MdOutlinePayments  fontSize={22} color="#0070fa" /></span>
+                  <span className="input-group-text"><MdOutlinePayments fontSize={22} color="#0070fa" /></span>
                   <Form.Control
                     type="text"
                     required
                     name="payment_method_name"
-                    placeholder="Digite o metódo de pagamento"
+                    placeholder="Digite o método de pagamento"
                     maxLength={50}
                     value={novoMetodo.payment_method_name} // Valor controlado
                     onChange={handleInputChange} // Atualiza o estado
@@ -219,6 +248,7 @@ export function ListarMetodosPagamento() {
     </>
   );
 }
+
 
 const MetodosPagamento = () => {
   return (
