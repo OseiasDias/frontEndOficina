@@ -3,16 +3,17 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { useState, useEffect } from "react";
-import axios from "axios"; // Importando axios para fazer requisições HTTP
+import axios from "axios";
 import DataTable from "react-data-table-component";
 import { Dropdown } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify"; // Para notificações
-import 'react-toastify/dist/ReactToastify.css'; // Estilos do Toast
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
 import { RiAddLargeFill, RiArrowDownSLine } from "react-icons/ri";
 import { Modal, Button, Form } from "react-bootstrap";
 import { FaCar } from "react-icons/fa";
+import imgN from "../../assets/not-found.png";
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -34,12 +35,14 @@ const customStyles = {
   },
 };
 
-export default function ListarMarcasVeiculos() {
-  const [showModal, setShowModal] = useState(false); // Estado para controlar se o modal está visível ou não
-  const [novoMarca, setNovoMarca] = useState(""); // Estado para a nova marca
-  const [tipoSelecionado, setTipoSelecionado] = useState(""); // Estado para o tipo de veículo selecionado
-  const [tiposVeiculos, setTiposVeiculos] = useState([]); // Tipos de veículos
-  const [marcasVeiculos, setMarcasVeiculos] = useState([]); // Marcas de veículos
+export  function ListarMarcasVeiculos() {
+  const [showModal, setShowModal] = useState(false);
+  const [novoMarca, setNovoMarca] = useState("");
+  const [tipoSelecionado, setTipoSelecionado] = useState("");
+  const [tiposVeiculos, setTiposVeiculos] = useState([]);
+  const [marcasVeiculos, setMarcasVeiculos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Buscar tipos de veículos da API
   const fetchTiposVeiculos = async () => {
@@ -48,6 +51,7 @@ export default function ListarMarcasVeiculos() {
       setTiposVeiculos(response.data);
     } catch (error) {
       console.error("Erro ao carregar os tipos de veículos:", error);
+      setError("Erro ao carregar os tipos de veículos.");
     }
   };
 
@@ -58,19 +62,18 @@ export default function ListarMarcasVeiculos() {
       setMarcasVeiculos(response.data);
     } catch (error) {
       console.error("Erro ao carregar as marcas de veículos:", error);
+      setError("Erro ao carregar as marcas de veículos.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Chama as funções de busca quando o componente é montado
   useEffect(() => {
     fetchTiposVeiculos();
     fetchMarcasVeiculos();
   }, []);
 
-  // Função para capturar o novo nome da marca
   const handleNovoMarcaChange = (e) => setNovoMarca(e.target.value);
-
-  // Função para capturar o tipo de veículo selecionado
   const handleTipoSelecionadoChange = (e) => setTipoSelecionado(e.target.value);
 
   // Função para adicionar uma nova marca
@@ -78,26 +81,28 @@ export default function ListarMarcasVeiculos() {
     e.preventDefault();
     if (novoMarca.trim() && tipoSelecionado) {
       try {
+        setLoading(true);
         const newMarca = {
           nome: novoMarca,
           tipo_veiculo_id: tipoSelecionado,
         };
         const response = await axios.post("http://127.0.0.1:8000/api/marcas", newMarca);
-        setMarcasVeiculos((prevMarcas) => [...prevMarcas, response.data]); // Atualiza a lista de marcas
-        setNovoMarca(""); // Limpar o campo de entrada
-        setTipoSelecionado(""); // Limpar o tipo selecionado
-        setShowModal(false); // Fechar o modal
-        toast.success("Marca adicionada com sucesso!"); // Exibe a notificação
+        setMarcasVeiculos((prevMarcas) => [...prevMarcas, response.data]);
+        setNovoMarca(""); 
+        setTipoSelecionado(""); 
+        setShowModal(false); 
+        toast.success("Marca adicionada com sucesso!");
       } catch (error) {
         console.error("Erro ao adicionar a marca:", error);
         toast.error("Erro ao adicionar a marca. Tente novamente.");
+      } finally {
+        setLoading(false);
       }
     } else {
       toast.error("Por favor, preencha todos os campos.");
     }
   };
 
-  // Função de busca para filtrar as marcas
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
@@ -110,7 +115,6 @@ export default function ListarMarcasVeiculos() {
     }
   };
 
-  // Colunas da tabela
   const columns = [
     {
       name: "Marca",
@@ -142,13 +146,24 @@ export default function ListarMarcasVeiculos() {
     },
   ];
 
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  if (error) return <div>{error}</div>;
+
   return (
     <>
-      <div className="container-fluid">
+      <div className="contai">
         <div className="d-flex">
-          <SideBar />
+      
           <div className="flexAuto w-100">
-            <TopoAdmin entrada=" Marcas de Veículos" icone={<IoIosAdd />} />
+        
             <div className="vh-100 alturaPereita">
               <div className="homeDiv">
                 <div className="search row d-flex justify-content-between">
@@ -157,7 +172,7 @@ export default function ListarMarcasVeiculos() {
                     <RiAddLargeFill
                       className="links-acessos arranjarBTN p-2 border-radius-zero"
                       fontSize={35}
-                      onClick={() => setShowModal(true)} // Abre o modal
+                      onClick={() => setShowModal(true)} 
                     />
                   </div>
                   <div className="col-12 col-md-6 col-lg-6">
@@ -240,3 +255,37 @@ export default function ListarMarcasVeiculos() {
     </>
   );
 }
+
+
+
+
+const ListarMarca = () => {
+  return (
+    <>
+      <div className="container-fluid">
+        <div className="d-flex">
+          <SideBar />
+
+          <div className="flexAuto w-100 ">
+          <TopoAdmin entrada=" Marcas de Veículos" icone={<IoIosAdd />} />
+            <div className="vh-100 alturaPereita ">
+            <ListarMarcasVeiculos />
+            </div>
+            <div className="div text-center np pt-2 mt-2 ppAr">
+              <hr />
+              <p className="text-center">
+
+                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
+                reservados.
+                <br />
+                Desenvolvido por: <b>Oseias Dias</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default ListarMarca;

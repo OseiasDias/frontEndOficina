@@ -7,6 +7,7 @@ import "../../css/StylesAdmin/tbvCliente.css";
 import { FaRegEye } from "react-icons/fa";
 import { ImCancelCircle } from "react-icons/im";
 import { MdDeleteOutline } from "react-icons/md";
+//import {imgN} from "../../assets/naoEncontrado.webp";
  //import { useNavigate } from "react-router-dom";  Importando o hook useNavigate
 
 // Definição de estilos personalizados para a tabela
@@ -119,34 +120,35 @@ export default function TabelaAgendamento() {
     setAgendamentoToConfirm({ id, novoStatus });
     setShowConfirmModal(true);  // Exibe a modal de confirmação
   };
-
- /* const handleConfirmCancel = async () => {
+  /*
+  const handleConfirmCancel = async () => {
     if (!agendamentoToConfirm) return;
-
+  
     const { id, novoStatus } = agendamentoToConfirm;
-
+  
     // Mapeia o novoStatus para uma string (Confirmado ou Cancelado)
     const statusString = novoStatus === 1 ? "Confirmado" : "Cancelado";
-
+  
     try {
+      // Faz a atualização do status na API
       const response = await fetch(`http://localhost:5000/api/agendamentos/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ novoStatus: statusString }), // Ajuste o campo para "novoStatus"
+        body: JSON.stringify({ novoStatus: statusString }), // Envia o novo status
       });
-
+  
       if (!response.ok) throw new Error("Erro ao atualizar status do agendamento");
-
-      const updatedAgendamentos = records.map((agendamento) =>
+  
+      // Atualiza o estado da tabela local
+      const updatedRecords = records.map((agendamento) =>
         agendamento.id_agendamento === id
-          ? { ...agendamento, status: novoStatus === "Cancelado" ? 0 : 1 }
+          ? { ...agendamento, status: novoStatus } // Atualiza o status
           : agendamento
       );
-
-      setRecords(updatedAgendamentos);
-
+  
+      setRecords(updatedRecords); // Atualiza os registros na tabela
       toast.success(`Agendamento ${statusString} com sucesso!`);
       setShowConfirmModal(false); // Fecha a modal
     } catch (err) {
@@ -297,6 +299,24 @@ export default function TabelaAgendamento() {
           <Modal.Footer>
         </Modal.Footer>
       </Modal>
+
+
+      {/* Modal de Confirmação de Status 
+<Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>{agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"} Agendamento</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    Tem certeza de que deseja {agendamentoToConfirm?.novoStatus === 1 ? "confirmar" : "cancelar"} este agendamento?
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Fechar</Button>
+    <Button variant="primary" onClick={handleConfirmCancel}>
+      {agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"}
+    </Button>
+  </Modal.Footer>
+</Modal>*/}
+
     </div>
   );
 }

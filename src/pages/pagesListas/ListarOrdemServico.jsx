@@ -10,6 +10,7 @@ import {  IoMdCreate } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify"; // Para notificações
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do Toast
+import imgN from "../../assets/not-found.png";
 
 
 
@@ -115,6 +116,7 @@ export function TabelaVizualizarOrdensServico() {
       selector: (row) => clientes[row.cust_id] || "Cliente não encontrado"  // Substituindo o cust_id pelo nome
     },
     { name: "Data de Entrada", selector: (row) => row.data_inicial_entrada || "Sem informação" },
+    // eslint-disable-next-line no-constant-binary-expression
     { name: "KM de Entrada", selector: (row) => `${row.km_entrada} KM` || "Sem informação" },
     { name: "Status", selector: (row) => row.status || "Sem informação" },
     { name: "Detalhes", selector: (row) => row.details || "Sem informação" },
@@ -154,7 +156,14 @@ export function TabelaVizualizarOrdensServico() {
     }
   };
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
   if (error) return <div>{error}</div>;
 
   return (

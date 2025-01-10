@@ -12,6 +12,7 @@ import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import imgN from "../../assets/not-found.png";
 
 const customStyles = {
   headCells: {
@@ -64,7 +65,7 @@ export function TabelaVizualizarFornecedores() {
     { name: "Nome da Empresa", selector: (row) => row.nome_empresa || "Sem informação" },
     { name: "E-mail", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
-    { name: "Gênero", selector: (row) => row.genero || "Sem informação" },
+  
    
     { name: "Endereço", selector: (row) => row.endereco || "Sem informação" },
     {
@@ -113,7 +114,15 @@ export function TabelaVizualizarFornecedores() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+  
   if (error) return <div>{error}</div>;
 
   return (

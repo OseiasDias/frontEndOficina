@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para
 // Importar ToastContainer e toast do react-toastify
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
-
+import imgN from "../../assets/not-found.png";
 // Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
@@ -81,7 +81,7 @@ export function TabelaVizualizarProdutos() {
     { name: "Unidade de Medida", selector: (row) => row.unidade_medida || "Sem informação" },
     { name: "Fornecedor", selector: (row) => row.fornecedor || "Sem informação" },
    
-    { name: "Garantia", selector: (row) => row.garantia || "Sem informação" },
+   
     {
       name: "Ações",
       cell: (row) => (
@@ -129,7 +129,16 @@ export function TabelaVizualizarProdutos() {
     fetchData();
   }, []);
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+  
+ 
   if (error) return <div>{error}</div>;
 
   return (

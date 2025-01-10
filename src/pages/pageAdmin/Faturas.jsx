@@ -13,6 +13,13 @@ import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 
 // Estilos customizados para a tabela
+import "../../css/StylesAdmin/homeAdministrador.css";
+import 'react-toastify/dist/ReactToastify.css';
+import imgN from "../../assets/not-found.png"; // Imagem para mostrar enquanto carrega
+
+// Estilos customizados para a tabela
+
+
 const customStyles = {
   headCells: {
     style: {
@@ -35,28 +42,33 @@ const customStyles = {
 export function ListarFacturas() {
   const [facturas, setFacturas] = useState([]); // Lista de faturas
   const [clientes, setClientes] = useState([]); // Lista de clientes
+  const [loading, setLoading] = useState(true); // Controle de carregamento
+  const [error, setError] = useState(null); // Armazenamento de erro
   const navigate = useNavigate(); // Hook para navegação
 
-  // Buscar faturas da API
+  // Função para buscar faturas da API
   const fetchFacturas = async () => {
     try {
+      setLoading(true); // Define o loading para verdadeiro enquanto carrega as faturas
       const response = await axios.get("http://127.0.0.1:8000/api/facturas");
-      console.log("Facturas:", response.data.data);  // Debug: Verificando dados de faturas
-      setFacturas(response.data.data); // Preenche a lista com os dados recebidos
+      setFacturas(response.data.data); // Preenche a lista com os dados de faturas
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      console.error("Erro ao carregar as faturas:", error);
+      setError("Erro ao carregar as faturas."); // Captura e define o erro
       toast.error("Erro ao carregar as faturas.");
+    } finally {
+      setLoading(false); // Define o loading para falso quando os dados forem carregados
     }
   };
 
-  // Buscar clientes da API
+  // Função para buscar clientes da API
   const fetchClientes = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/clientes");
-      console.log("Clientes:", response.data.data);  // Debug: Verificando dados dos clientes
-      setClientes(response.data.data || []); // Verifica se a resposta é válida e seta um array vazio se não houver dados
+      setClientes(response.data.data || []); // Verifica se a resposta é válida e seta os clientes
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      console.error("Erro ao carregar os clientes:", error);
+      setError("Erro ao carregar os clientes.");
       toast.error("Erro ao carregar os clientes.");
     }
   };
@@ -76,7 +88,7 @@ export function ListarFacturas() {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
-      fetchFacturas();
+      fetchFacturas(); // Se não houver pesquisa, carrega novamente as faturas
     } else {
       const filteredRecords = facturas.filter((item) =>
         item.numero_fatura.toLowerCase().includes(query) ||
@@ -93,8 +105,9 @@ export function ListarFacturas() {
       await axios.delete(`http://127.0.0.1:8000/api/facturas/${id}`);
       setFacturas(facturas.filter((item) => item.id !== id)); // Remove a fatura excluída
       toast.success("Fatura excluída com sucesso!");
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
-      console.error("Erro ao excluir a fatura:", error);
+      setError("Erro ao excluir a fatura.");
       toast.error("Erro ao excluir a fatura.");
     }
   };
@@ -158,6 +171,23 @@ export function ListarFacturas() {
     },
   ];
 
+  // Exibição de carregamento ou erro
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  if (error) return (
+    <div className="text-center">
+      <h4>{error}</h4>
+      <img src={imgN} alt="Erro" className="w-75 d-block mx-auto" />
+    </div>
+  );
+
   return (
     <div className="contain">
       <div className="d-flex">
@@ -198,6 +228,7 @@ export function ListarFacturas() {
     </div>
   );
 }
+
 
 const Faturas = () => {
   return (
