@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Para fazer a requisição à API
 import "../../css/StylesAdmin/homeAdministrador.css";
-import { FaCar } from "react-icons/fa";
+import { FaCar, FaFilePdf, FaPrint } from "react-icons/fa";
 import { FaRegEdit } from 'react-icons/fa';
 import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não encontrado"
 import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
@@ -10,16 +10,23 @@ import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 import { IoIosAdd } from 'react-icons/io';
+import { Button } from 'react-bootstrap';
+import { MdEditNote } from 'react-icons/md';
+import jsPDF from 'jspdf';
+import { ImWhatsapp } from 'react-icons/im';
+
+
 
 export function VerOrdemReparacao() {
     const { id } = useParams(); // Captura o id da URL
     const [ordemData, setOrdemData] = useState(null); // Estado para armazenar os dados da ordem de reparação
     const [veiculoData, setVeiculoData] = useState(null); // Estado para armazenar os dados do veículo
     const [clienteData, setClienteData] = useState(null); // Estado para armazenar os dados do cliente (dono)
-    const [empresaData, setEmpresaData] = useState(null); // Estado para armazenar os dados da empresa
     const [loading, setLoading] = useState(true); // Estado de carregamento
     const [error, setError] = useState(null); // Estado de erro
     const navigate = useNavigate(); // Navegação após sucesso
+    const [empresaData, setEmpresaData] = useState(null);
+
 
     // Função para buscar os dados da ordem de reparação com o id
     const fetchOrdemData = async () => {
@@ -36,10 +43,8 @@ export function VerOrdemReparacao() {
                 // Buscar os dados do cliente relacionado
                 const clienteResponse = await axios.get(`http://127.0.0.1:8000/api/clientes/${response.data.cust_id}`);
                 setClienteData(clienteResponse.data); // Armazenar os dados do cliente no estado
-
-                // Buscar os dados da empresa com ID 1
-                const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
-                setEmpresaData(empresaResponse.data); // Armazenar os dados da empresa no estado
+                   const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
+                setEmpresaData(empresaResponse.data);
             } else {
                 setError('Ordem de reparação não encontrada!');
             }
@@ -79,6 +84,23 @@ export function VerOrdemReparacao() {
         navigate(`/editarOrdemReparacao/${id}`);
     };
 
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.html(document.querySelector("#productDetailsTable"), {
+            callback: function (doc) {
+                doc.save(`${ordemData.jobno}.pdf`);
+            },
+            x: 10,
+            y: 10,
+        });
+    };
+
+    const shareOnWhatsApp = () => {
+        const message = `Confira a ordem de reparação: ${ordemData.jobno}\nDetalhes: ${ordemData.defeito_ou_servico}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
     return (
         <div className="container-fl">
             <div className="d-flex">
@@ -116,117 +138,156 @@ export function VerOrdemReparacao() {
                                     </div>
                                 </div>
 
-                                {/* Tabela para exibir os dados da ordem de reparação */}
-                                <h6 className="h5emGeral px-2">Informações da Ordem de Reparação</h6>
-                                <table className="table table-bordered mt-4">
-                                    <thead>
-                                        <tr>
-                                            <th>Campo</th>
-                                            <th>Detalhes</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Defeito ou Serviço</td>
-                                            <td>{ordemData.defeito_ou_servico}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Detalhes</td>
-                                            <td>{ordemData.details}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Garantia (dias)</td>
-                                            <td>{ordemData.garantia_dias}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Observações</td>
-                                            <td>{ordemData.observacoes}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Laudo Técnico</td>
-                                            <td>{ordemData.laudo_tecnico}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Data Final de Saída</td>
-                                            <td>{ordemData.data_final_saida}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Km Entrada</td>
-                                            <td>{ordemData.km_entrada}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Charge Required</td>
-                                            <td>{ordemData.charge_required}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {/* Informações do cliente */}
-                                <div className="user-details">
-                                    <h6 className="h5emGeral px-2">Informações do Cliente</h6>
-                                    {clienteData && (
+                                <div className="visual-order row">
+                                    {/* Tabela para exibir os dados da ordem de reparação */}
+                                    
+                                    <h6 className="h5emGeral px-2">Informações da Empresa</h6>
+                                    {empresaData && (
                                         <div className="col-lg-4">
                                             <div className="border p-3">
-                                                <p><strong>Nome:</strong> {clienteData.nome_exibicao}</p>
-                                                <p><strong>Primeiro Nome:</strong> {clienteData.primeiro_nome}</p>
-                                                <p><strong>Sobrenome:</strong> {clienteData.sobrenome}</p>
-                                                <p><strong>Data de Nascimento:</strong> {clienteData.data_nascimento}</p>
-                                                <p><strong>Email:</strong> {clienteData.email}</p>
-                                                <p><strong>Telefone Fixo:</strong> {clienteData.telefone_fixo}</p>
-                                                <p><strong>Celular:</strong> {clienteData.celular}</p>
-                                                <p><strong>Endereço:</strong> {clienteData.endereco}</p>
-                                                <p><strong>Empresa:</strong> {clienteData.nome_empresa}</p>
-                                                <p><strong>NIF:</strong> {clienteData.nif}</p>
-                                                <img src={clienteData.foto} alt="Foto do Cliente" className="img-fluid" />
+                                                <p><strong>Nome da Empresa:</strong> {empresaData.nome_empresa}</p>
+                                                <p><strong>NIF:</strong> {empresaData.nif_empresa}</p>
+                                                <p><strong>Tipo de Empresa:</strong> {empresaData.tipo_empresa}</p>
+                                                <p><strong>Setor:</strong> {empresaData.setor_empresa}</p>
+                                                <p><strong>Telefone:</strong> {empresaData.telefone}</p>
+                                                <p><strong>Email:</strong> {empresaData.email}</p>
+                                                <p><strong>Endereço:</strong> {empresaData.rua}, {empresaData.bairro}, {empresaData.municipio}</p>
+                                                <p><strong>Site:</strong> <a href={empresaData.site_empresa} className="text-black" target="_blank" rel="noopener noreferrer">{empresaData.site_empresa}</a></p>
+                                                <p><strong>Data de Criação:</strong> {empresaData.data_criacao}</p>
                                             </div>
                                         </div>
                                     )}
+                                    
+                                    <h6 className="h5emGeral px-2">Informações da Ordem de Reparação</h6>
+                                    <table className="table table-bordered mt-4">
+                                        <thead>
+                                            <tr>
+                                                <th>Campo</th>
+                                                <th>Detalhes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Defeito ou Serviço</td>
+                                                <td>{ordemData.defeito_ou_servico}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Detalhes</td>
+                                                <td>{ordemData.details}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Garantia (dias)</td>
+                                                <td>{ordemData.garantia_dias}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Observações</td>
+                                                <td>{ordemData.observacoes}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Laudo Técnico</td>
+                                                <td>{ordemData.laudo_tecnico}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Data Final de Saída</td>
+                                                <td>{ordemData.data_final_saida}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Km Entrada</td>
+                                                <td>{ordemData.km_entrada}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Charge Required</td>
+                                                <td>{ordemData.charge_required}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    {/* Informações do cliente */}
+                                    <div className="user-details">
+                                        <h6 className="h5emGeral px-2">Informações do Cliente</h6>
+                                        {clienteData && (
+                                            <div className="col-lg-4">
+                                                <div className="border p-3">
+                                                    <p><strong>Nome:</strong> {clienteData.nome_exibicao}</p>
+                                                    <p><strong>Primeiro Nome:</strong> {clienteData.primeiro_nome}</p>
+                                                    <p><strong>Sobrenome:</strong> {clienteData.sobrenome}</p>
+                                                    <p><strong>Data de Nascimento:</strong> {clienteData.data_nascimento}</p>
+                                                    <p><strong>Email:</strong> {clienteData.email}</p>
+                                                    <p><strong>Telefone Fixo:</strong> {clienteData.telefone_fixo}</p>
+                                                    <p><strong>Celular:</strong> {clienteData.celular}</p>
+                                                    <p><strong>Endereço:</strong> {clienteData.endereco}</p>
+                                                    <p><strong>Empresa:</strong> {clienteData.nome_empresa}</p>
+                                                    <p><strong>NIF:</strong> {clienteData.nif}</p>
+                                                    <img src={clienteData.foto} alt="Foto do Cliente" className="img-fluid" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Informações do veículo */}
+                                    <h6 className="h5emGeral px-2">Informações do Veículo</h6>
+                                    {veiculoData && (
+                                        <div className="col-lg-4">
+                                            <div className="border p-3">
+                                                <p><strong>Marca:</strong> {veiculoData.marca_veiculo}</p>
+                                                <p><strong>Modelo:</strong> {veiculoData.modelo_veiculo}</p>
+                                                <p><strong>Placa:</strong> {veiculoData.numero_placa}</p>
+                                                <p><strong>Combustível:</strong> {veiculoData.combustivel}</p>
+                                                <p><strong>Ano Modelo:</strong> {veiculoData.ano_modelo}</p>
+                                                <p><strong>Leitura Odômetro:</strong> {veiculoData.leitura_odometro}</p>
+                                                <p><strong>Caixa de Velocidade:</strong> {veiculoData.caixa_velocidade}</p>
+                                                <p><strong>Preço:</strong> {veiculoData.preco}</p>
+                                                <p><strong>Descrição:</strong> {veiculoData.descricao}</p>
+                                                <img src={veiculoData.imagens[0]} alt="Imagem do Veículo" className="img-fluid" />
+                                            </div>
+                                        </div>
+                                    )}
+
+
+                                     {/* Informações da empresa */}
+                                  
+
+
+                                    <div className="d-flex justify-content-end mt-4">
+                                        {/* Botões: Imprimir, Gerar PDF, Editar e WhatsApp */}
+                                        <div className="ms-2">
+                                            <Button variant="outline-secondary" onClick={() => window.print()}>
+                                                <FaPrint className="me-2" fontSize={20} />
+                                                Imprimir
+                                            </Button>
+                                        </div>
+                                        <div className="ms-2">
+                                            <Button variant="outline-danger" onClick={generatePDF}>
+                                                <FaFilePdf className="me-2" fontSize={20} />
+                                                Gerar PDF
+                                            </Button>
+                                        </div>
+                                        <div className="ms-2">
+                                            <Button variant="primary" onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
+                                                <MdEditNote fontSize={24} />
+                                                Editar Ordem
+                                            </Button>
+                                        </div>
+                                        <div className="ms-2">
+                                            <Button variant="success" onClick={shareOnWhatsApp}>
+                                            <ImWhatsapp />  Compartilhar no WhatsApp
+                                            </Button>
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                {/* Informações do veículo */}
-                                <h6 className="h5emGeral px-2">Informações do Veículo</h6>
-                                {veiculoData && (
-                                    <div className="col-lg-4">
-                                        <div className="border p-3">
-                                            <p><strong>Marca:</strong> {veiculoData.marca_veiculo}</p>
-                                            <p><strong>Modelo:</strong> {veiculoData.modelo_veiculo}</p>
-                                            <p><strong>Placa:</strong> {veiculoData.numero_placa}</p>
-                                            <p><strong>Combustível:</strong> {veiculoData.combustivel}</p>
-                                            <p><strong>Ano Modelo:</strong> {veiculoData.ano_modelo}</p>
-                                            <p><strong>Leitura Odômetro:</strong> {veiculoData.leitura_odometro}</p>
-                                            <p><strong>Caixa de Velocidade:</strong> {veiculoData.caixa_velocidade}</p>
-                                            <p><strong>Preço:</strong> {veiculoData.preco}</p>
-                                            <p><strong>Descrição:</strong> {veiculoData.descricao}</p>
-                                            <img src={veiculoData.imagens[0]} alt="Imagem do Veículo" className="img-fluid" />
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Informações da empresa */}
-                                <h6 className="h5emGeral px-2">Informações da Empresa</h6>
-                                {empresaData && (
-                                    <div className="col-lg-4">
-                                        <div className="border p-3">
-                                            <p><strong>Nome da Empresa:</strong> {empresaData.nome_empresa}</p>
-                                            <p><strong>NIF:</strong> {empresaData.nif_empresa}</p>
-                                            <p><strong>Tipo de Empresa:</strong> {empresaData.tipo_empresa}</p>
-                                            <p><strong>Setor:</strong> {empresaData.setor_empresa}</p>
-                                            <p><strong>Telefone:</strong> {empresaData.telefone}</p>
-                                            <p><strong>Email:</strong> {empresaData.email}</p>
-                                            <p><strong>Endereço:</strong> {empresaData.rua}, {empresaData.bairro}, {empresaData.municipio}</p>
-                                            <p><strong>Site:</strong> <a href={empresaData.site_empresa} className='text-black' target="_blank" rel="noopener noreferrer">{empresaData.site_empresa}</a></p>
-                                            <p><strong>Data de Criação:</strong> {empresaData.data_criacao}</p>
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         )}
+
+
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+
 
 const OrdemReparacao = () => {
     return (
@@ -260,3 +321,4 @@ const OrdemReparacao = () => {
 };
 
 export default OrdemReparacao;
+
