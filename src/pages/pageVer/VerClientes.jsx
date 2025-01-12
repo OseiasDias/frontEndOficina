@@ -134,7 +134,7 @@ export function VerCliente() {
 
                                     <div className="user-info row">
                                         {/* Informações de contato */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações de Contato</h6>
                                                 <p>
@@ -157,7 +157,7 @@ export function VerCliente() {
                                         </section>
 
                                         {/* Informações de Endereço */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações de Endereço</h6>
                                                 <p>
@@ -173,7 +173,7 @@ export function VerCliente() {
                                         </section>
 
                                         {/* Localização */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Localização</h6>
                                                 <p>

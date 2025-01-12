@@ -3,6 +3,8 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd, IoMdEye } from "react-icons/io";
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom'; // Hook do React Router para navegação
+
 import axios from "axios"; // Para fazer requisições HTTP
 import DataTable from "react-data-table-component";
 import { Dropdown, Modal, Button } from "react-bootstrap";
@@ -45,6 +47,8 @@ export function TabelaVizualizarOrdensServico() {
   const [selectedOrder, setSelectedOrder] = useState(null); // Ordem selecionada para exclusão
   const [clientes, setClientes] = useState({}); // Estado para armazenar os nomes dos clientes
 
+
+  const navigate = useNavigate();
   // Função para buscar os nomes dos clientes (com base no cust_id)
   const fetchClientes = async () => {
     try {
@@ -84,9 +88,9 @@ export function TabelaVizualizarOrdensServico() {
     fetchData();  // Carregar as ordens de serviço
   }, []);
 
-  // Função para exibir detalhes da ordem de serviço
+  // Função para exibir detalhes da ordem de serviço /verOR/
   const handleView = (order) => {
-    console.log("Visualizando ordem de serviço:", order);
+     navigate(`/verOR/${order.id}`);
   };
 
   // Função para excluir a ordem de serviço
@@ -116,7 +120,7 @@ export function TabelaVizualizarOrdensServico() {
       name: "Cliente", 
       selector: (row) => clientes[row.cust_id] || "Cliente não encontrado"  // Substituindo o cust_id pelo nome
     },
-    { name: "Data de Entrada", selector: (row) => row.data_inicial_entrada || "Sem informação" },
+    { name: "Data/Hora de Entrada", selector: (row) => row.data_inicial_entrada || "Sem informação" },
     // eslint-disable-next-line no-constant-binary-expression
     { name: "KM de Entrada", selector: (row) => `${row.km_entrada} KM` || "Sem informação" },
     { name: "Status", selector: (row) => row.status || "Sem informação" },

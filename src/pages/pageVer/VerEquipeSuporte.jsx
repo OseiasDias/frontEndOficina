@@ -109,7 +109,7 @@ export  function VerEquipeSuporte() {
 
                                     <div className="user-info row">
                                         {/* Informações de contato */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações de Contato</h6>
                                                 <p><b>Email:</b> {userData.email}</p>
@@ -122,7 +122,7 @@ export  function VerEquipeSuporte() {
                                         </section>
 
                                         {/* Informações de Filial e Endereço */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                            <div className="border p-3">
                                            <h6>Informações de Filial e Endereço</h6>
                                             <p><b>Filial:</b> {userData.filial}</p>
@@ -131,7 +131,7 @@ export  function VerEquipeSuporte() {
                                         </section>
 
                                         {/* Localização */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                            <div className="border p-3">
                                            <h6>Localização</h6>
                                             <p><b>País:</b> {userData.pais}</p>

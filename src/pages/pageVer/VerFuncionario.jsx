@@ -133,7 +133,7 @@ export function VerFuncionario() {
 
                                     <div className="user-info row">
                                         {/* Informações de contato */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4  mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações de Funcionário</h6>
                                                 <p>
@@ -161,7 +161,7 @@ export function VerFuncionario() {
                                         </section>
 
                                         {/* Informações de Endereço */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4  mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações de Endereço</h6>
                                                 <p>

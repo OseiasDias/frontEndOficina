@@ -71,7 +71,7 @@ export function VerVeiculo() {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-f">
             <div className="d-flex">
                 <div className="flexAuto w-100">
                     <div className="vh-100 alturaPereita">
@@ -133,7 +133,7 @@ export function VerVeiculo() {
 
                                     <div className="user-info row">
                                         {/* Informações de contato do veículo */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Informações Gerais</h6>
                                                 <p>
@@ -152,7 +152,7 @@ export function VerVeiculo() {
                                         </section>
 
                                           {/* Mais informações */}
-                                          <section className="section col-lg-4">
+                                          <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Mais Informação</h6>
                                                 <p>
@@ -172,7 +172,7 @@ export function VerVeiculo() {
 
                                         {/* Informações de contato do cliente */}
                                         {clienteData && (
-                                            <section className="section col-lg-4">
+                                            <section className="section col-lg-4 mb-3">
                                                 <div className="border p-3">
                                                     <h6>Contato do Dono</h6>
                                                     <p><strong>Nome:</strong> {clienteData.nome_exibicao}</p>
@@ -185,7 +185,7 @@ export function VerVeiculo() {
                                         )}
 
                                         {/* Imagens do Veículo */}
-                                        <section className="section col-lg-4">
+                                        <section className="section col-lg-4 mb-3">
                                             <div className="border p-3">
                                                 <h6>Imagens</h6>
                                                 <div className="image-gallery">
@@ -221,10 +221,10 @@ const Veiculo = () => {
                     <SideBar />
                     <div className="flexAuto w-100">
                         <TopoAdmin
-                            entrada="Dados do Veículo"
+                            entrada="  Dados do Veículo"
                             leftSeta={<FaArrowLeftLong />}
                             icone={<IoIosAdd />}
-                            leftR="/veiculoList"
+                            leftR="/veiculosPageItens"
                         />
                         <div className="vh-100 alturaPereita">
                             <VerVeiculo />
