@@ -43,7 +43,7 @@ export function TabelaVizualizarClient() {
 
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (cliente) => {
-    navigate(`/verCliente/${cliente.id}`);
+    navigate(`/verClientes/${cliente.id}`);
   };
 
   // Função para abrir a modal de confirmação de exclusão
@@ -78,7 +78,7 @@ export function TabelaVizualizarClient() {
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
     { name: "Endereço", selector: (row) => row.endereco || "Sem informação" },
     { name: "Município", selector: (row) => row.municipio || "Sem informação" },
-    { name: "Estado", selector: (row) => row.estado === 1 ? "Ativo" : "Inativo" },
+    { name: "Províncias", selector: (row) => row.estado === 1 ? "Ativo" : "Bloqueado" },
     {
       name: "Ações",
       cell: (row) => (

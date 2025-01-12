@@ -2,9 +2,6 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-
-
-import "../../css/StylesAdmin/homeAdministrador.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
@@ -13,14 +10,13 @@ import { MdDelete, MdEditNote } from "react-icons/md";
 import imgErro from "../../assets/error.webp";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
+import { useNavigate } from 'react-router-dom';
 import imgN from "../../assets/not-found.png";
-// Importar ToastContainer e toast do react-toastify
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
-//import { FaLock } from "react-icons/fa";
+import 'react-toastify/dist/ReactToastify.css';
+import { FaFilePdf, FaPrint } from "react-icons/fa";
+import { jsPDF } from "jspdf";  // Importar a biblioteca jsPDF para geração de PDF
 
-// Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
     style: {
@@ -39,38 +35,47 @@ export function TabelaVizualizarCompras() {
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para controlar a modal de exclusão
-  const [selectedCompra, setSelectedCompra] = useState(null); // Estado para armazenar a compra selecionada
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false); // Modal de visualização
+  const [selectedCompra, setSelectedCompra] = useState(null); // Compra selecionada
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); // Hook do React Router para navegação
-
-  // Função para abrir a modal de visualização e redirecionar para a página de visualização
+  // Função para visualizar compra
   const handleView = (compra) => {
-    navigate(`/verCompra/${compra.id}`);
+    setSelectedCompra(compra); // Definir a compra selecionada
+    setShowViewModal(true); // Mostrar a modal de visualização
   };
 
-  // Função para abrir a modal de confirmação de exclusão
+  // Função para deletar compra
   const handleDelete = (compra) => {
     setSelectedCompra(compra); // Definir a compra selecionada para exclusão
     setShowDeleteModal(true); // Mostrar a modal de confirmação de exclusão
   };
 
-  // Função para confirmar a exclusão
+  // Função para confirmar exclusão
   const confirmDelete = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/compras/${selectedCompra.id}`);
-      // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((compra) => compra.id !== selectedCompra.id));
       setShowDeleteModal(false);
-
-      // Exibir notificação de sucesso usando o toast
       toast.success('Compra excluída com sucesso!');
     } catch (error) {
       console.error("Erro ao excluir a compra:", error);
       setError("Erro ao excluir a compra.");
-      // Exibir notificação de erro usando o toast
       toast.error('Erro ao excluir a compra!');
     }
+  };
+
+  // Função para gerar PDF
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.html(document.querySelector("#productDetailsTable"), {
+      callback: function (doc) {
+        doc.save(`${selectedCompra.numero_compra}.pdf`);  // Salva o PDF com o nome do produto
+      },
+      x: 10,
+      y: 10,
+    });
   };
 
   // Colunas da tabela
@@ -104,7 +109,7 @@ export function TabelaVizualizarCompras() {
     },
   ];
 
-  // Função para buscar os dados da API
+  // Função para buscar os dados
   const fetchData = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/compras");
@@ -112,7 +117,6 @@ export function TabelaVizualizarCompras() {
         setRecords(response.data);
         setOriginalRecords(response.data);
       } else {
-        console.error("Os dados retornados não contêm um array de compras:", response.data);
         throw new Error("Os dados retornados não contêm um array de compras.");
       }
     } catch (error) {
@@ -135,18 +139,20 @@ export function TabelaVizualizarCompras() {
       </div>
     );
   }
-  
+
   if (error) {
-    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
-      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-    </div>);
-  };
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
 
   return (
     <div className="homeDiv">
       <div className="search row d-flex justify-content-between">
-        <div className="col-12 col-md-6 col-lg-6">
-        </div>
+        <div className="col-12 col-md-6 col-lg-6"></div>
         <div className="col-12 col-md-6 col-lg-6">
           <input
             type="text"
@@ -179,6 +185,67 @@ export function TabelaVizualizarCompras() {
         footer={<div>Exibindo {records.length} registros no total</div>}
       />
 
+      {/* Modal de Visualização de Compra */}
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Detalhes da Compra</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedCompra && (
+            <div>
+              <h4 className="text-center text-underline">Detalhes da Compra</h4>
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Número da Compra:</strong></td>
+                    <td>{selectedCompra.numero_compra}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Data de Compra:</strong></td>
+                    <td>{new Date(selectedCompra.data_compra).toLocaleDateString()}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Celular:</strong></td>
+                    <td>{selectedCompra.celular}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{selectedCompra.email}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Endereço:</strong></td>
+                    <td>{selectedCompra.endereco}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Galho:</strong></td>
+                    <td>{selectedCompra.galho}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {/* Ícones de Imprimir e Gerar PDF */}
+          <div className="ms-2">
+            <Button variant="outline-secondary" onClick={() => window.print()}>
+              <FaPrint className="me-2" fontSize={20} />
+              Imprimir
+            </Button>
+          </div>
+          <div className="ms-2">
+            <Button variant="outline-danger" onClick={generatePDF}>
+              <FaFilePdf className="me-2" fontSize={20} />
+              Gerar PDF
+            </Button>
+          </div>
+          <Button variant="primary" className='links-acessos ms-2' onClick={() => navigate(`/editarCompra/${selectedCompra.id}`)}>
+            <MdEditNote fontSize={24} />
+            Editar Compra
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* Modal de Confirmação de Exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
@@ -193,7 +260,6 @@ export function TabelaVizualizarCompras() {
         </Modal.Footer>
       </Modal>
 
-      {/* Toast Container para mostrar as notificações */}
       <ToastContainer position="top-center" />
     </div>
   );
@@ -202,32 +268,25 @@ export function TabelaVizualizarCompras() {
 
 const Compras = () => {
   return (
-    <>
-      <div className="container-fluid">
-        <div className="d-flex">
-          <SideBar />
-
-          <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Compras" direccao="/addCompras" icone={<IoIosAdd />} leftR="/ComprasList"/>
-
-            <div className="vh-100 alturaPereita">
-            
-            <TabelaVizualizarCompras  />   
-                  </div>
-            <div className="div text-center np pt-2 mt-2 ppAr">
-              <hr />
-              <p className="text-center">
-
-                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
-                reservados.
-                <br />
-                Desenvolvido por: <b>Oseias Dias</b>
-              </p>
-            </div>
+    <div className="container-fluid">
+      <div className="d-flex">
+        <SideBar />
+        <div className="flexAuto w-100">
+          <TopoAdmin entrada="Compras" direccao="/addCompras" icone={<IoIosAdd />} leftR="/ComprasList" />
+          <div className="vh-100 alturaPereita">
+            <TabelaVizualizarCompras />
+          </div>
+          <div className="div text-center np pt-2 mt-2 ppAr">
+            <hr />
+            <p className="text-center">
+              Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
+              <br />
+              Desenvolvido por: <b>Oseias Dias</b>
+            </p>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

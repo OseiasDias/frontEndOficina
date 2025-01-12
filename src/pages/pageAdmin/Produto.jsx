@@ -1,23 +1,26 @@
-import "../../css/StylesAdmin/homeAdministrador.css";
-import SideBar from "../../components/compenentesAdmin/SideBar";
-import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import { IoIosAdd } from "react-icons/io";
-import imgErro from "../../assets/error.webp";
-
-import "../../css/StylesAdmin/homeAdministrador.css";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import DataTable from "react-data-table-component";
-import { Dropdown } from "react-bootstrap";
-import { MdDelete, MdEditNote } from "react-icons/md";
-import { IoEye } from "react-icons/io5";
-import { Modal, Button } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
-
-// Importar ToastContainer e toast do react-toastify
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import DataTable from 'react-data-table-component';
+import { Dropdown } from 'react-bootstrap';
+import { MdDelete, MdEditNote } from 'react-icons/md';
+import { IoCall, IoEye } from 'react-icons/io5';
+import { Modal, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
+import 'react-toastify/dist/ReactToastify.css';
+import imgErro from "../../assets/error.webp";
 import imgN from "../../assets/not-found.png";
+import "../../css/StylesAdmin/homeAdministrador.css";
+import SideBar from '../../components/compenentesAdmin/SideBar';
+import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
+import { IoIosAdd } from 'react-icons/io';
+import { FaUserGear } from 'react-icons/fa6';
+import { FaEnvelopeOpenText, FaMapMarkerAlt } from 'react-icons/fa';
+
+import { FaPrint, FaFilePdf } from 'react-icons/fa';  // Importar os ícones de imprimir e PDF
+import { jsPDF } from "jspdf";  // Importar a biblioteca jsPDF para geração de PDF
+
 // Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
@@ -32,41 +35,41 @@ const customStyles = {
   },
 };
 
+
+
+// Componente principal para visualizar a tabela de produtos
 export function TabelaVizualizarProdutos() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para controlar a modal de exclusão
-  const [selectedProduto, setSelectedProduto] = useState(null); // Estado para armazenar o produto selecionado
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false); // Estado para controlar a modal de visualização
+  const [selectedProduto, setSelectedProduto] = useState(null);
 
-  const navigate = useNavigate(); // Hook do React Router para navegação
+  const navigate = useNavigate();
 
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (produto) => {
-    navigate(`/verProduto/${produto.id}`);
+    setSelectedProduto(produto);  // Armazena o produto selecionado
+    setShowViewModal(true); // Abre a modal
   };
 
   // Função para abrir a modal de confirmação de exclusão
   const handleDelete = (produto) => {
-    setSelectedProduto(produto); // Definir o produto selecionado para exclusão
-    setShowDeleteModal(true); // Mostrar a modal de confirmação de exclusão
+    setSelectedProduto(produto);
+    setShowDeleteModal(true);
   };
 
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/produtos/${selectedProduto.id}`);
-      // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((produto) => produto.id !== selectedProduto.id));
       setShowDeleteModal(false);
-
-      // Exibir notificação de sucesso usando o toast
       toast.success('Produto excluído com sucesso!');
     } catch (error) {
-      console.error("Erro ao excluir o produto:", error);
-      setError("Erro ao excluir o produto.");
-      // Exibir notificação de erro usando o toast
+      setError('Erro ao excluir o produto.');
       toast.error('Erro ao excluir o produto!');
     }
   };
@@ -75,13 +78,10 @@ export function TabelaVizualizarProdutos() {
   const columns = [
     { name: "Número do Produto", selector: (row) => row.numero_produto || "Sem informação" },
     { name: "Nome", selector: (row) => row.nome || "Sem informação" },
-   
     { name: "Fabricante", selector: (row) => row.fabricante || "Sem informação" },
-    { name: "Preço", selector: (row) => ` ${row.preco || "0.00"} Kz` },
+    { name: "Preço", selector: (row) => `${row.preco || "0.00"} Kz` },
     { name: "Unidade de Medida", selector: (row) => row.unidade_medida || "Sem informação" },
     { name: "Fornecedor", selector: (row) => row.fornecedor || "Sem informação" },
-   
-   
     {
       name: "Ações",
       cell: (row) => (
@@ -89,22 +89,31 @@ export function TabelaVizualizarProdutos() {
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
           <Dropdown.Menu className="cimaAll">
             <Dropdown.Item onClick={() => handleView(row)}>
-              <IoEye fontSize={20} />
-              &nbsp;&nbsp;Visualizar
+              <IoEye fontSize={20} /> Visualizar
             </Dropdown.Item>
             <Dropdown.Item onClick={() => handleDelete(row)}>
-              <MdEditNote fontSize={23} />
-              &nbsp;&nbsp;Editar
+              <MdEditNote fontSize={23} /> Editar
             </Dropdown.Item>
             <Dropdown.Item onClick={() => handleDelete(row)}>
-              <MdDelete fontSize={23} />
-              &nbsp;&nbsp;Apagar
+              <MdDelete fontSize={23} /> Apagar
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       ),
     },
   ];
+
+  // Função para gerar PDF
+const generatePDF = () => {
+  const doc = new jsPDF();
+  doc.html(document.querySelector("#productDetailsTable"), {
+    callback: function (doc) {
+      doc.save(`${selectedProduto.nome}.pdf`);  // Salva o PDF com o nome do produto
+    },
+    x: 10,
+    y: 10,
+  });
+};
 
   // Função para buscar os dados da API
   const fetchData = async () => {
@@ -114,21 +123,21 @@ export function TabelaVizualizarProdutos() {
         setRecords(response.data);
         setOriginalRecords(response.data);
       } else {
-        console.error("Os dados retornados não contêm um array de produtos:", response.data);
         throw new Error("Os dados retornados não contêm um array de produtos.");
       }
     } catch (error) {
-      console.error("Erro ao buscar os dados:", error);
       setError("Erro ao carregar os dados.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Chama a função fetchData quando o componente é montado
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Exibe uma tela de carregamento enquanto os dados são buscados
   if (loading) {
     return (
       <div className="text-center">
@@ -137,16 +146,20 @@ export function TabelaVizualizarProdutos() {
       </div>
     );
   }
-  
- 
+
+  // Exibe erro se ocorrer durante a busca dos dados
   if (error) {
-     return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
-       <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-     </div>);
-   };
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
 
   return (
     <div className="homeDiv">
+      {/* Barra de pesquisa */}
       <div className="search row d-flex justify-content-between">
         <div className="col-12 col-md-6 col-lg-6"></div>
         <div className="col-12 col-md-6 col-lg-6">
@@ -171,6 +184,7 @@ export function TabelaVizualizarProdutos() {
         </div>
       </div>
 
+      {/* Exibe a tabela de dados */}
       <DataTable
         className="paddingTopTable"
         columns={columns}
@@ -180,6 +194,104 @@ export function TabelaVizualizarProdutos() {
         paginationPerPage={10}
         footer={<div>Exibindo {records.length} registros no total</div>}
       />
+
+      {/* Modal de Visualização de Produto */}
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Detalhes do Produto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedProduto && (
+            <div>
+              <div className="topBarraVe w-100 d-flex">
+                <div className="divFoto">
+                  <FaUserGear className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
+                </div>
+
+                <div className="divInfo mt-2 pt-4 ms-3 text-black">
+                  <p className="ajusteParagrafo">
+                    <span className="me-2">
+                      <b>Número de produto: </b>{selectedProduto.numero_produto}
+                    </span>
+                  </p>
+                  <p className="ajusteParagrafo">
+                    <span className="me-2">
+                      <b>Nome do Produto: </b>{selectedProduto.nome}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <hr />
+              <h4 className="text-center text-underline">Detalhes do Produto</h4>
+
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Código do Produto:</strong></td>
+                    <td>{selectedProduto.numero_produto}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Data de Compra:</strong></td>
+                    <td>{selectedProduto.data_compra}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nome:</strong></td>
+                    <td>{selectedProduto.nome}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Categoria:</strong></td>
+                    <td>{selectedProduto.galho}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fabricante:</strong></td>
+                    <td>{selectedProduto.fabricante}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preço:</strong></td>
+                    <td>{selectedProduto.preco} Kz</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Unidade de Medida:</strong></td>
+                    <td>{selectedProduto.unidade_medida}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fornecedor:</strong></td>
+                    <td>{selectedProduto.fornecedor}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cor:</strong></td>
+                    <td>{selectedProduto.cor}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Garantia:</strong></td>
+                    <td>{selectedProduto.garantia}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {/* Botões de Ação */}
+        
+
+          {/* Ícones de Imprimir e Gerar PDF */}
+          <div className="ms-2">
+            <Button variant="outline-secondary" onClick={() => window.print()}>
+              <FaPrint className="me-2" fontSize={20} />
+              Imprimir
+            </Button>
+          </div>
+          <div className="ms-2">
+            <Button variant="outline-danger" onClick={generatePDF}>
+              <FaFilePdf className="me-2" fontSize={20} />
+              Gerar PDF
+            </Button>
+          </div>
+          <Button variant="primary" className='links-acessos ms-2' onClick={() => navigate(`/editarProduto/${selectedProduto.id}`)}><MdEditNote fontSize={24} />
+          Editar Produto</Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* Modal de Confirmação de Exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
@@ -195,13 +307,14 @@ export function TabelaVizualizarProdutos() {
         </Modal.Footer>
       </Modal>
 
-      {/* Toast Container para mostrar as notificações */}
+      {/* Toast Container para notificações */}
       <ToastContainer position="top-center" />
     </div>
   );
 }
 
 
+// Componente para a página de produtos, que inclui o sidebar e o topo da página
 const Produtos = () => {
   return (
     <>
@@ -209,20 +322,16 @@ const Produtos = () => {
         <div className="d-flex">
           <SideBar />
 
-          <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Produtos" direccao="/addProdutos" icone={<IoIosAdd />} leftR="/ProdutosList"/>
+          <div className="flexAuto w-100">
+            <TopoAdmin entrada="Produtos" direccao="/addProdutos" icone={<IoIosAdd />} leftR="/ProdutosList" />
 
             <div className="vh-100 alturaPereita">
-
-                <TabelaVizualizarProdutos />
-
+              <TabelaVizualizarProdutos />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
               <p className="text-center">
-
-                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
-                reservados.
+                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
                 <br />
                 Desenvolvido por: <b>Oseias Dias</b>
               </p>

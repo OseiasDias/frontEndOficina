@@ -162,6 +162,7 @@
     background-color: var(--corSecodaria) !important;
     border: 6px solid #fff;
     border-radius: 25px;
+    outline: 4px solid var(--corPrimaria);
     box-shadow: var(--sombra);
     
 }
@@ -191,4 +192,9 @@
 .bg-CorNone:hover{
     background-color: var(--corPrimaria) !important
     ;
+}
+
+.text-underline{
+    text-decoration: underline;
+    margin:30px 0 ;
 }

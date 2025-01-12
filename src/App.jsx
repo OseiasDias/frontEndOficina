@@ -77,6 +77,8 @@ import VerEquipeSuporte from "./pages/pageVer/VerEquipeSuporte.jsx";
 import VerBlog from "./pages/pageVer/VerBlog.jsx";
 import EditarBlog from "./pages/pageEdit/EditarBlog.jsx";
 import EditarEquipeSuporte from "./pages/pageEdit/EditarEquipeSuporte.jsx";
+import VerFornecedor from "./pages/pageVer/VerFornecedor.jsx";
+import VerClientes from "./pages/pageVer/VerClientes.jsx";
 
 
 
@@ -679,6 +681,25 @@ const App = () => {
 
 
               {/**Routes de Add de Entidades */}
+              <Route path="/verFornecedor/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerFornecedor />
+                </ProtectedRouteAdmin>
+              } />
+
+              {/**Routes de Add de Entidades */}
+              <Route path="/verClientes/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerClientes />
+                </ProtectedRouteAdmin>
+              } />
+
+
+
+
+
+
+              {/**Routes de Add de Entidades */}
               <Route path="/verBlog/:id" element={
                 <ProtectedRouteAdmin>
                   <VerBlog />
@@ -690,7 +711,7 @@ const App = () => {
               {/**Routes de Add de Entidades */}
               <Route path="/editarEquipeSuportar/:id" element={
                 <ProtectedRouteAdmin>
-                  <EditarEquipeSuporte  />
+                  <EditarEquipeSuporte />
                 </ProtectedRouteAdmin>
               } />
 
