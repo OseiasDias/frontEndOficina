@@ -44,7 +44,7 @@ export function TabelaVizualizarVeiculos() {
 
   // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (veiculo) => {
-    navigate(`/verVeiculo/${veiculo.id}`);
+    navigate(`/verVeiculosAdmin/${veiculo.id}`);
   };
 
   // Função para abrir a modal de confirmação de exclusão

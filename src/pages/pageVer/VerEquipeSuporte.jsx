@@ -11,9 +11,11 @@ import { BiSolidPhoneCall } from 'react-icons/bi';
 import { FaEnvelopeOpenText, FaMapMarkerAlt, FaRegEdit } from 'react-icons/fa';
 import { IoCall } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não encontrado"
+import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
 
 
-export default function VerEquipeSuporte() {
+export  function VerEquipeSuporte() {
     const { id } = useParams(); // Captura o id da URL
     const [userData, setUserData] = useState(null); // Estado para armazenar os dados do usuário
     const [loading, setLoading] = useState(true);
@@ -38,8 +40,23 @@ export default function VerEquipeSuporte() {
     }, [id]);
 
     // Verifica se os dados estão sendo carregados ou se ocorreu algum erro
-    if (loading) return <div>Carregando...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) {
+        return (
+            <div className="text-center">
+                <h4>Carregando...</h4>
+                <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center">
+                <h3 className="text-danger">{error}</h3>
+                <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+            </div>
+        );
+    }
 
     const handleViewEdit = (id) => {
         // Redireciona para a rota de visualização passando o ID
@@ -47,12 +64,9 @@ export default function VerEquipeSuporte() {
     };
 
     return (
-        <div className="container-fluid">
-            <div className="d-flex">
-                <SideBar />
-                <div className="flexAuto w-100 ">
-                    <TopoAdmin entrada={<>   {userData.nome_exibicao} {userData.sobrenome}</>} leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/equipeSuportePage" />
-
+        <div className="container-flu">
+           
+           
                     <div className="vh-100 alturaPereita">
                         {/* Exibir os dados do usuário */}
                         {userData && (
@@ -132,17 +146,44 @@ export default function VerEquipeSuporte() {
                         )}
                     </div>
 
-                    <div className="div text-center np pt-2 mt-2 ppAr">
-                        <hr />
-                        <p className="text-center">
-                            Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
-                            reservados.
-                            <br />
-                            Desenvolvido por: <b>Oseias Dias</b>
-                        </p>
-                    </div>
-                </div>
-            </div>
+                   
+             
         </div>
     );
 }
+
+
+
+
+const EquipeSuporte = () => {
+    return (
+        <>
+            <div className="container-fluid">
+                <div className="d-flex">
+                    <SideBar />
+                    <div className="flexAuto w-100">
+                        <TopoAdmin
+                            entrada="  Dados da Equipe de Suporte"
+                            leftSeta={<FaArrowLeftLong />}
+                            icone={<IoIosAdd />}
+                            leftR="/equipeSuportePage"
+                        />
+                        <div className="vh-100 alturaPereita">
+                            <VerEquipeSuporte />
+                        </div>
+                        <div className="div text-center np pt-2 mt-2 ppAr">
+                            <hr />
+                            <p className="text-center">
+                                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
+                                <br />
+                                Desenvolvido por: <b>Oseias Dias</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+};
+
+export default EquipeSuporte;

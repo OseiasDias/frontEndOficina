@@ -79,7 +79,8 @@ import EditarBlog from "./pages/pageEdit/EditarBlog.jsx";
 import EditarEquipeSuporte from "./pages/pageEdit/EditarEquipeSuporte.jsx";
 import VerFornecedor from "./pages/pageVer/VerFornecedor.jsx";
 import VerClientes from "./pages/pageVer/VerClientes.jsx";
-
+import VerFuncionarios from "./pages/pageVer/VerFuncionario.jsx";
+import VerVeiculosAll from "./pages/pageVer/VerVeiculoAll.jsx";
 
 
 
@@ -693,6 +694,23 @@ const App = () => {
                   <VerClientes />
                 </ProtectedRouteAdmin>
               } />
+
+                {/**Routes de Add de Entidades */}
+                <Route path="/verFuncionario/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerFuncionarios />
+                </ProtectedRouteAdmin>
+              } />
+
+
+               {/**Routes de Add de Entidades */}
+               <Route path="/verVeiculosAdmin/:id" element={
+                <ProtectedRouteAdmin>
+                  <VerVeiculosAll />
+                </ProtectedRouteAdmin>
+              } />
+
+
 
 
 
