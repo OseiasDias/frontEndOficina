@@ -302,7 +302,7 @@ export function VerOrdemReparacao() {
                                             </Button>
                                         </div>
                                         <div className="ms-2">
-                                            <Button variant="primary" onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
+                                            <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
                                                 <MdEditNote fontSize={24} />
                                                 Editar Ordem
                                             </Button>
@@ -339,7 +339,7 @@ const OrdemReparacao = () => {
                             entrada="  Dados da Ordem de Reparação"
                             leftSeta={<FaArrowLeftLong />}
                             icone={<IoIosAdd />}
-                            leftR="/ordensDeReparacaoPageItens"
+                            leftR="/listarOrdemServico"
                         />
                         <div className="vh-100 alturaPereita">
                             <VerOrdemReparacao />

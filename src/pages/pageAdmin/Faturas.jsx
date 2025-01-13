@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect } from 'react';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { RiAddFill } from "react-icons/ri";
 import axios from "axios";
@@ -16,6 +16,8 @@ import imgErro from "../../assets/error.webp";
 import "../../css/StylesAdmin/homeAdministrador.css";
 import 'react-toastify/dist/ReactToastify.css';
 import imgN from "../../assets/not-found.png"; // Imagem para mostrar enquanto carrega
+import { IoMdEye } from 'react-icons/io';
+import { Modal } from "react-bootstrap"; // Importando o Modal
 
 // Estilos customizados para a tabela
 
@@ -44,7 +46,29 @@ export function ListarFacturas() {
   const [clientes, setClientes] = useState([]); // Lista de clientes
   const [loading, setLoading] = useState(true); // Controle de carregamento
   const [error, setError] = useState(null); // Armazenamento de erro
+  const [selectedFatura, setSelectedFatura] = useState(null); // Fatura selecionada para visualização
+  const [showModal, setShowModal] = useState(false); // Controle da visibilidade da moda
   const navigate = useNavigate(); // Hook para navegação
+  const [veiculoDetalhes, setVeiculoDetalhes] = useState(null); // Dados do veículo
+  const [ordemServicoDetalhes, setOrdemServicoDetalhes] = useState(null); // Detalhes da ordem de serviço
+
+
+  // Função para obter os dados da ordem de serviço
+  const getOrdemDeServicoDetalhes = async (ordemServicoId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-servico/${ordemServicoId}`);
+      return response.data;  // Retorna os detalhes da ordem de serviço
+    } catch (error) {
+      console.error('Erro ao buscar ordem de serviço:', error);
+      return null;  // Retorna null em caso de erro
+    }
+  };
+
+  const fetchOrdemDeServicoDetalhes = async (ordemServicoId) => {
+    const ordemServicoData = await getOrdemDeServicoDetalhes(ordemServicoId);
+    setOrdemServicoDetalhes(ordemServicoData); // Atualiza o estado com os dados da ordem de serviço
+  };
+
 
   // Função para buscar faturas da API
   const fetchFacturas = async () => {
@@ -52,7 +76,7 @@ export function ListarFacturas() {
       setLoading(true); // Define o loading para verdadeiro enquanto carrega as faturas
       const response = await axios.get("http://127.0.0.1:8000/api/facturas");
       setFacturas(response.data.data); // Preenche a lista com os dados de faturas
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setError("Erro ao carregar as faturas."); // Captura e define o erro
       toast.error("Erro ao carregar as faturas.");
@@ -66,12 +90,38 @@ export function ListarFacturas() {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/clientes");
       setClientes(response.data.data || []); // Verifica se a resposta é válida e seta os clientes
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setError("Erro ao carregar os clientes.");
       toast.error("Erro ao carregar os clientes.");
     }
   };
+
+  // Função para obter os dados do veículo
+  const getVeiculoDetalhes = async (veiculoId) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/veiculos/${veiculoId}`);
+      const veiculo = response.data;  // Veículo encontrado
+      return veiculo; // Retorna todos os detalhes do veículo
+    } catch (error) {
+      console.error('Erro ao buscar veículo:', error);
+      return null; // Retorna null caso haja erro
+    }
+  };
+
+  // Função para buscar o veículo e exibir detalhes
+  const fetchVeiculoDetalhes = async (veiculoId) => {
+    const veiculoData = await getVeiculoDetalhes(veiculoId);
+    setVeiculoDetalhes(veiculoData);
+  };
+  const handleView = async (fatura) => {
+    setSelectedFatura(fatura);
+    setShowModal(true); // Exibe a modal
+    // Chama as funções para buscar os detalhes do veículo e da ordem de serviço
+    await fetchVeiculoDetalhes(fatura.veiculo_id);
+    await fetchOrdemDeServicoDetalhes(fatura.ordem_servico_id);
+  };
+
 
   // Função para adicionar uma nova fatura
   const handleAddFaturas = () => {
@@ -105,7 +155,7 @@ export function ListarFacturas() {
       await axios.delete(`http://127.0.0.1:8000/api/facturas/${id}`);
       setFacturas(facturas.filter((item) => item.id !== id)); // Remove a fatura excluída
       toast.success("Fatura excluída com sucesso!");
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setError("Erro ao excluir a fatura.");
       toast.error("Erro ao excluir a fatura.");
@@ -118,6 +168,14 @@ export function ListarFacturas() {
     const cliente = clientes.find((cliente) => cliente.id === clienteId);
     return cliente ? `${cliente.primeiro_nome} ${cliente.sobrenome}` : "Cliente não encontrado";
   };
+
+
+  // Fechar a modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedFatura(null);
+  };
+
 
   // Colunas da tabela
   const columns = [
@@ -157,6 +215,9 @@ export function ListarFacturas() {
         <Dropdown className="btnDrop" drop="up">
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
           <Dropdown.Menu className="cimaAll">
+            <Dropdown.Item onClick={() => handleView(row)}>
+              <IoMdEye fontSize={20} /> Visualizar
+            </Dropdown.Item>
             <Dropdown.Item>
               <FiEdit />
               &nbsp;&nbsp;Editar
@@ -219,6 +280,65 @@ export function ListarFacturas() {
                 className="pt-5"
               />
               <ToastContainer position="top-center" autoClose={3000} />
+
+              {/* Modal de visualização da fatura */}
+              <Modal show={showModal} onHide={handleCloseModal} scrollable size="xl">
+                <Modal.Header closeButton>
+                  <Modal.Title>Detalhes da Fatura</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {selectedFatura && (
+                    <div>
+                      <p><strong>Número da Fatura:</strong> {selectedFatura.numero_fatura}</p>
+                      <p><strong>Cliente:</strong> {getClienteNome(selectedFatura.cliente_id)}</p>
+                      <p><strong>Ordem de Serviço:</strong> {selectedFatura.ordem_servico_id}</p>
+                      <p><strong>Valor Pago:</strong> {selectedFatura.valor_pago} Kz</p>
+                      <p><strong>Desconto:</strong> {selectedFatura.desconto} Kz</p>
+                      <p><strong>Data:</strong> {selectedFatura.data}</p>
+                      <p><strong>Filial:</strong> {selectedFatura.filiais}</p>
+                      <p><strong>Status:</strong> {selectedFatura.status}</p>
+                      <p><strong>Tipo de Pagamento:</strong> {selectedFatura.tipo_pagamento}</p>
+                      <p><strong>Valor Total:</strong> {selectedFatura.valor_total} Kz</p>
+                      <p><strong>Detalhes:</strong> {selectedFatura.detalhes}</p>
+                      <p><strong>Tipo de Fatura:</strong> {selectedFatura.tipo_fatura}</p>
+
+                      {/* Exibindo os detalhes do veículo */}
+                      {veiculoDetalhes && (
+                        <div>
+                          <h5>Detalhes do Veículo</h5>
+                          <p><strong>Marca:</strong> {veiculoDetalhes.marca_veiculo}</p>
+                          <p><strong>Modelo:</strong> {veiculoDetalhes.modelo_veiculo}</p>
+                          <p><strong>Ano Modelo:</strong> {veiculoDetalhes.ano_modelo}</p>
+                          <p><strong>Placa:</strong> {veiculoDetalhes.numero_placa}</p>
+                          <p><strong>Cor:</strong> {veiculoDetalhes.cor}</p>
+                          <p><strong>Motor:</strong> {veiculoDetalhes.motor}</p>
+                          <p><strong>Tamanho do Motor:</strong> {veiculoDetalhes.tamanho_motor}</p>
+                          <p><strong>Combustível:</strong> {veiculoDetalhes.combustivel}</p>
+                          <p><strong>Caixa de Velocidade:</strong> {veiculoDetalhes.caixa_velocidade}</p>
+                          <p><strong>Leitura do Odômetro:</strong> {veiculoDetalhes.leitura_odometro} km</p>
+                          <p><strong>Descrição:</strong> {veiculoDetalhes.descricao}</p>
+                        </div>
+                      )}
+
+                      {/* Exibindo os detalhes da ordem de serviço */}
+                      {ordemServicoDetalhes && (
+                        <div>
+                          <h5>Detalhes da Ordem de Serviço</h5>
+                          <p><strong>Número da Ordem de Serviço:</strong> {ordemServicoDetalhes.numero_ordem_servico}</p>
+                          <p><strong>Data de Criação:</strong> {ordemServicoDetalhes.data_criacao}</p>
+                          <p><strong>Status da Ordem:</strong> {ordemServicoDetalhes.status_ordem}</p>
+                          <p><strong>Descrição do Serviço:</strong> {ordemServicoDetalhes.descricao_servico}</p>
+                          <p><strong>Valor Total:</strong> {ordemServicoDetalhes.valor_total_ordem} Kz</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Modal.Body>
+
+                <Modal.Footer>
+                  <button className="btn btn-secondary" onClick={handleCloseModal}>Fechar</button>
+                </Modal.Footer>
+              </Modal>
             </div>
           </div>
         </div>
@@ -235,7 +355,7 @@ const Faturas = () => {
         <SideBar />
 
         <div className="flexAuto w-100">
-          <TopoAdmin entrada=" Faturas"  />
+          <TopoAdmin entrada=" Faturas" />
 
           <div className="vh-100 alturaPereita">
             <ListarFacturas />
