@@ -14,6 +14,7 @@ import { Button } from 'react-bootstrap';
 import { MdEditNote } from 'react-icons/md';
 import jsPDF from 'jspdf';
 import { ImWhatsapp } from 'react-icons/im';
+import logotipo from "../../assets/lgo.png"; // Imagem para o estado de "não encontrado"
 
 
 
@@ -26,6 +27,24 @@ export function VerOrdemReparacao() {
     const [error, setError] = useState(null); // Estado de erro
     const navigate = useNavigate(); // Navegação após sucesso
     const [empresaData, setEmpresaData] = useState(null);
+
+    const [dataHoraAtual, setDataHoraAtual] = useState('');
+
+    useEffect(() => {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString('pt-BR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+        setDataHoraAtual(formattedDate);
+    }, []);  // Chamado apenas uma vez ao carregar o componente
+
+
 
 
     // Função para buscar os dados da ordem de reparação com o id
@@ -43,7 +62,7 @@ export function VerOrdemReparacao() {
                 // Buscar os dados do cliente relacionado
                 const clienteResponse = await axios.get(`http://127.0.0.1:8000/api/clientes/${response.data.cust_id}`);
                 setClienteData(clienteResponse.data); // Armazenar os dados do cliente no estado
-                   const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
+                const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
                 setEmpresaData(empresaResponse.data);
             } else {
                 setError('Ordem de reparação não encontrada!');
@@ -101,6 +120,9 @@ export function VerOrdemReparacao() {
         window.open(url, '_blank');
     };
 
+
+
+
     return (
         <div className="container-fl">
             <div className="d-flex">
@@ -140,25 +162,60 @@ export function VerOrdemReparacao() {
 
                                 <div className="visual-order row">
                                     {/* Tabela para exibir os dados da ordem de reparação */}
-                                    
-                                    <h6 className="h5emGeral px-2">Informações da Empresa</h6>
-                                    {empresaData && (
-                                        <div className="col-lg-4">
-                                            <div className="border p-3">
-                                                <p><strong>Nome da Empresa:</strong> {empresaData.nome_empresa}</p>
-                                                <p><strong>NIF:</strong> {empresaData.nif_empresa}</p>
-                                                <p><strong>Tipo de Empresa:</strong> {empresaData.tipo_empresa}</p>
-                                                <p><strong>Setor:</strong> {empresaData.setor_empresa}</p>
-                                                <p><strong>Telefone:</strong> {empresaData.telefone}</p>
-                                                <p><strong>Email:</strong> {empresaData.email}</p>
-                                                <p><strong>Endereço:</strong> {empresaData.rua}, {empresaData.bairro}, {empresaData.municipio}</p>
-                                                <p><strong>Site:</strong> <a href={empresaData.site_empresa} className="text-black" target="_blank" rel="noopener noreferrer">{empresaData.site_empresa}</a></p>
-                                                <p><strong>Data de Criação:</strong> {empresaData.data_criacao}</p>
-                                            </div>
+
+                                    <h6 className="h5 fw-900">DADOS DA ORDEM DE REPARAÇÃO</h6>
+                                    <hr />
+                                    <div className="row pb-3">
+                                        <div className="imagem col-12 col-md-4 col-lg-3">
+                                            <img src={logotipo} alt="logotipo biturbo" className='w-100' />
                                         </div>
-                                    )}
-                                    
-                                    <h6 className="h5emGeral px-2">Informações da Ordem de Reparação</h6>
+                                        <div className="imagem col-12 col-md-4 col-lg-6">
+                                            <h5 className='fw-bold'>{empresaData.nome_empresa}</h5>
+                                            <span className='d-block tamanhoSpan'>{empresaData.nif_empresa}</span>
+                                            <span className='d-block tamanhoSpan'>{empresaData.rua}, {empresaData.bairro}, {empresaData.municipio}</span>
+                                            <span className='d-block tamanhoSpan'>Email: {empresaData.email} - Fone: {empresaData.telefone} </span>
+                                            <span className='d-block tamanhoSpan'><b>Site:</b><a href={empresaData.site_empresa} className="text-black" target="_blank" rel="noopener noreferrer">{empresaData.site_empresa}</a></span>
+                                        </div>
+                                        <div className="imagem col-12 col-md-4 col-lg-3">
+                                            <span className='d-block sizeSpan mt-3'><b>Nº OR:</b> 0{ordemData.id}</span>
+                                            <span className='d-block sizeSpan mt-1'><b>Emissão:</b> {dataHoraAtual}</span>
+
+
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    {/* Informações do cliente */}
+                                    <div className="user-details">
+
+                                        {clienteData && (
+                                            <div className="row">
+                                                <div className="col-12 col-md-6 col-lg-6">
+                                                    <h6 className="text-uppercase fw-bold">Informações do Cliente</h6>
+                                                    <div className="borde pb-3">
+                                                        <span className='d-block sizeSpan mt-3'><b>Nome:</b>{clienteData.nome_exibicao}  {clienteData.primeiro_nome}</span>
+                                                        <span className='d-block sizeSpan mt-3'><b>Email:</b> {clienteData.email}</span>
+                                                        <span className='d-block sizeSpan mt-3'><b>Telefone:</b> {clienteData.celular}</span>
+                                                        <span className='d-block sizeSpan mt-3'><b>Endereço:</b> {clienteData.endereco}</span>
+
+                                                    </div>
+                                                </div>
+                                                <div className="col-12 col-md-6 col-lg-6">
+                                                    {/**  <div className="borde pb-3">
+                                                    <h6 className="text-uppercase fw-bold">RESPONSÁVEL</h6>
+                                                        <span className='d-block sizeSpan mt-3'><b>Nome:</b>{clienteData.nome_exibicao}  {clienteData.primeiro_nome}</span>
+                                                        <span className='d-block sizeSpan mt-3'><b>Email:</b> {clienteData.email}</span>
+                                                        <span className='d-block sizeSpan mt-3'><b>Telefone:</b> {clienteData.celular}</span>
+
+                                                    </div>*/}
+                                                </div>
+
+                                            </div>
+                                        )}
+                                    </div>
+                                    <hr />
+
+
+                                    <h6 className="h5emGe text-uppercase fw-bold">Informações da Ordem de Reparação</h6>
                                     <table className="table table-bordered mt-4">
                                         <thead>
                                             <tr>
@@ -168,84 +225,66 @@ export function VerOrdemReparacao() {
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>Defeito ou Serviço</td>
-                                                <td>{ordemData.defeito_ou_servico}</td>
+                                                <td className='fw-bold sizelinha'>Defeito ou Serviço</td>
+                                                <td className='sizelinha'>{ordemData.defeito_ou_servico}</td>
                                             </tr>
                                             <tr>
-                                                <td>Detalhes</td>
-                                                <td>{ordemData.details}</td>
+                                                <td className='fw-bold sizelinha'>Detalhes</td>
+                                                <td className='sizelinha'>{ordemData.details} </td>
                                             </tr>
                                             <tr>
-                                                <td>Garantia (dias)</td>
-                                                <td>{ordemData.garantia_dias}</td>
+                                                <td className='fw-bold sizelinha'>Garantia (dias)</td>
+                                                <td className='sizelinha'>{ordemData.garantia_dias}</td>
                                             </tr>
                                             <tr>
-                                                <td>Observações</td>
-                                                <td>{ordemData.observacoes}</td>
+                                                <td className='fw-bold sizelinha'>Observações</td>
+                                                <td className='sizelinha'>{ordemData.observacoes}</td>
                                             </tr>
                                             <tr>
-                                                <td>Laudo Técnico</td>
-                                                <td>{ordemData.laudo_tecnico}</td>
+                                                <td className='fw-bold sizelinha'>Laudo Técnico</td>
+                                                <td className='sizelinha'>{ordemData.laudo_tecnico}</td>
                                             </tr>
                                             <tr>
-                                                <td>Data Final de Saída</td>
-                                                <td>{ordemData.data_final_saida}</td>
+                                                <td className='fw-bold sizelinha'>Data Final de Saída</td>
+                                                <td className='sizelinha'>{ordemData.data_final_saida}</td>
                                             </tr>
                                             <tr>
-                                                <td>Km Entrada</td>
-                                                <td>{ordemData.km_entrada}</td>
+                                                <td className='fw-bold sizelinha'>Km Entrada</td>
+                                                <td className='sizelinha'>{ordemData.km_entrada}</td>
                                             </tr>
-                                            <tr>
+                                            <tr className='fw-bold sizelinha'>
                                                 <td>Charge Required</td>
-                                                <td>{ordemData.charge_required}</td>
+                                                <td className='sizelinha'>{ordemData.charge_required}</td>
                                             </tr>
                                         </tbody>
                                     </table>
 
-                                    {/* Informações do cliente */}
-                                    <div className="user-details">
-                                        <h6 className="h5emGeral px-2">Informações do Cliente</h6>
-                                        {clienteData && (
-                                            <div className="col-lg-4">
-                                                <div className="border p-3">
-                                                    <p><strong>Nome:</strong> {clienteData.nome_exibicao}</p>
-                                                    <p><strong>Primeiro Nome:</strong> {clienteData.primeiro_nome}</p>
-                                                    <p><strong>Sobrenome:</strong> {clienteData.sobrenome}</p>
-                                                    <p><strong>Data de Nascimento:</strong> {clienteData.data_nascimento}</p>
-                                                    <p><strong>Email:</strong> {clienteData.email}</p>
-                                                    <p><strong>Telefone Fixo:</strong> {clienteData.telefone_fixo}</p>
-                                                    <p><strong>Celular:</strong> {clienteData.celular}</p>
-                                                    <p><strong>Endereço:</strong> {clienteData.endereco}</p>
-                                                    <p><strong>Empresa:</strong> {clienteData.nome_empresa}</p>
-                                                    <p><strong>NIF:</strong> {clienteData.nif}</p>
-                                                    <img src={clienteData.foto} alt="Foto do Cliente" className="img-fluid" />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
 
                                     {/* Informações do veículo */}
-                                    <h6 className="h5emGeral px-2">Informações do Veículo</h6>
+                                    <h6 className="h5e text-uppercase fw-bold">Informações do Veículo</h6>
+                                    <hr />
                                     {veiculoData && (
-                                        <div className="col-lg-4">
-                                            <div className="border p-3">
-                                                <p><strong>Marca:</strong> {veiculoData.marca_veiculo}</p>
-                                                <p><strong>Modelo:</strong> {veiculoData.modelo_veiculo}</p>
-                                                <p><strong>Placa:</strong> {veiculoData.numero_placa}</p>
-                                                <p><strong>Combustível:</strong> {veiculoData.combustivel}</p>
-                                                <p><strong>Ano Modelo:</strong> {veiculoData.ano_modelo}</p>
-                                                <p><strong>Leitura Odômetro:</strong> {veiculoData.leitura_odometro}</p>
-                                                <p><strong>Caixa de Velocidade:</strong> {veiculoData.caixa_velocidade}</p>
-                                                <p><strong>Preço:</strong> {veiculoData.preco}</p>
-                                                <p><strong>Descrição:</strong> {veiculoData.descricao}</p>
-                                                <img src={veiculoData.imagens[0]} alt="Imagem do Veículo" className="img-fluid" />
+                                        <div className="">
+                                            
+                                            <div className="row">
+                                                <span className='col-6 col-md-4 col-lg-3 sizeSpan mt-3'><b>Marca:</b> {veiculoData.marca_veiculo}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Modelo:</b> {veiculoData.modelo_veiculo}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Placa:</b> {veiculoData.numero_placa}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Combustível:</b> {veiculoData.combustivel}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Ano Modelo:</b> {veiculoData.ano_modelo}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Leitura Odômetro:</b> {veiculoData.leitura_odometro}</span>
+                                                <span className='col-6 col-md-4 col-lg-3  sizeSpan mt-3'><b>Caixa de Velocidade:</b> {veiculoData.caixa_velocidade}</span>
+                                                <span className='col-12 border py-3 col-md-12 col-lg-12 sizeSpan mt-3'><b>Descrição:</b> {veiculoData.descricao}</span>
+
+                                                <h5 className='col-12 text-end col-md-12 col-lg-12   mt-3'><b>Preço:</b> {veiculoData.preco} Kz</h5>
+
                                             </div>
                                         </div>
                                     )}
 
 
-                                     {/* Informações da empresa */}
-                                  
+                                    {/* Informações da empresa */}
+
 
 
                                     <div className="d-flex justify-content-end mt-4">
@@ -270,7 +309,7 @@ export function VerOrdemReparacao() {
                                         </div>
                                         <div className="ms-2">
                                             <Button variant="success" onClick={shareOnWhatsApp}>
-                                            <ImWhatsapp />  Compartilhar no WhatsApp
+                                                <ImWhatsapp />  Compartilhar no WhatsApp
                                             </Button>
                                         </div>
                                     </div>
@@ -297,7 +336,7 @@ const OrdemReparacao = () => {
                     <SideBar />
                     <div className="flexAuto w-100">
                         <TopoAdmin
-                            entrada="Dados da Ordem de Reparação"
+                            entrada="  Dados da Ordem de Reparação"
                             leftSeta={<FaArrowLeftLong />}
                             icone={<IoIosAdd />}
                             leftR="/ordensDeReparacaoPageItens"

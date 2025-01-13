@@ -206,3 +206,12 @@
     border-radius: 15px;
     box-shadow: var(--sombraA) !important;
 }
+
+.tamanhoSpan{
+    font-size: .7em;
+}
+
+.sizeSpan,.sizelinha{
+    font-size: .9em;
+}
+
