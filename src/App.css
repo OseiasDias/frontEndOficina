@@ -221,12 +221,3 @@
 }
 
 
-.selected-client {
-    background-color: #0070fa; /* Cor de fundo azul */
-    color: white; /* Cor do texto */
-    border: 2px solid #005bb5; /* Borda de destaque */
-  }
-  .selected-client:hover {
-    background-color: #005bb5; /* Cor de fundo ao passar o mouse */
-  }
-  

@@ -494,7 +494,7 @@ const Agendamentos = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Agendamentos" direccao="/marcarAgendamentoAdimin" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <TopoAdmin entrada="Lista de Agendamentos" direccao="" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
               <ListarAgendamentos />
             </div>
