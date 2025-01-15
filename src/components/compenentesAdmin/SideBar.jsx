@@ -26,7 +26,7 @@ import { AiFillCalculator } from "react-icons/ai";
  
 const routes = [
   { path: "/homeAdministrador", name: "Painel de Controle", icon: <FaHome /> },
-  { path: "/agendamentoList", name: "Agendamentos", icon: <FaCalendarDays /> },
+  { path: "/viewAgendamentos", name: "Agendamentos", icon: <FaCalendarDays /> },
   {
     name: "Inventário",
     icon: <MdInventory size={24} />,

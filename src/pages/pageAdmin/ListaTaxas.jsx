@@ -2,18 +2,22 @@ import { useState, useEffect } from 'react';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { RiAddFill } from "react-icons/ri";
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { FaIdCard, FaPercent, FaRegFileAlt } from 'react-icons/fa';
+import { FaFilePdf, FaIdCard, FaPercent, FaPrint, FaRegEye, FaRegFileAlt } from 'react-icons/fa';
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { Dropdown } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FiEdit } from "react-icons/fi";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdEditNote } from "react-icons/md";
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
+import { ImWhatsapp } from 'react-icons/im';
+import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom';
+
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -41,6 +45,17 @@ export function ListarTaxas() {
   const [taxas, setTaxas] = useState([]); // Lista de taxas
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false); // Modal para visualização
+  const [selectedCompra, setSelectedCompra] = useState(null); // Informações da compra selecionada
+  const [ordemData, setOrdemData] = useState(null); // Estado para armazenar os dados da ordem de reparação
+  const navigate = useNavigate(); // Navegação após sucesso
+
+
+  const handleVisualizar = (taxa) => {
+    setSelectedCompra(taxa); // Preenche os dados da taxa selecionada
+    setShowViewModal(true); // Abre a modal de visualização
+  };
+
 
   // Buscar taxas da API
   const fetchTaxas = async () => {
@@ -50,6 +65,7 @@ export function ListarTaxas() {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/taxas");
       setTaxas(response.data); // Preenche a lista com os dados recebidos
+      setOrdemData(response.data);
     } catch (error) {
       console.error("Erro ao carregar as taxas:", error);
       setError("Erro ao carregar as taxas."); // Armazena o erro
@@ -131,10 +147,14 @@ export function ListarTaxas() {
     },
     {
       name: "Ações",
-      cell: () => (
+      cell: (row) => (
         <Dropdown className="btnDrop" drop="up">
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
           <Dropdown.Menu className="cimaAll">
+            <Dropdown.Item onClick={() => handleVisualizar(row)}>
+              <FaRegEye />
+              &nbsp;&nbsp;Visualizar
+            </Dropdown.Item>
             <Dropdown.Item>
               <FiEdit />
               &nbsp;&nbsp;Editar
@@ -148,6 +168,22 @@ export function ListarTaxas() {
       ),
     },
   ];
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.html(document.querySelector("#productDetailsTable"), {
+      callback: function (doc) {
+        doc.save(`${ordemData.jobno}.pdf`);
+      },
+      x: 10,
+      y: 10,
+    });
+  };
+
+  const shareOnWhatsApp = () => {
+    const message = `Confira a ordem de reparação: ${ordemData.jobno}\nDetalhes: ${ordemData.defeito_ou_servico}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
 
   if (loading) {
     return (
@@ -208,6 +244,65 @@ export function ListarTaxas() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Visualização da Taxa */}
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title>Detalhes da Taxa</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedCompra && (
+            <div>
+              <h4 className="text-center text-underline">Detalhes da Taxa</h4>
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Nome da Taxa:</strong></td>
+                    <td>{selectedCompra.taxrate}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Número da Taxa:</strong></td>
+                    <td>{selectedCompra.tax_number}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Valor da Taxa:</strong></td>
+                    <td>{selectedCompra.tax} Kz</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-end mt-4">
+            {/* Botões: Imprimir, Gerar PDF, Editar e WhatsApp */}
+            <div className="ms-2">
+              <Button variant="outline-secondary" onClick={() => window.print()}>
+                <FaPrint className="me-2" fontSize={20} />
+                Imprimir
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="outline-danger" onClick={generatePDF}>
+                <FaFilePdf className="me-2" fontSize={20} />
+                Gerar PDF
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
+                <MdEditNote fontSize={24} />
+                Editar Ordem
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="success" onClick={shareOnWhatsApp}>
+                <ImWhatsapp />  Compartilhar no WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
 
       {/* Modal para adicionar taxa */}
       <Modal show={showModal} onHide={() => setShowModal(false)} scrollable>

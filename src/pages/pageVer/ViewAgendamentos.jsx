@@ -17,6 +17,9 @@ import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
+import Accordion from 'react-bootstrap/Accordion';
+
+
 // Estilos customizados para a tabela
 const customStyles = {
   headCells: {
@@ -37,28 +40,25 @@ const customStyles = {
   },
 };
 
-export function ListarRendas() {
-  const [rendas, setRendas] = useState([]); // Lista de rendas
+export function ListarAgendamentos() {
+  const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
   const [error, setError] = useState(null); // Variável de estado para erro
   const [showViewModal, setShowViewModal] = useState(false); // Controle da visibilidade do modal
-  const [selectedRenda, setSelectedRenda] = useState(null); // Renda selecionada para visualização
-  const [ordemData, setOrdemData] = useState(null); // Estado para armazenar os dados da ordem de reparação
+  const [selectedAgendamento, setSelectedAgendamento] = useState(null); // Agendamento selecionado para visualização
   const navigate = useNavigate(); // Navegação após sucesso
 
-  // Buscar rendas da API
-  const fetchRendas = async () => {
+  // Buscar agendamentos da API
+  const fetchAgendamentos = async () => {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/rendas");
-      setRendas(response.data); // Preenche a lista com os dados recebidos
-      setOrdemData(response.data);
-
+      const response = await axios.get("http://127.0.0.1:8000/api/agendamentos");
+      setAgendamentos(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
-      console.error("Erro ao carregar as rendas:", error);
-      setError("Erro ao carregar as rendas."); // Define a mensagem de erro
-      toast.error("Erro ao carregar as rendas.");
+      console.error("Erro ao carregar os agendamentos:", error);
+      setError("Erro ao carregar os agendamentos."); // Define a mensagem de erro
+      toast.error("Erro ao carregar os agendamentos.");
     } finally {
       setLoading(false); // Desativa o estado de carregamento
     }
@@ -66,51 +66,57 @@ export function ListarRendas() {
 
   // Chama a função de busca quando o componente é montado
   useEffect(() => {
-    fetchRendas();
+    fetchAgendamentos();
   }, []);
 
-  // Função de busca para filtrar as rendas
+  // Função de busca para filtrar os agendamentos
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
-      fetchRendas();
+      fetchAgendamentos();
     } else {
-      const filteredRecords = rendas.filter((item) =>
-        item.rotulo_principal.toLowerCase().includes(query) ||
-        item.rotulo_renda.toLowerCase().includes(query)
+      const filteredRecords = agendamentos.filter((item) =>
+        item.cliente.nome_exibicao.toLowerCase().includes(query) ||
+        item.data.toLowerCase().includes(query) ||
+        item.status.toLowerCase().includes(query)
       );
-      setRendas(filteredRecords);
+      setAgendamentos(filteredRecords);
     }
   };
 
-  // Função para excluir uma renda
+  // Função para excluir um agendamento
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/rendas/${id}`);
-      setRendas(rendas.filter((item) => item.id !== id)); // Remove a renda excluída
-      toast.success("Renda excluída com sucesso!");
+      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${id}`);
+      setAgendamentos(agendamentos.filter((item) => item.id !== id)); // Remove o agendamento excluído
+      toast.success("Agendamento excluído com sucesso!");
     } catch (error) {
-      console.error("Erro ao excluir a renda:", error);
-      toast.error("Erro ao excluir a renda.");
+      console.error("Erro ao excluir o agendamento:", error);
+      toast.error("Erro ao excluir o agendamento.");
     }
   };
 
-  // Função para abrir o modal e setar a renda selecionada
-  const handleVisualizar = (renda) => {
-    setSelectedRenda(renda);
+  // Função para abrir o modal e setar o agendamento selecionado
+  const handleVisualizar = (agendamento) => {
+    setSelectedAgendamento(agendamento);
     setShowViewModal(true);
   };
 
   // Colunas da tabela
   const columns = [
     {
-      name: "Fatura",
-      selector: (row) => row.fatura,
+      name: "Data do Agendamento",
+      selector: (row) => new Date(row.data).toLocaleString(),
       sortable: true,
     },
     {
-      name: "Valor Pendente",
-      selector: (row) => row.valor_pendente + " Kz",
+      name: "Cliente",
+      selector: (row) => row.cliente.nome_exibicao,
+      sortable: true,
+    },
+    {
+      name: "Serviço",
+      selector: (row) => row.servico ? row.servico.nome_servico : "Não informado",
       sortable: true,
     },
     {
@@ -119,13 +125,11 @@ export function ListarRendas() {
       sortable: true,
     },
     {
-      name: "Rótulo Principal",
-      selector: (row) => row.rotulo_principal,
-      sortable: true,
-    },
-    {
-      name: "Entrada de Renda",
-      selector: (row) => row.entrada_renda + " Kz",
+      name: "Descrição",
+      selector: (row) => {
+        const descricao = row.descricao || "";
+        return descricao.length > 60 ? descricao.substring(0, 60) + '...' : descricao;
+      },
       sortable: true,
     },
     {
@@ -153,29 +157,29 @@ export function ListarRendas() {
   ];
 
   // Exibe a tela de carregamento
-   if (loading) {
-     return (
-       <div className="text-center">
-         <h4>Carregando...</h4>
-         <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
-       </div>
-     );
-   }
- 
-   if (error) {
-     return (
-       <div className="text-center">
-         <h3 className="text-danger">{error}</h3>
-         <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
-       </div>
-     );
-   }
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
 
   const generatePDF = () => {
     const doc = new jsPDF();
     doc.html(document.querySelector("#productDetailsTable"), {
       callback: function (doc) {
-        doc.save(`${ordemData.jobno}.pdf`);
+        doc.save(`${selectedAgendamento.id}.pdf`);
       },
       x: 10,
       y: 10,
@@ -183,7 +187,7 @@ export function ListarRendas() {
   };
 
   const shareOnWhatsApp = () => {
-    const message = `Confira a ordem de reparação: ${ordemData.jobno}\nDetalhes: ${ordemData.defeito_ou_servico}`;
+    const message = `Confira o agendamento: Cliente: ${selectedAgendamento.cliente.nome_exibicao}\nData: ${new Date(selectedAgendamento.data).toLocaleString()}`;
     const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -203,7 +207,7 @@ export function ListarRendas() {
                     <input
                       type="text"
                       className="w-100 my-2 zIndex"
-                      placeholder="Pesquisar Rendas"
+                      placeholder="Pesquisar Agendamentos"
                       onChange={handleSearch}
                     />
                   </div>
@@ -211,11 +215,11 @@ export function ListarRendas() {
 
                 <DataTable
                   columns={columns}
-                  data={rendas}
+                  data={agendamentos}
                   customStyles={customStyles}
                   pagination
                   paginationPerPage={10}
-                  footer={<div>Exibindo {rendas.length} registros no total</div>}
+                  footer={<div>Exibindo {agendamentos.length} registros no total</div>}
                   className="pt-5"
                 />
                 <ToastContainer position="top-center" autoClose={3000} />
@@ -225,62 +229,65 @@ export function ListarRendas() {
         </div>
       </div>
 
-      {/* Modal de Visualização da Renda */}
-
+      {/* Modal de Visualização do Agendamento */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes da Renda</Modal.Title>
+          <Modal.Title>Detalhes do Agendamento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedRenda && (
-            <div>
-              <h4 className="text-center text-underline">Detalhes da Renda</h4>
-              <table className="table table-striped">
-                <tbody>
-                  <tr>
-                    <td><strong>Fatura:</strong></td>
-                    <td>{selectedRenda.fatura}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Valor Pendente:</strong></td>
-                    <td>{selectedRenda.valor_pendente} Kz</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Status:</strong></td>
-                    <td>{selectedRenda.status}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rótulo Principal:</strong></td>
-                    <td>{selectedRenda.rotulo_principal}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Data de Recebimento:</strong></td>
-                    <td>{selectedRenda.data_recebimento}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Tipo de Pagamento:</strong></td>
-                    <td>{selectedRenda.tipo_pagamento === "1" ? "Pagamento à Vista" : "Outros"}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Galho:</strong></td>
-                    <td>{selectedRenda.galho}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Entrada de Renda:</strong></td>
-                    <td>{selectedRenda.entrada_renda} Kz</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Rótulo da Renda:</strong></td>
-                    <td>{selectedRenda.rotulo_renda}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
+          <Accordion defaultActiveKey="0" flush>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Detalhes do Agendamento</Accordion.Header>
+              <Accordion.Body>
+                {selectedAgendamento && (
+
+
+                  <div>
+                    <table className="table table-striped">
+                      <tbody>
+                        <tr>
+                          <td><strong>Cliente:</strong></td>
+                          <td>{selectedAgendamento.cliente.nome_exibicao}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Data:</strong></td>
+                          <td>{new Date(selectedAgendamento.data).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Serviço:</strong></td>
+                          <td>{selectedAgendamento.servico ? selectedAgendamento.servico.nome_servico : "Não informado"}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Status:</strong></td>
+                          <td>{selectedAgendamento.status}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Descrição:</strong></td>
+                          <td>{selectedAgendamento.descricao}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
+            <Accordion.Item eventKey="1">
+              <Accordion.Header>Accordion Item #2</Accordion.Header>
+              <Accordion.Body>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+                minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in
+                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                culpa qui officia deserunt mollit anim id est laborum.
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+
         </Modal.Body>
         <Modal.Footer>
           <div className="d-flex justify-content-end mt-4">
-            {/* Botões: Imprimir, Gerar PDF, Editar e WhatsApp */}
             <div className="ms-2">
               <Button variant="outline-secondary" onClick={() => window.print()}>
                 <FaPrint className="me-2" fontSize={20} />
@@ -294,41 +301,33 @@ export function ListarRendas() {
               </Button>
             </div>
             <div className="ms-2">
-              <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
+              <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarAgendamento/${selectedAgendamento.id}`)}>
                 <MdEditNote fontSize={24} />
-                Editar Ordem
+                Editar Agendamento
               </Button>
             </div>
             <div className="ms-2">
               <Button variant="success" onClick={shareOnWhatsApp}>
-                <ImWhatsapp />  Compartilhar no WhatsApp
+                <ImWhatsapp /> Compartilhar no WhatsApp
               </Button>
             </div>
           </div>
         </Modal.Footer>
       </Modal>
-
     </>
   );
 }
 
-
-
-const Rendas = () => {
+const Agendamentos = () => {
   return (
     <>
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
           <div className="flexAuto w-100">
-            <h4 className='me-3'></h4>
-
-            <TopoAdmin entrada="Lista de Rendas" direccao="/addRenda" icone={<RiAddFill />} leftR="/ProdutosList" />
-
-
+            <TopoAdmin entrada="Lista de Agendamentos" direccao="/addAgendamento" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
-              <ListarRendas />
+              <ListarAgendamentos />
             </div>
 
             <div className="div text-center np pt-2 mt-2 ppAr">
@@ -346,4 +345,4 @@ const Rendas = () => {
   );
 };
 
-export default Rendas;
+export default Agendamentos;

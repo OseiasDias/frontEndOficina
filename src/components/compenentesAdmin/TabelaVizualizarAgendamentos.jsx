@@ -1,68 +1,129 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from 'react';
+import "../../css/StylesAdmin/homeAdministrador.css";
+import axios from "axios";
 import DataTable from "react-data-table-component";
-import { Dropdown, Modal, Button } from "react-bootstrap";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../../css/StylesAdmin/tbvCliente.css";
-import { FaRegEye } from "react-icons/fa";
-import { ImCancelCircle } from "react-icons/im";
-import { MdDeleteOutline } from "react-icons/md";
-import imgN from "../../assets/not-found.png";
-import imgErro from "../../assets/error.webp";
- //import { useNavigate } from "react-router-dom";  Importando o hook useNavigate
+import { Dropdown } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { FiEdit } from "react-icons/fi";
+import { MdDeleteOutline, MdEditNote } from "react-icons/md";
+import { FaFilePdf, FaPrint, FaRegEye } from 'react-icons/fa';
+import { Modal, Button } from "react-bootstrap";
+import SideBar from '../../components/compenentesAdmin/SideBar';
+import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
+import { RiAddFill } from 'react-icons/ri';
+import { ImWhatsapp } from 'react-icons/im';
+import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom';
 
-// Definição de estilos personalizados para a tabela
+// Estilos customizados para a tabela
 const customStyles = {
   headCells: {
     style: {
-      backgroundColor: "#044697",
-      color: "#fff",
-      fontSize: "16px",
-      fontWeight: "bolder",
-      paddingTop: "10px",
-      paddingBottom: "10px",
-      marginTop: "60px",
+      backgroundColor: '#044697',
+      color: '#fff',
+      fontSize: '16px',
+      fontWeight: 'bolder',
+      paddingTop: '10px',
+      paddingBottom: '10px',
     },
   },
   cells: {
-    style: {},
+    style: {
+      padding: '8px',
+      fontSize: '14px',
+    },
   },
 };
 
-export default function TabelaAgendamento() {
-  const [records, setRecords] = useState([]);
-  const [originalRecords, setOriginalRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showVisualizarModal, setShowVisualizarModal] = useState(false);  // Modal de Visualização
-  const [showExcluirModal, setShowExcluirModal] = useState(false);  // Modal de Exclusão
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // Modal de Confirmação de Status
-  const [agendamentoIdToDelete, setAgendamentoIdToDelete] = useState(null);
-  const [agendamentoToConfirm, setAgendamentoToConfirm] = useState(null); // Agendamento para Confirmar/Cancelar
-  const [agendamentoDetails, setAgendamentoDetails] = useState(null); // Detalhes do agendamento para a modal de visualização
+export function ListarAgendamentos() {
+  const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
+  const [loading, setLoading] = useState(true); // Variável de estado para carregamento
+  const [error, setError] = useState(null); // Variável de estado para erro
+  const [showViewModal, setShowViewModal] = useState(false); // Controle da visibilidade do modal
+  const [selectedAgendamento, setSelectedAgendamento] = useState(null); // Agendamento selecionado para visualização
+  const navigate = useNavigate(); // Navegação após sucesso
 
-  // const navigate = useNavigate();  Inicializa o hook para navegação
+  // Buscar agendamentos da API
+  const fetchAgendamentos = async () => {
+    setLoading(true);  // Ativa o estado de carregamento
+    setError(null);    // Reseta qualquer erro anterior
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/agendamentos");
+      setAgendamentos(response.data); // Preenche a lista com os dados recebidos
+    } catch (error) {
+      console.error("Erro ao carregar os agendamentos:", error);
+      setError("Erro ao carregar os agendamentos."); // Define a mensagem de erro
+      toast.error("Erro ao carregar os agendamentos.");
+    } finally {
+      setLoading(false); // Desativa o estado de carregamento
+    }
+  };
 
-  // Definição das colunas da tabela
+  // Chama a função de busca quando o componente é montado
+  useEffect(() => {
+    fetchAgendamentos();
+  }, []);
+
+  // Função de busca para filtrar os agendamentos
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    if (!query) {
+      fetchAgendamentos();
+    } else {
+      const filteredRecords = agendamentos.filter((item) =>
+        item.cliente.nome_exibicao.toLowerCase().includes(query) ||
+        item.data.toLowerCase().includes(query) ||
+        item.status.toLowerCase().includes(query)
+      );
+      setAgendamentos(filteredRecords);
+    }
+  };
+
+  // Função para excluir um agendamento
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${id}`);
+      setAgendamentos(agendamentos.filter((item) => item.id !== id)); // Remove o agendamento excluído
+      toast.success("Agendamento excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro ao excluir o agendamento:", error);
+      toast.error("Erro ao excluir o agendamento.");
+    }
+  };
+
+  // Função para abrir o modal e setar o agendamento selecionado
+  const handleVisualizar = (agendamento) => {
+    setSelectedAgendamento(agendamento);
+    setShowViewModal(true);
+  };
+
+  // Colunas da tabela
   const columns = [
-    { name: "Data", selector: (row) => new Date(row.data).toLocaleDateString() },
-    { name: "Cliente", selector: (row) => row.nome_cliente || "Carregando..." },
     {
-      name: "Veículo",
-      selector: (row) => row.veiculo
-        ? `${row.veiculo.marca} ${row.veiculo.modelo} (${row.veiculo.ano})`
-        : "Carregando...",
+      name: "Data do Agendamento",
+      selector: (row) => new Date(row.data).toLocaleString(),
+      sortable: true,
+    },
+    {
+      name: "Cliente",
+      selector: (row) => row.cliente.nome_exibicao,
+      sortable: true,
+    },
+    {
+      name: "Serviço",
+      selector: (row) => row.servico ? row.servico.nome_servico : "Não informado",
+      sortable: true,
     },
     {
       name: "Status",
-      selector: (row) => {
-        if (row.status === 1) {
-          return "Confirmado";
-        } else if (row.status === 0) {
-          return "Cancelado";
-        }
-        return "Sem status"; // Caso não tenha status definido
-      }
+      selector: (row) => row.status,
+      sortable: true,
+    },
+    {
+      name: "Descrição",
+      selector: (row) => row.descricao,
+      sortable: true,
     },
     {
       name: "Ações",
@@ -74,14 +135,11 @@ export default function TabelaAgendamento() {
               <FaRegEye />
               &nbsp;&nbsp;Visualizar
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => openConfirmModal(row.id_agendamento, row.status)}>
-              <ImCancelCircle />
-              &nbsp;&nbsp;{row.status === 1 ? "Cancelar" : "Confirmar"}
+            <Dropdown.Item>
+              <FiEdit />
+              &nbsp;&nbsp;Editar
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => openDeleteModal(row.id_agendamento)}  // Habilitando a exclusão na tabela
-              className="text-danger"
-            >
+            <Dropdown.Item className="text-danger" onClick={() => handleDelete(row.id)}>
               <MdDeleteOutline />
               &nbsp;&nbsp;Excluir
             </Dropdown.Item>
@@ -91,238 +149,171 @@ export default function TabelaAgendamento() {
     },
   ];
 
-  // Função para abrir a modal de visualização com os dados do agendamento
-  const handleVisualizar = async (row) => {
-    try {
-      const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${row.id_cliente}`);
-      const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${row.id_veiculo}`);
-      const servicoResponse = await fetch(`http://127.0.0.1:8000/api/servicos/${row.id_servico}`);
+  // Exibe a tela de carregamento
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+      </div>
+    );
+  }
 
-      const clienteData = await clienteResponse.json();
-      const veiculoData = await veiculoResponse.json();
-      const servicoData = await servicoResponse.json();
+  // Exibe mensagem de erro
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+      </div>
+    );
+  }
 
-      setAgendamentoDetails({
-        agendamento: row,
-        cliente: clienteData,
-        veiculo: veiculoData,
-        servico: servicoData,
-      });
-
-      setShowVisualizarModal(true);
-    } catch (err) {
-      console.error("Erro ao carregar os detalhes do agendamento:", err);
-      toast.error("Erro ao carregar os detalhes.");
-    }
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.html(document.querySelector("#productDetailsTable"), {
+      callback: function (doc) {
+        doc.save(`${selectedAgendamento.id}.pdf`);
+      },
+      x: 10,
+      y: 10,
+    });
   };
 
-  const openConfirmModal = (id, statusAtual) => {
-    const novoStatus = statusAtual === 1 ? 0 : 1; // Inverte o status (0 = cancelado, 1 = confirmado)
-    setAgendamentoToConfirm({ id, novoStatus });
-    setShowConfirmModal(true);  // Exibe a modal de confirmação
+  const shareOnWhatsApp = () => {
+    const message = `Confira o agendamento: Cliente: ${selectedAgendamento.cliente.nome_exibicao}\nData: ${new Date(selectedAgendamento.data).toLocaleString()}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
   };
-  /*
-  const handleConfirmCancel = async () => {
-    if (!agendamentoToConfirm) return;
-  
-    const { id, novoStatus } = agendamentoToConfirm;
-  
-    // Mapeia o novoStatus para uma string (Confirmado ou Cancelado)
-    const statusString = novoStatus === 1 ? "Confirmado" : "Cancelado";
-  
-    try {
-      // Faz a atualização do status na API
-      const response = await fetch(`http://localhost:5000/api/agendamentos/${id}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ novoStatus: statusString }), // Envia o novo status
-      });
-  
-      if (!response.ok) throw new Error("Erro ao atualizar status do agendamento");
-  
-      // Atualiza o estado da tabela local
-      const updatedRecords = records.map((agendamento) =>
-        agendamento.id_agendamento === id
-          ? { ...agendamento, status: novoStatus } // Atualiza o status
-          : agendamento
-      );
-  
-      setRecords(updatedRecords); // Atualiza os registros na tabela
-      toast.success(`Agendamento ${statusString} com sucesso!`);
-      setShowConfirmModal(false); // Fecha a modal
-    } catch (err) {
-      toast.error("Erro ao atualizar status do agendamento.");
-    }
-  };*/
-
-  const openDeleteModal = (id) => {
-    setAgendamentoIdToDelete(id);  // Define o agendamento a ser excluído
-    setShowExcluirModal(true);  // Abre a modal de exclusão
-  };
-
-  const handleDelete = async () => {
-    try {
-      await fetch(`http://localhost:5000/api/agendamentos/${agendamentoIdToDelete}`, {
-        method: "DELETE",
-      });
-
-      const updatedRecords = records.filter((record) => record.id_agendamento !== agendamentoIdToDelete);
-      setRecords(updatedRecords);
-      setOriginalRecords(originalRecords.filter((record) => record.id_agendamento !== agendamentoIdToDelete));
-
-      if (updatedRecords.length === 0) {
-        fetchData();
-      }
-
-      setShowExcluirModal(false); // Fecha a modal de exclusão
-      toast.success("Agendamento excluído com sucesso!");
-    } catch (error) {
-      console.error("Erro ao excluir agendamento:", error);
-      toast.error("Erro ao excluir agendamento.");
-    }
-  };
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/agendamentos");
-      if (!response.ok) throw new Error("Erro ao buscar dados dos agendamentos");
-      const data = await response.json();
-
-      const dataWithDetails = await Promise.all(
-        data.map(async (agendamento) => {
-          // Fetch de cliente e veículo de acordo com as novas rotas
-          const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${agendamento.id_cliente}`);
-          const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`);
-
-          const clienteData = await clienteResponse.json();
-          const veiculoData = await veiculoResponse.json();
-
-          return {
-            ...agendamento,
-            nome_cliente: clienteData.nome_exibicao || "Sem nome",
-            veiculo: {
-              marca: veiculoData.marca_veiculo || "Sem marca",
-              modelo: veiculoData.modelo_veiculo || "Sem modelo",
-              ano: veiculoData.ano_modelo || "Sem ano",
-              placa: veiculoData.numero_placa || "Sem placa",
-            },
-          };
-        })
-      );
-
-      // Filtra os agendamentos para exibir apenas os que não passaram da data atual
-      const today = new Date();
-      const upcomingAgendamentos = dataWithDetails.filter((agendamento) => {
-        const agendamentoDate = new Date(agendamento.data);
-        return agendamentoDate >= today;
-      });
-
-      setRecords(upcomingAgendamentos);
-      setOriginalRecords(upcomingAgendamentos);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(); // Carrega os dados assim que o componente for montado
-  }, []);
 
   return (
-    <div className="cont">
-      <ToastContainer />
-    
+    <>
+      <div className="contai">
+        <div className="d-flex">
+          <div className="flexAuto w-100">
+            <div className="vh-100 alturaPereita">
+              <div className="homeDiv">
+                <div className="search row d-flex justify-content-between">
+                  <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
+                    {/* Espaço vazio para futuras funcionalidades */}
+                  </div>
+                  <div className="col-12 col-md-6 col-lg-6">
+                    <input
+                      type="text"
+                      className="w-100 my-2 zIndex"
+                      placeholder="Pesquisar Agendamentos"
+                      onChange={handleSearch}
+                    />
+                  </div>
+                </div>
 
-      {loading ? (
-            <div className="text-center">
-            <h4>Carregando...</h4>
-            <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+                <DataTable
+                  columns={columns}
+                  data={agendamentos}
+                  customStyles={customStyles}
+                  pagination
+                  paginationPerPage={10}
+                  footer={<div>Exibindo {agendamentos.length} registros no total</div>}
+                  className="pt-5"
+                />
+                <ToastContainer position="top-center" autoClose={3000} />
+              </div>
+            </div>
           </div>
-      ) : error ? (
-        <div className='text-center'><h3 className='text-danger'>{error}</h3>
-      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-    </div>
-      ) : (
-        <DataTable
-        
-          columns={columns}
-          data={records}
-          customStyles={customStyles}
-          pagination
-        />
-      )}
+        </div>
+      </div>
 
-      {/* Modal de Visualização */}
-      <Modal show={showVisualizarModal} onHide={() => setShowVisualizarModal(false)} centered>
+      {/* Modal de Visualização do Agendamento */}
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Visualizar Agendamento</Modal.Title>
+          <Modal.Title>Detalhes do Agendamento</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {agendamentoDetails ? (
-            <>
-              <div className="row">
-                <p><strong>Cliente:</strong> {agendamentoDetails.cliente.nome_exibicao}</p>
-                <p><strong>Veículo:</strong> {`${agendamentoDetails.veiculo.marca} ${agendamentoDetails.veiculo.modelo} (${agendamentoDetails.veiculo.ano})`}</p>
-                <p><strong>Placa:</strong> {agendamentoDetails.veiculo.placa}</p>
-                <p><strong>Serviço:</strong> {agendamentoDetails.servico.descricao}</p>
-                <p><strong>Data:</strong> {new Date(agendamentoDetails.agendamento.data).toLocaleDateString()}</p>
-                <p><strong>Status:</strong> {agendamentoDetails.agendamento.status === 1 ? "Confirmado" : "Cancelado"}</p>
-              </div>
-            </>
-          ) : (
-            <p>Carregando...</p>
+          {selectedAgendamento && (
+            <div>
+              <h4 className="text-center text-underline">Detalhes do Agendamento</h4>
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Cliente:</strong></td>
+                    <td>{selectedAgendamento.cliente.nome_exibicao}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Data:</strong></td>
+                    <td>{new Date(selectedAgendamento.data).toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Serviço:</strong></td>
+                    <td>{selectedAgendamento.servico ? selectedAgendamento.servico.nome_servico : "Não informado"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Status:</strong></td>
+                    <td>{selectedAgendamento.status}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Descrição:</strong></td>
+                    <td>{selectedAgendamento.descricao}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowVisualizarModal(false)}>Fechar</Button>
+          <div className="d-flex justify-content-end mt-4">
+            <div className="ms-2">
+              <Button variant="outline-secondary" onClick={() => window.print()}>
+                <FaPrint className="me-2" fontSize={20} />
+                Imprimir
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="outline-danger" onClick={generatePDF}>
+                <FaFilePdf className="me-2" fontSize={20} />
+                Gerar PDF
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarAgendamento/${selectedAgendamento.id}`)}>
+                <MdEditNote fontSize={24} />
+                Editar Agendamento
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="success" onClick={shareOnWhatsApp}>
+                <ImWhatsapp /> Compartilhar no WhatsApp
+              </Button>
+            </div>
+          </div>
         </Modal.Footer>
       </Modal>
-
-      {/* Modal de Exclusão */}
-      <Modal show={showExcluirModal} onHide={() => setShowExcluirModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Excluir Agendamento</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Você tem certeza que deseja excluir este agendamento?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowExcluirModal(false)}>Cancelar</Button>
-          <Button variant="danger" onClick={handleDelete}>Excluir</Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Modal de Confirmação de Status */}
-      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"} Agendamento</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Tem certeza de que deseja {agendamentoToConfirm?.novoStatus === 1 ? "confirmar" : "cancelar"} este agendamento?
-          </Modal.Body>
-          <Modal.Footer>
-        </Modal.Footer>
-      </Modal>
-
-
-      {/* Modal de Confirmação de Status 
-<Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
-  <Modal.Header closeButton>
-    <Modal.Title>{agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"} Agendamento</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    Tem certeza de que deseja {agendamentoToConfirm?.novoStatus === 1 ? "confirmar" : "cancelar"} este agendamento?
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Fechar</Button>
-    <Button variant="primary" onClick={handleConfirmCancel}>
-      {agendamentoToConfirm?.novoStatus === 1 ? "Confirmar" : "Cancelar"}
-    </Button>
-  </Modal.Footer>
-</Modal>*/}
-
-    </div>
+    </>
   );
 }
+
+const Agendamentos = () => {
+  return (
+    <>
+      <div className="container-fluid">
+        <div className="d-flex">
+          <SideBar />
+          <div className="flexAuto w-100">
+            <TopoAdmin entrada="Lista de Agendamentos" direccao="/addAgendamento" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <div className="vh-100 alturaPereita">
+              <ListarAgendamentos />
+            </div>
+
+            <div className="div text-center np pt-2 mt-2 ppAr">
+              <hr />
+              <p className="text-center">
+                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
+                <br />
+                Desenvolvido por: <b>Oseias Dias</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Agendamentos;

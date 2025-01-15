@@ -82,7 +82,7 @@ import VerClientes from "./pages/pageVer/VerClientes.jsx";
 import VerFuncionarios from "./pages/pageVer/VerFuncionario.jsx";
 import VerVeiculosAll from "./pages/pageVer/VerVeiculoAll.jsx";
 import VerOR  from "./pages/pageVer/VerOR.jsx";
-
+import ViewAgendamento  from "./pages/pageVer/ViewAgendamentos.jsx";
 
 
 
@@ -222,6 +222,14 @@ const App = () => {
 
                 <ProtectedRouteAdmin>
                   <Agendamento />
+                </ProtectedRouteAdmin>
+              }
+
+              />
+              <Route path="/viewAgendamentos" element={
+
+                <ProtectedRouteAdmin>
+                  <ViewAgendamento />
                 </ProtectedRouteAdmin>
               }
 

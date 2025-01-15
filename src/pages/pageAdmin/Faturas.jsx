@@ -47,6 +47,7 @@ export function ListarFacturas() {
   const [loading, setLoading] = useState(true); // Controle de carregamento
   const [error, setError] = useState(null); // Armazenamento de erro
   const [selectedFatura, setSelectedFatura] = useState(null); // Fatura selecionada para visualização
+  const [selectedClient, setSelectedClient] = useState(null); 
   const [showModal, setShowModal] = useState(false); // Controle da visibilidade da moda
   const navigate = useNavigate(); // Hook para navegação
   const [veiculoDetalhes, setVeiculoDetalhes] = useState(null); // Dados do veículo
@@ -109,6 +110,17 @@ export function ListarFacturas() {
     }
   };
 
+  // Função para buscar os dados do cliente pelo ID
+  const fetchClientById = async (id) => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/clientes/${id}`);
+      setSelectedClient(response.data); // Armazena os dados do cliente
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      toast.error("Erro ao carregar os dados do cliente.");
+    }
+  };
+
   // Função para buscar o veículo e exibir detalhes
   const fetchVeiculoDetalhes = async (veiculoId) => {
     const veiculoData = await getVeiculoDetalhes(veiculoId);
@@ -119,6 +131,7 @@ export function ListarFacturas() {
     setShowModal(true); // Exibe a modal
     // Chama as funções para buscar os detalhes do veículo e da ordem de serviço
     await fetchVeiculoDetalhes(fatura.veiculo_id);
+    fetchClientById(fatura.cliente_id); // Carr
     await fetchOrdemDeServicoDetalhes(fatura.ordem_servico_id);
   };
 
@@ -163,10 +176,23 @@ export function ListarFacturas() {
   };
 
   // Função para obter o nome do cliente pelo ID
+  // Função para obter o nome do cliente pelo ID
   const getClienteNome = (clienteId) => {
-    if (!clientes || clientes.length === 0) return "Cliente não encontrado";  // Verifica se clientes está vazio
+    // Verifica se a lista de clientes existe e se há pelo menos um cliente na lista
+    if (!clientes || clientes.length === 0) {
+      return "Cliente não encontrado";
+    }
+  
+    // Procura o cliente pelo id
     const cliente = clientes.find((cliente) => cliente.id === clienteId);
-    return cliente ? `${cliente.primeiro_nome} ${cliente.sobrenome}` : "Cliente não encontrado";
+  
+    // Caso o cliente não seja encontrado, retorna "Cliente não encontrado"
+    if (!cliente) {
+      return "Cliente não encontrado";
+    }
+  
+    // Retorna o nome completo do cliente (primeiro nome e sobrenome)
+    return `${cliente.primeiro_nome} ${cliente.sobrenome}`;
   };
 
 
@@ -174,6 +200,7 @@ export function ListarFacturas() {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedFatura(null);
+
   };
 
 
@@ -287,10 +314,18 @@ export function ListarFacturas() {
                   <Modal.Title>Detalhes da Fatura</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+
+                {selectedClient && (
+                    <div>
+                      <p><strong>Nome do Cliente:</strong> {selectedClient.primeiro_nome} {selectedClient.sobrenome}</p>
+                      <p><strong>Email:</strong> {selectedClient.email}</p>
+                      <p><strong>Telefone:</strong> {selectedClient.celular}</p>
+                    </div>
+                  )}
                   {selectedFatura && (
                     <div>
                       <p><strong>Número da Fatura:</strong> {selectedFatura.numero_fatura}</p>
-                      <p><strong>Cliente:</strong> {getClienteNome(selectedFatura.cliente_id)}</p>
+              
                       <p><strong>Ordem de Serviço:</strong> {selectedFatura.ordem_servico_id}</p>
                       <p><strong>Valor Pago:</strong> {selectedFatura.valor_pago} Kz</p>
                       <p><strong>Desconto:</strong> {selectedFatura.desconto} Kz</p>
