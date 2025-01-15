@@ -81,8 +81,9 @@ import VerFornecedor from "./pages/pageVer/VerFornecedor.jsx";
 import VerClientes from "./pages/pageVer/VerClientes.jsx";
 import VerFuncionarios from "./pages/pageVer/VerFuncionario.jsx";
 import VerVeiculosAll from "./pages/pageVer/VerVeiculoAll.jsx";
-import VerOR  from "./pages/pageVer/VerOR.jsx";
-import ViewAgendamento  from "./pages/pageVer/ViewAgendamentos.jsx";
+import VerOR from "./pages/pageVer/VerOR.jsx";
+import ViewAgendamento from "./pages/pageVer/ViewAgendamentos.jsx";
+import AddAgendamentoAdmin  from "./pages/pagesAdd/AddAgendamentoAdmin.jsx";
 
 
 
@@ -303,6 +304,15 @@ const App = () => {
 
                 <ProtectedRouteAdmin>
                   <AddClientes />
+                </ProtectedRouteAdmin>
+
+              } />
+
+              {/**Routes de Add Agendamento */}
+              <Route path="/marcarAgendamentoAdimin" element={
+
+                <ProtectedRouteAdmin>
+                  <AddAgendamentoAdmin />
                 </ProtectedRouteAdmin>
 
               } />
@@ -705,23 +715,23 @@ const App = () => {
                 </ProtectedRouteAdmin>
               } />
 
-                {/**Routes de Add de Entidades */}
-                <Route path="/verFuncionario/:id" element={
+              {/**Routes de Add de Entidades */}
+              <Route path="/verFuncionario/:id" element={
                 <ProtectedRouteAdmin>
                   <VerFuncionarios />
                 </ProtectedRouteAdmin>
               } />
 
 
-               {/**Routes de Add de Entidades */}
-               <Route path="/verVeiculosAdmin/:id" element={
+              {/**Routes de Add de Entidades */}
+              <Route path="/verVeiculosAdmin/:id" element={
                 <ProtectedRouteAdmin>
                   <VerVeiculosAll />
                 </ProtectedRouteAdmin>
               } />
 
-                  {/**Routes de Add de Entidades */}
-                  <Route path="/verOR/:id" element={
+              {/**Routes de Add de Entidades */}
+              <Route path="/verOR/:id" element={
                 <ProtectedRouteAdmin>
                   <VerOR />
                 </ProtectedRouteAdmin>

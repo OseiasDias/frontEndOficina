@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import Accordion from 'react-bootstrap/Accordion';
-
+import 'react-toastify/dist/ReactToastify.css';
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -47,6 +47,11 @@ export function ListarAgendamentos() {
   const [showViewModal, setShowViewModal] = useState(false); // Controle da visibilidade do modal
   const [selectedAgendamento, setSelectedAgendamento] = useState(null); // Agendamento selecionado para visualização
   const navigate = useNavigate(); // Navegação após sucesso
+  const [cliente, setCliente] = useState(null); 
+  const [veiculo, setVeiculo] = useState(null);
+
+
+
 
   // Buscar agendamentos da API
   const fetchAgendamentos = async () => {
@@ -97,10 +102,32 @@ export function ListarAgendamentos() {
   };
 
   // Função para abrir o modal e setar o agendamento selecionado
-  const handleVisualizar = (agendamento) => {
+  // Função para visualizar os detalhes
+  const handleVisualizar = async (agendamento) => {
     setSelectedAgendamento(agendamento);
     setShowViewModal(true);
+
+
+    axios.get(`http://127.0.0.1:8000/api/clientes/${agendamento.id_cliente}`)
+      .then(response => {
+        setCliente(response.data);
+        setLoading(false);
+      });
+
+      axios.get(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`)
+      .then(response => {
+        setVeiculo(response.data);
+        setLoading(false);
+      })
+
+    
+
+
   };
+
+  // Dentro do Modal, no corpo:
+
+
 
   // Colunas da tabela
   const columns = [
@@ -247,7 +274,7 @@ export function ListarAgendamentos() {
                       <tbody>
                         <tr>
                           <td><strong>Cliente:</strong></td>
-                          <td>{selectedAgendamento.cliente.nome_exibicao}</td>
+                          <td>{selectedAgendamento.cliente.nome_exibicao}  </td>
                         </tr>
                         <tr>
                           <td><strong>Data:</strong></td>
@@ -263,7 +290,7 @@ export function ListarAgendamentos() {
                         </tr>
                         <tr>
                           <td><strong>Descrição:</strong></td>
-                          <td>{selectedAgendamento.descricao}</td>
+                          <td className='text-justify'>{selectedAgendamento.descricao}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -272,17 +299,159 @@ export function ListarAgendamentos() {
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1">
-              <Accordion.Header>Accordion Item #2</Accordion.Header>
+              <Accordion.Header>Dados do Veículos</Accordion.Header>
               <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                aliquip ex ea commodo consequat. Duis aute irure dolor in
-                reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                culpa qui officia deserunt mollit anim id est laborum.
+                {veiculo && (
+                  <div>
+                    <table className="table table-striped">
+                      <tbody>
+                        <tr>
+                          <td><strong>Tipo de Veículo:</strong></td>
+                          <td>{veiculo.tipo_veiculo}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número da Placa:</strong></td>
+                          <td>{veiculo.numero_placa}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Marca:</strong></td>
+                          <td>{veiculo.marca_veiculo}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Modelo:</strong></td>
+                          <td>{veiculo.modelo_veiculo}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Preço:</strong></td>
+                          <td>R$ {veiculo.preco}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Cliente ID:</strong></td>
+                          <td>{veiculo.cliente_id}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Combustível:</strong></td>
+                          <td>{veiculo.combustivel}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número do Equipamento:</strong></td>
+                          <td>{veiculo.numero_equipamento}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Ano Modelo:</strong></td>
+                          <td>{veiculo.ano_modelo}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Leitura do Odômetro:</strong></td>
+                          <td>{veiculo.leitura_odometro} km</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Data de Fabricação:</strong></td>
+                          <td>{veiculo.data_fabricacao}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Caixa de Velocidade:</strong></td>
+                          <td>{veiculo.caixa_velocidade}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número da Caixa:</strong></td>
+                          <td>{veiculo.numero_caixa}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número do Motor:</strong></td>
+                          <td>{veiculo.numero_motor}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Tamanho do Motor:</strong></td>
+                          <td>{veiculo.tamanho_motor}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número da Chave:</strong></td>
+                          <td>{veiculo.numero_chave}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Motor:</strong></td>
+                          <td>{veiculo.motor}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Número do Chassi:</strong></td>
+                          <td>{veiculo.numero_chassi}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Descrição:</strong></td>
+                          <td>{veiculo.descricao}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Cor:</strong></td>
+                          <td>{veiculo.cor}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </Accordion.Body>
             </Accordion.Item>
+            <Accordion.Item eventKey="2">
+              <Accordion.Header>Dados do Cliente</Accordion.Header>
+              <Accordion.Body>
+                {cliente && (
+                  <table className="table table-striped">
+                    <tbody>
+                      <tr>
+                        <td><strong>Nome:</strong></td>
+                        <td>{cliente.nome_exibicao}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Primeiro Nome:</strong></td>
+                        <td>{cliente.primeiro_nome}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Sobrenome:</strong></td>
+                        <td>{cliente.sobrenome}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Data de Nascimento:</strong></td>
+                        <td>{cliente.data_nascimento}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Email:</strong></td>
+                        <td>{cliente.email}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Celular:</strong></td>
+                        <td>{cliente.celular}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Telefone Fixo:</strong></td>
+                        <td>{cliente.telefone_fixo}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Nome da Empresa:</strong></td>
+                        <td>{cliente.nome_empresa}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>NIF:</strong></td>
+                        <td>{cliente.nif}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Endereço:</strong></td>
+                        <td>{cliente.endereco}, {cliente.municipio} - {cliente.id_provincia}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>Estado:</strong></td>
+                        <td>{cliente.estado === 1 ? 'Ativo' : 'Inativo'}</td>
+                      </tr>
+                      <tr>
+                        <td><strong>País:</strong></td>
+                        <td>{cliente.id_pais}</td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
+      
           </Accordion>
 
         </Modal.Body>
@@ -325,7 +494,7 @@ const Agendamentos = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Agendamentos" direccao="/addAgendamento" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <TopoAdmin entrada="Lista de Agendamentos" direccao="/marcarAgendamentoAdimin" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
               <ListarAgendamentos />
             </div>
