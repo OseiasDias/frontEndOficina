@@ -1,7 +1,7 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import { IoIosAdd, IoMdAddCircle } from "react-icons/io";
+import { IoIosAdd} from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
 import { Form, Button, Col, Row, Modal } from 'react-bootstrap';
@@ -109,45 +109,14 @@ function FormularioProduto() {
     setProduto({ ...produto, imagem: e.target.files[0] });
   };
 
-  const handleNotaChange = (index, e) => {
-    const { name, value, type, checked } = e.target;
-    const newNotas = [...produto.notas];
-    newNotas[index][name] = type === 'checkbox' ? checked : value;
-    setProduto({ ...produto, notas: newNotas });
-  };
-
-  const handleFileChange = (index, e) => {
-    const newNotas = [...produto.notas];
-    newNotas[index].arquivosNota = e.target.files;
-    setProduto({ ...produto, notas: newNotas });
-  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(produto);
   };
 
-  const handleAddNota = () => {
-    // Adiciona uma nova nota vazia
-    setProduto({
-      ...produto,
-      notas: [
-        ...produto.notas,
-        {
-          textoNota: '',
-          arquivosNota: [],
-          interna: false,
-          compartilhada: false,
-        },
-      ],
-    });
-  };
-
-  const handleRemoveNota = (index) => {
-    // Remove a nota no índice especificado
-    const newNotas = produto.notas.filter((_, i) => i !== index);
-    setProduto({ ...produto, notas: newNotas });
-  };
+  
 
 
 
@@ -643,30 +612,22 @@ function FormularioProduto() {
         <Form.Group>
           <div className="d-flex justify-content-between">
             <h6 className="mt-5">Adicionar Notas</h6>
-            {/* Botão de Adicionar Nota */}
-            <Button
-              variant="primary"
-              type="button"
-              onClick={handleAddNota}
-              className="mt-3 btnAddEsp"
-            >
-              <IoMdAddCircle className="btnColorir" />
-            </Button>
+           
           </div>
           <hr />
-          {produto.notas.map((nota, index) => (
-            <div key={index} className="nota d-flex">
+        
+            <div  className="nota d-flex">
               <Row>
                 <Col xs={12} md={6} lg={4}>
-                  <Form.Group controlId={`nota-texto-${index}`}>
+                  <Form.Group controlId={`nota-texto`}>
                     <Form.Label className="fortificarLetter">Notas</Form.Label>
                     <div className="input-group">
                       <span className="input-group-text"><MdNote fontSize={22} color="#0070fa" /></span>
                       <Form.Control
                         as="textarea"
                         name="textoNota"
-                        value={nota.textoNota}
-                        onChange={(e) => handleNotaChange(index, e)}
+                        value=""
+                        onChange=""
                         maxLength="100"
                       />
                     </div>
@@ -674,14 +635,14 @@ function FormularioProduto() {
                 </Col>
 
                 <Col xs={12} md={6} lg={4}>
-                  <Form.Group controlId={`nota-arquivos-${index}`}>
+                  <Form.Group controlId={`nota-arquivos`}>
                     <Form.Label className="fortificarLetter">Arquivos</Form.Label>
                     <div className="input-group">
                       <span className="input-group-text"><MdOutlineFileCopy fontSize={22} color="#0070fa" /></span>
                       <Form.Control
                         type="file"
-                        name={`nota-arquivos-${index}`}
-                        onChange={(e) => handleFileChange(index, e)}
+                        name={`nota-arquivos`}
+                        onChange=""
                         multiple
                       />
                     </div>
@@ -694,31 +655,24 @@ function FormularioProduto() {
                     type="checkbox"
                     label="Nota Interna"
                     name="interna"
-                    checked={nota.interna}
-                    onChange={(e) => handleNotaChange(index, e)}
+                    checked=""
+                    onChange=""
                   />
 
                   <Form.Check
                     type="checkbox"
                     label="Compartilhado com fornecedor"
                     name="compartilhada"
-                    checked={nota.compartilhada}
-                    onChange={(e) => handleNotaChange(index, e)}
+                    checked=""
+                    onChange=""
                   />
                 </Col>
               </Row>
 
               {/* Botão de Remover Nota */}
-              <Button
-                variant="danger"
-                type="button"
-                onClick={() => handleRemoveNota(index)}
-                className="mt-2 btnAddEsp"
-              >
-                <MdDeleteForever className="btnDeleteColorir" fontSize={20} />
-              </Button>
+             
             </div>
-          ))}
+          
 
 
         </Form.Group>
