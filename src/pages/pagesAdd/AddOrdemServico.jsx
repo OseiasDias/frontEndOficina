@@ -7,7 +7,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
-import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileAlt, FaFileSignature,  FaHome, FaRegFileAlt, FaStickyNote, FaTint, FaTools, FaUpload, FaUser, FaUserCog } from "react-icons/fa";
+import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileAlt, FaFileSignature,  FaHome, FaRegFileAlt, FaStickyNote, FaTint, FaTools, FaUpload, FaUser} from "react-icons/fa";
 import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
@@ -17,80 +17,98 @@ import logoMarca from "../../assets/lgo.png";
 
 
 const ServiceAddForm = () => {
-  const [notes, setNotes] = useState([{ id: 1, text: "", file: null, internal: false, shared: false }]);
 
-  // Função para adicionar uma nova nota
-  const addNote = () => {
-    setNotes([...notes, { id: notes.length + 1, text: "", file: null, internal: false, shared: false }]);
+
+  const [formValues, setFormValues] = useState({
+    jobno: 'J000005', // Ordem de Reparação
+    cust_id: '', // Nome do cliente
+    vhi: '', // Nome do veículo
+    data_inicial_entrada: '',
+    repair_cat: '',
+    km_entrada: '',
+    charge: '',
+    branch: '1', // Galho
+    status: '',
+    garantia_dias: '',
+    data_final_saida: '',
+    details: '',
+    defeito_ou_servico: '',
+    observacoes: '',
+    laudo_tecnico: '',
+    images: [],
+    washBay: false,
+    washBayCharge: '',
+  });
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [showCorModal, setShowCorModal] = useState(false);
+  const [novaCategoria, setNovaCategoria] = useState({ nome: '' });
+  const [categorias, setCategorias] = useState([]);
+
+  // Funções para lidar com o estado do formulário
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues(prevValues => ({
+      ...prevValues,
+      [name]: value
+    }));
   };
 
-  // Função para remover uma nota
-  const removeNote = (id) => {
-    setNotes(notes.filter((note) => note.id !== id));
+ 
+
+  
+
+  // Função para abrir a modal
+  const handleOpenModal = (content) => {
+    setModalContent(content);
+    setShowModal(true);
   };
 
-  // Função para lidar com mudanças nos campos de nota
-  const handleNoteChange = (id, field, value) => {
-    setNotes(notes.map((note) => note.id === id ? { ...note, [field]: value } : note));
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleShowCorModal = () => setShowCorModal(true);
+  const handleCloseCorModal = () => setShowCorModal(false);
+
+  // Funções para adicionar/remover categorias
+  const handleAddCategoria = () => {
+    if (novaCategoria.nome) {
+      setCategorias([...categorias, novaCategoria]);
+      setNovaCategoria({ nome: '' });
+    }
   };
 
+  const handleRemoveCategoria = (nome) => {
+    setCategorias(categorias.filter((categoria) => categoria.nome !== nome));
+  };
   // Estado para controlar a visibilidade das taxas
   const [washBayChecked, setWashBayChecked] = useState(false);
-  const [motTestChecked, setMotTestChecked] = useState(false);
 
   // Funções para lidar com as mudanças nas checkboxes
   const handleWashBayChange = (e) => {
     setWashBayChecked(e.target.checked);
   };
 
-  const handleMotTestChange = (e) => {
-    setMotTestChecked(e.target.checked);
-  };
+ 
 
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState('');
+ 
 
   // Função para abrir a modal com conteúdo específico
-  const handleOpenModal = (content) => {
-    setModalContent(content);
-    setShowModal(true);
-  };
+
 
   // Função para fechar a modal
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
 
 
-  const [showCorModal, setShowCorModal] = useState(false);
-  const [novaCategoria, setNovaCategoria] = useState({ nome: '' });
-  const [categorias, setCategorias] = useState([]);
 
-  // Função para abrir a modal
-  const handleShowCorModal = () => setShowCorModal(true);
 
-  // Função para fechar a modal
-  const handleCloseCorModal = () => setShowCorModal(false);
-
-  // Função para tratar a mudança no campo de nome da categoria
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setNovaCategoria({ ...novaCategoria, [name]: value });
-  };
+  
 
   // Função para adicionar uma nova categoria
-  const handleAddCategoria = () => {
-    if (novaCategoria.nome) {
-      setCategorias([...categorias, novaCategoria]);
-      setNovaCategoria({ nome: '' }); // Limpar o campo após adicionar
-    }
-  };
+ 
 
   // Função para remover uma categoria
-  const handleRemoveCategoria = (nome) => {
-    setCategorias(categorias.filter((categoria) => categoria.nome !== nome));
-  };
+ 
 
 
 
@@ -113,7 +131,7 @@ const ServiceAddForm = () => {
                   <Form.Label>Nº Ordem de Reparação <span className="text-danger">*</span></Form.Label>
                   <div className="input-group">
                     <span className="input-group-text"><AiOutlineFieldNumber fontSize={20} color="#0070fa" /></span>
-                    <Form.Control type="text" value="J000005" readOnly />
+                    <Form.Control type="text" value="OR000005" readOnly />
                   </div>
                 </Form.Group>
               </Col>
@@ -127,7 +145,7 @@ const ServiceAddForm = () => {
 
                       <Form.Control as="select" required>
                         <option value="">Selecione o Cliente</option>
-                        <option value="6">Abraão Odair Kanepa</option>
+                        <option value="Abracoa">Abraão Odair Kanepa</option>
                       </Form.Control>
                     </div>
                     <Button
@@ -415,41 +433,7 @@ const ServiceAddForm = () => {
             
 
             {/* Teste MOT */}
-            <Row className="mb-3">
-              <Col xs={12} md={6}>
-                <Form.Group controlId="motTestStatusCheckbox" className="d-flex  bordando">
-                  <Form.Label className="me-2">Teste MOT</Form.Label>
-
-                  <Form.Check
-                    type="checkbox"
-                    name="motTestStatusCheckbox"
-                    checked={motTestChecked}
-                    onChange={handleMotTestChange}
-                    style={{ height: "20px", width: "20px", marginRight: "5px" }}
-                  />
-
-                </Form.Group>
-              </Col>
-
-              {/* Taxa de teste MOT */}
-              {motTestChecked && (
-                <Col xs={12} md={6}>
-                  <Form.Group controlId="motTestCharge">
-                    <Form.Label>Preço de teste MOT (kz)</Form.Label>
-                    <div className="input-group">
-                      <span className="input-group-text"><FaTools fontSize={20} color="#0070fa" /></span>
-
-                      <Form.Control
-                        type="text"
-                        name="motTestCharge"
-                        placeholder="Insira as preço de teste MOT"
-                        maxLength="10"
-                      />
-                    </div>
-                  </Form.Group>
-                </Col>
-              )}
-            </Row>
+          
          
           
 
@@ -457,10 +441,7 @@ const ServiceAddForm = () => {
               <div className="d-flex justify-content-between">
                 <h6 className="baixarTexto text-uppercase">Adicionar Notas</h6>
 
-                {/* Botão para Adicionar Nota */}
-                <Button variant="success" onClick={addNote} className="mt-5 links-acessos border-radius-zero">
-                  +
-                </Button>
+            
               </div>
               <Row className="mb-3">
                 <Col xs={12}>
@@ -468,8 +449,8 @@ const ServiceAddForm = () => {
                   <hr />
 
                   
-                  {notes.map((note, index) => (
-                    <Row key={note.id} className="align-items-center mb-2">
+                  
+                    <Row className="align-items-center mb-2">
                       {/* Nota Texto */}
                       <Col xs={12} md={4}>
                         <h6>Nota</h6>
@@ -478,8 +459,8 @@ const ServiceAddForm = () => {
 
                           <Form.Control
                             as="textarea"
-                            value={note.text}
-                            onChange={(e) => handleNoteChange(note.id, "text", e.target.value)}
+                            value=""
+                            onChange=""
                             placeholder="Escreva uma nota"
                           />
                         </div>
@@ -493,9 +474,7 @@ const ServiceAddForm = () => {
 
                           <Form.Control
                             type="file"
-                            onChange={(e) =>
-                              handleNoteChange(note.id, "files", e.target.files)
-                            }
+                           
                             multiple
                           />
                         </div>
@@ -506,20 +485,16 @@ const ServiceAddForm = () => {
                         <h6>Opções</h6>
                         <Form.Check
                           type="checkbox"
-                          checked={note.internal}
+                          checked=""
                           label="Nota Interna"
-                          onChange={(e) =>
-                            handleNoteChange(note.id, "internal", e.target.checked)
-                          }
+                         
                           className="d-block mb-2"
                         />
                         <Form.Check
                           type="checkbox"
-                          checked={note.shared}
+                          checked=""
                           label="Compartilhado com fornecedor"
-                          onChange={(e) =>
-                            handleNoteChange(note.id, "shared", e.target.checked)
-                          }
+                          
                           className="d-block"
                         />
                       </Col>
@@ -528,7 +503,7 @@ const ServiceAddForm = () => {
                       <Col xs={12} md={1}>
                         <Button
 
-                          onClick={() => removeNote(note.id)}
+                          
                           size="sm"
                           className="mt-2 border-radius-zero borderSem colorirBTN"
                         >
@@ -537,7 +512,7 @@ const ServiceAddForm = () => {
                         </Button>
                       </Col>
                     </Row>
-                  ))}
+                
 
                 </Col>
               </Row>
@@ -553,7 +528,8 @@ const ServiceAddForm = () => {
           </Form>
 
           {/* Modal */}
-          <Modal show={showModal} onHide={handleCloseModal} centered size="xl" scrollable >
+         <div className="modails">
+         <Modal show={showModal} onHide={handleCloseModal} centered size="xl" scrollable >
             <Modal.Header closeButton>
               <Modal.Title>Adicionar {modalContent === 'cliente' ? 'Cliente' : 'Veículo'}</Modal.Title>
             </Modal.Header>
@@ -633,6 +609,7 @@ const ServiceAddForm = () => {
 
             </Modal.Footer>
           </Modal>
+         </div>
         </div>
       </div>
     </div >
@@ -648,7 +625,7 @@ const AddFuncionarios = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Adicionar Ordem de Reparação" leftSeta={<FaArrowLeftLong />} leftR="/listarOrdemServico" />
+            <TopoAdmin entrada="  Adicionar Ordem de Reparação" leftSeta={<FaArrowLeftLong />} leftR="/listarOrdemServico" />
             <div className="vh-100 alturaPereita">
               <ServiceAddForm />
             </div>
