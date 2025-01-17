@@ -3,20 +3,24 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd, IoMdAddCircle } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Button, Col, Row, Modal } from 'react-bootstrap';
-import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdSecurity, MdStore, MdStraighten, MdTextFields } from "react-icons/md";
+import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdSecurity, MdStraighten, MdTextFields } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
+import logoMarca from "../../assets/lgo.png";
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify'; // Importando react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Estilos do toast
+import { RiAddLargeLine } from "react-icons/ri";
+
+import { AddFornecedor } from "../pagesAdd/AddFornecedor.jsx";
 
 function FormularioProduto() {
   const [showCorModal, setShowCorModal] = useState(false); // Modal para cores
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
 
   //const [unidadeMedida, setUnidadeMedida] = useState(""); // Estado para o select
-  const [unidades, setUnidades] = useState([
-    { id: 1, nome: 'Dúzia' },
-    { id: 2, nome: 'Litro' },
-  ]); // Unidades de medida
+  
 
 
 
@@ -35,19 +39,13 @@ function FormularioProduto() {
     { nome: 'Marrom', hex: '#6f4f37' },
   ]);
 
-  const [showFabricanteModal, setShowFabricanteModal] = useState(false);
-  const [novoFabricante, setNovaFabricante] = useState('');
 
-  const [fabricante, setFabricante] = useState([
-    { id: 1, nome: 'Fabricante 1' },
-    { id: 2, nome: 'Fabricante 2' },
-    // Adicione mais fabricantes conforme necessário
-  ]);
+
 
   //const handleShowCorModal = () => setShowCorModal(true);
   const handleCloseCorModal = () => setShowCorModal(false);
 
-  const handleShowUnidadeModal = () => setShowUnidadeModal(true);
+  //const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
 
 
@@ -102,6 +100,9 @@ function FormularioProduto() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduto({ ...produto, [name]: value });
+
+
+
   };
 
   const handleImageChange = (e) => {
@@ -151,35 +152,216 @@ function FormularioProduto() {
 
 
 
-  // Função para manipular a mudança no formulário
-  /*const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduto((prevProduto) => ({ ...prevProduto, [name]: value }));
-  };*/
 
-  // Função para mostrar a modal
-  const handleShowFabricanteModalNome = () => setShowFabricanteModal(true);
 
-  // Função para fechar a modal
-  const handleCloseFabricanteModalNome = () => setShowFabricanteModal(false);
 
-  // Função para adicionar um novo fabricante
-  const handleAddfabricante = () => {
-    if (novoFabricante.trim()) {
-      setFabricante((prevFabricante) => [
-        ...prevFabricante,
-        { id: Date.now(), nome: novoFabricante },
-      ]);
-      setNovaFabricante('');
+
+  /**CONFIGURAÇÕES DA MODAL FABRICANTE */
+  const [showFabricanteModal, setShowFabricanteModal] = useState(false);
+  const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+  const [fabricantes, setFabricantes] = useState([]);
+  const [novoFabricante, setNovoFabricante] = useState('');
+  const [fabricanteToDelete, setFabricanteToDelete] = useState(null);
+
+  const [showFornecedorModal, setShowFornecedorModal] = useState(false);
+
+  const handleCloseFornecedorModal = () => setShowFornecedorModal(false);
+  const handleShowFornecedorModal = () => setShowFornecedorModal(true);
+  // Função para abrir a modal principal
+  const handleOpenFabricanteModal = () => setShowFabricanteModal(true);
+
+  // Função para fechar a modal principal
+  const handleCloseFabricanteModal = () => setShowFabricanteModal(false);
+
+  // Função para buscar todos os fabricantes
+  const fetchFabricantes = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/fabricantes/');
+      setFabricantes(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar fabricantes:', error);
     }
   };
 
-  // Função para remover um fabricante
-  const handleRemoveFabricante = (id) => {
-    setFabricante((prevFabricante) =>
-      prevFabricante.filter((fab) => fab.id !== id)
-    );
+  // Função para adicionar um novo fabricante
+  const handleAddFabricante = async () => {
+    if (novoFabricante.trim() === '') {
+      toast.error('O nome do fabricante não pode estar vazio.');
+      return;
+    }
+
+    try {
+      await axios.post('http://127.0.0.1:8000/api/fabricantes/', { nome: novoFabricante });
+      setNovoFabricante('');
+      fetchFabricantes(); // Recarrega a lista de fabricantes
+      toast.success('Fabricante adicionado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar fabricante:', error);
+      toast.error('Erro ao adicionar fabricante!');
+    }
   };
+
+  // Função para abrir a modal de confirmação de exclusão
+  const handleOpenConfirmDeleteModal = (fabricanteId) => {
+    setFabricanteToDelete(fabricanteId);
+    setShowConfirmDeleteModal(true);
+  };
+
+  // Função para fechar a modal de confirmação de exclusão
+  const handleCloseConfirmDeleteModal = () => setShowConfirmDeleteModal(false);
+
+  // Função para remover um fabricante
+  const handleRemoveFabricante = async () => {
+    if (!fabricanteToDelete) return;
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/fabricantes/${fabricanteToDelete}`);
+      fetchFabricantes(); // Recarrega a lista de fabricantes
+      setShowConfirmDeleteModal(false);
+      toast.success('Fabricante excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao remover fabricante:', error);
+      toast.error('Erro ao excluir fabricante!');
+    }
+  };
+
+  // Carregar os fabricantes ao abrir a modal principal
+  useEffect(() => {
+    if (showFabricanteModal) {
+      fetchFabricantes();
+    }
+  }, [showFabricanteModal]);
+  /**FIM DA CONFIGURAÇÃO DA MODAL FABRICANTE */
+
+
+  /**CONFIGURAÇAO DA LISTAGEM DO FABRICANTE NO SELECT */
+
+
+
+
+  // Chama a função fetchFabricantes assim que o componente for montado
+  useEffect(() => {
+    fetchFabricantes();
+  }, []);
+
+
+
+  /**FIM DA CONFIGURAÇÃO DE LISTAGEM */
+
+  /**CONFIGURAÇÕES DA MODAL UNIDADE */
+
+  const [showUnidadeMedidaModalUnidade, setShowUnidadeMedidaModalUnidade] = useState(false);
+  const [showConfirmDeleteModalUnidade, setShowConfirmDeleteModalUnidade] = useState(false);
+  const [novaUnidadeMedidaUnidade, setNovaUnidadeMedidaUnidade] = useState('');
+  const [unidadeMedidaToDeleteUnidade, setUnidadeMedidaToDeleteUnidade] = useState(null);
+
+  // Função para buscar todas as unidades de medida
+
+
+  // Função para adicionar uma nova unidade de medida
+  const handleAddUnidadeMedidaUnidade = async () => {
+    if (novaUnidadeMedidaUnidade.trim() === '') {
+      toast.error('O nome da unidade de medida não pode estar vazio.');
+      return;
+    }
+
+    try {
+      await axios.post('http://127.0.0.1:8000/api/unidade-medidas/', { unidade: novaUnidadeMedidaUnidade });
+      setNovaUnidadeMedidaUnidade('');
+      fetchUnidadesMedidaUnidade(); // Recarrega a lista de unidades de medida
+      toast.success('Unidade de medida adicionada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao adicionar unidade de medida:', error);
+      toast.error('Erro ao adicionar unidade de medida!');
+    }
+  };
+
+  // Função para abrir a modal de confirmação de exclusão
+  const handleOpenConfirmDeleteModalUnidade = (unidadeMedidaIdUnidade) => {
+    setUnidadeMedidaToDeleteUnidade(unidadeMedidaIdUnidade);
+    setShowConfirmDeleteModalUnidade(true);
+  };
+
+  // Função para fechar a modal de confirmação de exclusão
+  const handleCloseConfirmDeleteModalUnidade = () => setShowConfirmDeleteModalUnidade(false);
+
+  // Função para remover uma unidade de medida
+  const handleRemoveUnidadeMedidaUnidade = async () => {
+    if (!unidadeMedidaToDeleteUnidade) return;
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/unidade-medidas/${unidadeMedidaToDeleteUnidade}`);
+      fetchUnidadesMedidaUnidade(); // Recarrega a lista de unidades de medida
+      setShowConfirmDeleteModalUnidade(false);
+      toast.success('Unidade de medida excluída com sucesso!');
+    } catch (error) {
+      console.error('Erro ao remover unidade de medida:', error);
+      toast.error('Erro ao excluir unidade de medida!');
+    }
+  };
+
+  // Carregar as unidades de medida ao abrir a modal principal
+  useEffect(() => {
+    if (showUnidadeMedidaModalUnidade) {
+      fetchUnidadesMedidaUnidade();
+    }
+  }, [showUnidadeMedidaModalUnidade]);
+
+  /*CONFIGURAÇOES PRA O SELECT UNIDADE */
+
+  const [unidades, setUnidades] = useState([]);
+
+
+  // Função para abrir a modal principal
+  const handleOpenUnidadeMedidaModalUnidade = () => setShowUnidadeMedidaModalUnidade(true);
+
+  // Função para fechar a modal principal
+  const handleCloseUnidadeMedidaModalUnidade = () => setShowUnidadeMedidaModalUnidade(false);
+
+  // Função para buscar todas as unidades de medida
+  const fetchUnidadesMedidaUnidade = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/unidade-medidas/');
+      console.log('Unidades de Medida:', response.data);  // Verifique se os dados estão sendo retornados corretamente
+      setUnidades(response.data);  // Atualiza o estado com os dados recebidos
+    } catch (error) {
+      console.error('Erro ao buscar unidades de medida:', error);
+      toast.error('Erro ao carregar unidades de medida');
+    }
+  };
+
+  // Função para lidar com a mudança do select
+
+
+  // Carregar as unidades de medida ao montar o componente
+  useEffect(() => {
+    fetchUnidadesMedidaUnidade();
+  }, []);
+
+
+  /**CONFIGURACAO DO SELECT UNIDADES */
+
+  const [fornecedores, setFornecedores] = useState([]);
+
+
+  // Função para buscar os fornecedores
+  const fetchFornecedores = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/distribuidores/');
+      console.log('Fornecedores:', response.data);  // Verifique os dados no console
+      setFornecedores(response.data);  // Atualiza o estado com os dados recebidos
+    } catch (error) {
+      console.error('Erro ao buscar fornecedores:', error);
+      toast.error('Erro ao carregar fornecedores');
+    }
+  };
+
+  // Função para lidar com a mudança do select
+
+  // Carregar os fornecedores ao montar o componente
+  useEffect(() => {
+    fetchFornecedores();
+  }, []);
 
 
   return (
@@ -285,19 +467,21 @@ function FormularioProduto() {
                     onChange={handleChange}
                   >
                     <option value="">--Selecione o nome da fabricação--</option>
-                    {fabricante.map((fabricante) => (
+                    {fabricantes.map((fabricante) => (
                       <option key={fabricante.id} value={fabricante.id}>
                         {fabricante.nome}
                       </option>
                     ))}
                   </Form.Control>
-                  <Button
-                    onClick={handleShowFabricanteModalNome}
-                    className="btn btn-primary ms-3 links-acessos"
-                  >
-                    Adicionar/remover
-                  </Button>
                 </div>
+
+                <Button
+                  onClick={handleOpenFabricanteModal}
+                  className="btn btn-primary ms-3 links-acessos d-flex px-4"
+                >
+                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+                </Button>
+
               </div>
             </Form.Group>
           </Col>
@@ -323,12 +507,17 @@ function FormularioProduto() {
 
         <Row>
           {/* Unidade de Medida */}
+          {/* Unidade de Medida */}
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="unidadeMedida">
-              <Form.Label className="fortificarLetter">Unidade de Medida <span className="text-danger">*</span></Form.Label>
+              <Form.Label className="fortificarLetter">
+                Unidade de Medida <span className="text-danger">*</span>
+              </Form.Label>
               <div className="d-flex">
                 <div className="input-group">
-                  <span className="input-group-text"><MdStraighten fontSize={22} color="#0070fa" /></span>
+                  <span className="input-group-text">
+                    <MdStraighten fontSize={22} color="#0070fa" />
+                  </span>
                   <Form.Control
                     as="select"
                     name="unidadeMedida"
@@ -336,31 +525,69 @@ function FormularioProduto() {
                     onChange={handleChange}
                   >
                     <option value="">- Selecionar Unidade -</option>
-                    {unidades.map((unidade) => (
-                      <option key={unidade.id} value={unidade.nome}>{unidade.nome}</option>
-                    ))}
+                    {unidades.length > 0 ? (
+                      unidades.map((unidade) => (
+                        <option key={unidade.id} value={unidade.id}>
+                          {unidade.unidade}
+                        </option>
+                      ))
+                    ) : (
+                      <option>Carregando...</option>  // Exibe uma opção enquanto os dados não são carregados
+                    )}
                   </Form.Control>
                 </div>
-                <button onClick={handleShowUnidadeModal} className="btn btn-primary ms-3 links-acessos">Adicionar/remover</button>
+                <button
+                  onClick={handleOpenUnidadeMedidaModalUnidade}
+                  className="btn btn-primary ms-3 links-acessos d-flex px-4"
+                >
+                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+                </button>
               </div>
             </Form.Group>
           </Col>
 
-          {/* Fornecedor */}
+          {/* Selecione o fornecedor */}
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="fornecedor">
-              <Form.Label className="fortificarLetter">Fornecedor <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdStore fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  as="select"
-                  name="fornecedor"
-                  value={produto.fornecedor}
-                  onChange={handleChange}
-                >
-                  <option value="">- Selecione Fornecedor -</option>
-                  <option value="56">Gondoafrica</option>
-                </Form.Control>
+              <Form.Label className="fortificarLetter">
+                Fornecedor <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="d-flex">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <MdBusiness fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    as="select"
+                    name="fornecedor"
+                    value={produto.fornecedor}
+                    onChange={handleChange}
+                  >
+                    <option value="">- Selecionar Fornecedor -</option>
+                    {fornecedores.length > 0 ? (
+                      fornecedores.map((fornecedor) => (
+                        <option key={fornecedor.id} value={fornecedor.id}>
+                          {`${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome} - ${fornecedor.nome_empresa}`}
+                        </option>
+                      ))
+                    ) : (
+                      <option>Carregando...</option>  // Exibe uma opção enquanto os dados não são carregados
+                    )}
+                  </Form.Control>
+                </div>
+                <Button className="btn btn-primary ms-3 links-acessos" onClick={handleShowFornecedorModal}>+</Button>
+
+                <Modal show={showFornecedorModal} scrollable size="xl" onHide={handleCloseFornecedorModal}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Adicionar Fornecedor Agora</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <AddFornecedor />
+                  </Modal.Body>
+                  <Modal.Footer className="p-0">
+                    <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+                  </Modal.Footer>
+                </Modal>
               </div>
             </Form.Group>
           </Col>
@@ -368,7 +595,7 @@ function FormularioProduto() {
 
         {/* Cor */}
         <Row>
-        
+
 
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="garantia">
@@ -409,7 +636,7 @@ function FormularioProduto() {
           </Col>
         </Row>
 
-     
+
 
         {/* Notas */}
 
@@ -605,10 +832,9 @@ function FormularioProduto() {
 
       {/* Modal para adicionar nova unidade */}
       {/* Modal para adicionar/remover fabricante */}
-      <Modal
-        show={showFabricanteModal}
-        onHide={handleCloseFabricanteModalNome}
-      >
+
+      {/* Modal Principal */}
+      <Modal show={showFabricanteModal} size="lg" scrollable onHide={handleCloseFabricanteModal}>
         <Modal.Header closeButton>
           <Modal.Title>Adicionar Nome do Fabricante</Modal.Title>
         </Modal.Header>
@@ -619,28 +845,36 @@ function FormularioProduto() {
                 <Form.Control
                   type="text"
                   value={novoFabricante}
-                  onChange={(e) => setNovaFabricante(e.target.value)}
+                  onChange={(e) => setNovoFabricante(e.target.value)}
                   placeholder="Nome do Fabricante"
                   maxLength="30"
                 />
               </Form.Group>
-              <Button className="h-25 ms-2" onClick={handleAddfabricante}>
-                Enviar
+              <Button className="h-25 ms-2 links-acessos" onClick={handleAddFabricante}>
+                Adicionar
               </Button>
             </div>
           </Form>
 
-          <table className="table unitproductname mt-3">
+          <ToastContainer position="top-center" />
+
+          <table className="table unitproductname mt-3 table-striped">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th className="text-end">Ações</th>
+              </tr>
+            </thead>
             <tbody>
-              {fabricante.map((fabricante) => (
+              {fabricantes.map((fabricante) => (
                 <tr key={fabricante.id}>
-                  <td>{fabricante.nome}</td>
-                  <td>
+                  <td className="pt-3">{fabricante.nome}</td>
+                  <td className="text-end">
                     <Button
                       variant="danger"
-                      onClick={() => handleRemoveFabricante(fabricante.id)}
+                      onClick={() => handleOpenConfirmDeleteModal(fabricante.id)}
                     >
-                      <MdDeleteForever fontSize={26} />
+                      <MdDeleteForever fontSize={22} />
                     </Button>
                   </td>
                 </tr>
@@ -648,10 +882,121 @@ function FormularioProduto() {
             </tbody>
           </table>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+
+          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+
+        </Modal.Footer>
       </Modal>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Modal
+        show={showConfirmDeleteModal}
+        onHide={handleCloseConfirmDeleteModal}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Essa ação não pode ser desfeita.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseConfirmDeleteModal}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleRemoveFabricante}>
+            Excluir
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/**MODAL UNIDADES */}
+
+
+      {/* Modal Principal */}
+      <Modal show={showUnidadeMedidaModalUnidade} size="lg" scrollable onHide={handleCloseUnidadeMedidaModalUnidade}>
+        <Modal.Header closeButton>
+          <Modal.Title>Adicionar Unidade de Medida</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <div className="d-flex">
+              <Form.Group className="mb-3 w-100">
+                <Form.Control
+                  type="text"
+                  value={novaUnidadeMedidaUnidade}
+                  onChange={(e) => setNovaUnidadeMedidaUnidade(e.target.value)}
+                  placeholder="Nome da Unidade de Medida"
+                  maxLength="30"
+                />
+              </Form.Group>
+              <Button className="h-25 ms-2 links-acessos" onClick={handleAddUnidadeMedidaUnidade}>
+                Adicionar
+              </Button>
+            </div>
+          </Form>
+
+          <ToastContainer position="top-center" />
+
+          <table className="table unitproductname mt-3 table-striped">
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th className="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unidades.map((unidade) => (
+                <tr key={unidade.id}>
+                  <td className="pt-3">{unidade.unidade}</td>
+                  <td className="text-end">
+                    <Button
+                      variant="danger"
+                      onClick={() => handleOpenConfirmDeleteModalUnidade(unidade.id)}
+                    >
+                      <MdDeleteForever fontSize={22} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Modal.Body>
+        <Modal.Footer className="p-0">
+          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Confirmação de Exclusão */}
+      <Modal
+        show={showConfirmDeleteModalUnidade}
+        onHide={handleCloseConfirmDeleteModalUnidade}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
+
+        </Modal.Header>
+        <Modal.Body>
+          <p>Essa ação não pode ser desfeita.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseConfirmDeleteModalUnidade}>
+            Cancelar
+          </Button>
+          <Button variant="danger" onClick={handleRemoveUnidadeMedidaUnidade}>
+            Excluir
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </>
   );
 }
+
 
 
 
@@ -669,7 +1014,7 @@ export default function AddProdutos() {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="  Adicionar Produtos" direccao="/AddProdutos" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/produtosPage" />
+            <TopoAdmin entrada="  Adicionar Produtos" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/produtosPage" />
 
             <div className="vh-100 alturaPereita">
               <FormularioProduto />

@@ -124,6 +124,7 @@ export default function CadastrarCliente() {
         return;
       }
 
+      // eslint-disable-next-line no-unused-vars
       const data = await response.json();
       toast.success(`Cadastro realizado com sucesso!`);
 
@@ -198,21 +199,7 @@ export default function CadastrarCliente() {
           </div>
         </Form.Group>
 
-        {/* Data de Nascimento 
-        <Form.Group className='col-12 col-md-12 col-lg-6 my-1' controlId="formDataNascimento">
-          <Form.Label className="fw-bold">Data de Nascimento</Form.Label>
-          <div className="input-group">
-            <span className="input-group-text"><IoCalendar /></span>
-            <Form.Control 
-              type="date" 
-              name="dataNascimento" 
-              value={formValues.dataNascimento} 
-              onChange={handleInputChange} 
-              isInvalid={!!errors.dataNascimento} 
-            />
-          </div>
-          <Form.Control.Feedback type="invalid">{errors.dataNascimento}</Form.Control.Feedback>
-        </Form.Group>*/}
+     
 
         {/* Endereço */}
         <Form.Group className='col-12 col-md-12 col-lg-6 my-1' controlId="formEndereco">

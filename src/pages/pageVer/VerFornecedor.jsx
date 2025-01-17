@@ -61,7 +61,7 @@ export function VerFornecedor() {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-">
             <div className="d-flex">
                 <div className="flexAuto w-100">
                     <div className="vh-100 alturaPereita">

@@ -17,6 +17,8 @@ import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
+import logoMarca from "../../assets/lgo.png";
+
 // Estilos customizados para a tabela
 const customStyles = {
   headCells: {
@@ -229,7 +231,8 @@ export function ListarRendas() {
 
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes da Renda</Modal.Title>
+            <Modal.Title className="d-flex justify-content-between w-100"><h4 className="mt-3">Detalhes da Renda</h4> <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
+                    </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedRenda && (

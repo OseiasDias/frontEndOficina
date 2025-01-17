@@ -17,6 +17,7 @@ import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 import { ImWhatsapp } from 'react-icons/im';
 import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
+import logoMarca from "../../assets/lgo.png";
 
 
 // Estilos customizados para a tabela
@@ -248,7 +249,10 @@ export function ListarTaxas() {
       {/* Modal de Visualização da Taxa */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes da Taxa</Modal.Title>
+           <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes da Taxa</h4>
+                      <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60}/>
+                    </Modal.Title>
+        
         </Modal.Header>
         <Modal.Body>
           {selectedCompra && (
@@ -385,6 +389,10 @@ export function ListarTaxas() {
             </Row>
           </Form>
         </Modal.Body>
+        <Modal.Footer className='p-0'>
+            <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
     </>
   );

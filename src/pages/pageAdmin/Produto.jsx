@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import logoMarca from "../../assets/lgo.png";
+
 import DataTable from 'react-data-table-component';
 import { Dropdown } from 'react-bootstrap';
 import { MdDelete, MdEditNote } from 'react-icons/md';
@@ -198,7 +200,9 @@ const generatePDF = () => {
       {/* Modal de Visualização de Produto */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes do Produto</Modal.Title>
+          <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes do Produto</h4>
+            <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60}/>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedProduto && (

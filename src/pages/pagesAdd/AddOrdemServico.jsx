@@ -12,7 +12,7 @@ import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
-
+import logoMarca from "../../assets/lgo.png";
 
 
 
@@ -466,6 +466,8 @@ const ServiceAddForm = () => {
                 <Col xs={12}>
 
                   <hr />
+
+                  
                   {notes.map((note, index) => (
                     <Row key={note.id} className="align-items-center mb-2">
                       {/* Nota Texto */}
@@ -568,10 +570,9 @@ const ServiceAddForm = () => {
                 </div>
               )}
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseModal}>
-                Fechar
-              </Button>
+            <Modal.Footer className="p-0">
+                          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+              
 
             </Modal.Footer>
           </Modal>
@@ -627,6 +628,10 @@ const ServiceAddForm = () => {
                 ))}
               </ul>
             </Modal.Body>
+            <Modal.Footer className="p-0">
+              <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+
+            </Modal.Footer>
           </Modal>
         </div>
       </div>

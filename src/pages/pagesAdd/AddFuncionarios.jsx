@@ -10,8 +10,8 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 //import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, FaLock, FaRegEye, FaRegEyeSlash, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, FaTag, FaRegCalendarAlt } from "react-icons/fa";
-import {  InputGroup } from 'react-bootstrap';
-import {  useEffect } from 'react';
+import { InputGroup } from 'react-bootstrap';
+import { useEffect } from 'react';
 
 
 const FormularioFuncionario = () => {
@@ -27,7 +27,7 @@ const FormularioFuncionario = () => {
     dataAdmissao: '2024-11-25',
     cargo: '',
     dataSaida: '',
-   // senha: '',
+    // senha: '',
     dataNascimento: '',
     nomeExibicao: '',
     telefoneFixo: '',
@@ -42,7 +42,7 @@ const FormularioFuncionario = () => {
     const { name, value } = e.target;
     setDadosFormulario({ ...dadosFormulario, [name]: value });
   };
-  
+
   const handleMudancaArquivo = (e) => {
     setDadosFormulario({ ...dadosFormulario, imagem: e.target.files[0] });
   };
@@ -128,14 +128,14 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="text"
-              name="nome"
-              value={dadosFormulario.nome}
-              placeholder="Introduza o primeiro nome"
-              maxLength="50"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="text"
+                name="nome"
+                value={dadosFormulario.nome}
+                placeholder="Introduza o primeiro nome"
+                maxLength="50"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -145,14 +145,14 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="text"
-              name="sobrenome"
-              value={dadosFormulario.sobrenome}
-              placeholder="Insira o último nome"
-              maxLength="50"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="text"
+                name="sobrenome"
+                value={dadosFormulario.sobrenome}
+                placeholder="Insira o último nome"
+                maxLength="50"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -165,12 +165,12 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="date"
-              name="dataNascimento"
-              value={dadosFormulario.dataNascimento}
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="date"
+                name="dataNascimento"
+                value={dadosFormulario.dataNascimento}
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -180,21 +180,21 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaEnvelope fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="email"
-              name="email"
-              value={dadosFormulario.email}
-              placeholder="Digite o e-mail"
-              maxLength="50"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="email"
+                name="email"
+                value={dadosFormulario.email}
+                placeholder="Digite o e-mail"
+                maxLength="50"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
       </Row>
 
       <Row>
-      <Col>
+        <Col>
           <Form.Group controlId="uploadArquivo">
             <Form.Label>Foto</Form.Label>
             <div className="input-group">
@@ -214,32 +214,32 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaVenusMars fontSize={20} color="#0070fa" /></span>
 
-            <div className="d-flex ms-3">
-              <Form.Check
-                type="radio"
-                label="Masculino"
-                name="genero"
-                value="0"
-                checked={dadosFormulario.genero === '0'}
-                onChange={handleAlteracao}
-              />
-              <Form.Check
-                className="ms-3"
-                type="radio"
-                label="Feminino"
-                name="genero"
-                value="1"
-                checked={dadosFormulario.genero === '1'}
-                onChange={handleAlteracao}
-              />
-            </div>
+              <div className="d-flex ms-3">
+                <Form.Check
+                  type="radio"
+                  label="Masculino"
+                  name="genero"
+                  value="0"
+                  checked={dadosFormulario.genero === '0'}
+                  onChange={handleAlteracao}
+                />
+                <Form.Check
+                  className="ms-3"
+                  type="radio"
+                  label="Feminino"
+                  name="genero"
+                  value="1"
+                  checked={dadosFormulario.genero === '1'}
+                  onChange={handleAlteracao}
+                />
+              </div>
             </div>
           </Form.Group>
         </Col>
       </Row>
 
       <Row>
-      <Col md={6}>
+        <Col md={6}>
           <Form.Group controlId="senha">
             <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
@@ -252,7 +252,7 @@ const FormularioFuncionario = () => {
                 onChange={handleMudanca}
                 disabled
               />
-              
+
               <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
               </Button>
@@ -274,14 +274,14 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaMobileAlt fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="text"
-              name="celular"
-              value={dadosFormulario.celular}
-              placeholder="Digite o número de celular"
-              maxLength="16"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="text"
+                name="celular"
+                value={dadosFormulario.celular}
+                placeholder="Digite o número de celular"
+                maxLength="16"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -291,14 +291,14 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaPhone fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="text"
-              name="telefoneFixo"
-              value={dadosFormulario.telefoneFixo}
-              placeholder="Digite o telefone fixo"
-              maxLength="16"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="text"
+                name="telefoneFixo"
+                value={dadosFormulario.telefoneFixo}
+                placeholder="Digite o telefone fixo"
+                maxLength="16"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -317,43 +317,43 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaBuilding fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              as="select"
-              name="filial"
-              value={dadosFormulario.filial}
-              onChange={handleAlteracao}
-            >
-              <option value="1">Filial Principal</option>
-            </Form.Control>
+              <Form.Control
+                as="select"
+                name="filial"
+                value={dadosFormulario.filial}
+                onChange={handleAlteracao}
+              >
+                <option value="1">Filial Principal</option>
+              </Form.Control>
             </div>
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group controlId="cargo">
             <Form.Label>Cargo <span className="text-danger">*</span></Form.Label>
-            
-            <InputGroup>
-            <div className="input-group">
-              <span className="input-group-text"><FaSuitcase fontSize={20} color="#0070fa" /></span>
 
-              <Form.Control
-                as="select"
-                name="cargo"
-                value={dadosFormulario.cargo}
-                onChange={handleAlteracao}
-               
-              >
-                <option value="">Selecione o cargo</option>
-                {cargos.map((cargo, index) => (
-                  <option key={index} value={cargo}>
-                    {cargo}
-                  </option>
-                ))}
-              </Form.Control>
-            
-              <Button variant="outline-secondary" onClick={() => setMostrarModal(true)}>
-                Adicionar
-              </Button>
+            <InputGroup>
+              <div className="input-group">
+                <span className="input-group-text"><FaSuitcase fontSize={20} color="#0070fa" /></span>
+
+                <Form.Control
+                  as="select"
+                  name="cargo"
+                  value={dadosFormulario.cargo}
+                  onChange={handleAlteracao}
+
+                >
+                  <option value="">Selecione o cargo</option>
+                  {cargos.map((cargo, index) => (
+                    <option key={index} value={cargo}>
+                      {cargo}
+                    </option>
+                  ))}
+                </Form.Control>
+
+                <Button variant="outline-secondary" onClick={() => setMostrarModal(true)}>
+                  Adicionar
+                </Button>
               </div>
             </InputGroup>
           </Form.Group>
@@ -361,20 +361,20 @@ const FormularioFuncionario = () => {
       </Row>
 
       <Row className="mb-3">
-      <Col md={6}>
+        <Col md={6}>
           <Form.Group controlId="nomeExibicao">
             <Form.Label>Nome Exibido</Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaTag fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="text"
-              name="nomeExibicao"
-              value={dadosFormulario.nomeExibicao}
-              placeholder="Nome que será exibido"
-              maxLength="25"
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="text"
+                name="nomeExibicao"
+                value={dadosFormulario.nomeExibicao}
+                placeholder="Nome que será exibido"
+                maxLength="25"
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
@@ -384,18 +384,18 @@ const FormularioFuncionario = () => {
             <div className="input-group">
               <span className="input-group-text"><FaRegCalendarAlt fontSize={20} color="#0070fa" /></span>
 
-            <Form.Control
-              type="date"
-              name="dataAdmissao"
-              value={dadosFormulario.dataAdmissao}
-              onChange={handleAlteracao}
-            />
+              <Form.Control
+                type="date"
+                name="dataAdmissao"
+                value={dadosFormulario.dataAdmissao}
+                onChange={handleAlteracao}
+              />
             </div>
           </Form.Group>
         </Col>
       </Row>
 
-      
+
       {/* Endereço */}
       <div className="col-md-12 mt-3">
         <h6>ENDEREÇO</h6>
@@ -414,250 +414,250 @@ const FormularioFuncionario = () => {
                 value={dadosFormulario.pais}
                 onChange={handleAlteracao}
               >
-                  <option value="">Selecione o país</option>
-                <option value="5">Andorra</option>
-                <option value="8">Antártica</option>
-                <option value="9">Antígua e Barbuda</option>
-                <option value="10">Argentina</option>
-                <option value="11">Armênia</option>
-                <option value="12">Aruba</option>
-                <option value="13">Austrália</option>
-                <option value="14">Áustria</option>
-                <option value="15">Azerbaijão</option>
-                <option value="16">Bahamas</option>
-                <option value="17">Bahrein</option>
-                <option value="18">Bangladesh</option>
-                <option value="19">Barbados</option>
-                <option value="20">Bielorrússia</option>
-                <option value="21">Bélgica</option>
-                <option value="22">Belize</option>
-                <option value="23">Benin</option>
-                <option value="24">Bermudas</option>
-                <option value="25">Butão</option>
-                <option value="26">Bolívia</option>
-                <option value="27">Bósnia e Herzegovina</option>
-                <option value="28">Botsuana</option>
-                <option value="29">Ilha Bouvet</option>
-                <option value="30">Brasil</option>
-                <option value="31">Território Britânico do Oceano Índico</option>
-                <option value="32">Brunei</option>
-                <option value="33">Bulgária</option>
-                <option value="34">Burquina Faso</option>
-                <option value="35">Burundi</option>
-                <option value="36">Camboja</option>
-                <option value="37">Camarões</option>
-                <option value="38">Canadá</option>
-                <option value="39">Cabo Verde</option>
-                <option value="40">Ilhas Cayman</option>
-                <option value="41">República Centro-Africana</option>
-                <option value="42">Chade</option>
-                <option value="43">Chile</option>
-                <option value="44">China</option>
-                <option value="45">Ilha Christmas</option>
-                <option value="46">Ilhas Cocos (Keeling)</option>
-                <option value="47">Colômbia</option>
-                <option value="48">Comores</option>
-                <option value="49">Congo</option>
-                <option value="50">Congo (República Democrática)</option>
-                <option value="51">Ilhas Cook</option>
-                <option value="52">Costa Rica</option>
-                <option value="53">Costa do Marfim</option>
-                <option value="54">Croácia</option>
-                <option value="55">Cuba</option>
-                <option value="56">Chipre</option>
-                <option value="57">República Tcheca</option>
-                <option value="58">Dinamarca</option>
-                <option value="59">Djibuti</option>
-                <option value="60">Dominica</option>
-                <option value="61">República Dominicana</option>
-                <option value="62">Timor-Leste</option>
-                <option value="63">Equador</option>
-                <option value="64">Egito</option>
-                <option value="65">El Salvador</option>
-                <option value="66">Guiné Equatorial</option>
-                <option value="67">Eritreia</option>
-                <option value="68">Estônia</option>
-                <option value="69">Etiópia</option>
-                <option value="70">Territórios Externos da Austrália</option>
-                <option value="71">Ilhas Falkland</option>
-                <option value="72">Ilhas Faroé</option>
-                <option value="73">Ilhas Fiji</option>
-                <option value="74">Finlândia</option>
-                <option value="75">França</option>
-                <option value="76">Guiana Francesa</option>
-                <option value="77">Polinésia Francesa</option>
-                <option value="78">Territórios Franceses do Sul</option>
-                <option value="79">Gabão</option>
-                <option value="80">Gâmbia</option>
-                <option value="81">Geórgia</option>
-                <option value="82">Alemanha</option>
-                <option value="83">Gana</option>
-                <option value="84">Gibraltar</option>
-                <option value="85">Grécia</option>
-                <option value="86">Groenlândia</option>
-                <option value="87">Granada</option>
-                <option value="88">Guadalupe</option>
-                <option value="89">Guam</option>
-                <option value="90">Guatemala</option>
-                <option value="91">Guernsey e Alderney</option>
-                <option value="92">Guiné</option>
-                <option value="93">Guiné-Bissau</option>
-                <option value="94">Guiana</option>
-                <option value="95">Haiti</option>
-                <option value="96">Ilhas Heard e McDonald</option>
-                <option value="97">Honduras</option>
-                <option value="98">Hong Kong</option>
-                <option value="99">Hungria</option>
-                <option value="100">Islândia</option>
-                <option value="101">Índia</option>
-                <option value="102">Indonésia</option>
-                <option value="103">Irã</option>
-                <option value="104">Iraque</option>
-                <option value="105">Irlanda</option>
-                <option value="106">Israel</option>
-                <option value="107">Itália</option>
-                <option value="108">Jamaica</option>
-                <option value="109">Japão</option>
-                <option value="110">Jersey</option>
-                <option value="111">Jordânia</option>
-                <option value="112">Cazaquistão</option>
-                <option value="113">Quênia</option>
-                <option value="114">Kiribati</option>
-                <option value="115">Coreia do Norte</option>
-                <option value="116">Coreia do Sul</option>
-                <option value="117">Kuwait</option>
-                <option value="118">Quirguistão</option>
-                <option value="119">Laos</option>
-                <option value="120">Letônia</option>
-                <option value="121">Líbano</option>
-                <option value="122">Lesoto</option>
-                <option value="123">Libéria</option>
-                <option value="124">Líbia</option>
-                <option value="125">Liechtenstein</option>
-                <option value="126">Lituânia</option>
-                <option value="127">Luxemburgo</option>
-                <option value="128">Macau</option>
-                <option value="129">Macedônia</option>
-                <option value="130">Madagascar</option>
-                <option value="131">Malawi</option>
-                <option value="132">Malásia</option>
-                <option value="133">Maldivas</option>
-                <option value="134">Mali</option>
-                <option value="135">Malta</option>
-                <option value="136">Ilha de Man</option>
-                <option value="137">Ilhas Marshall</option>
-                <option value="138">Martinica</option>
-                <option value="139">Mauritânia</option>
-                <option value="140">Maurício</option>
-                <option value="141">Mayotte</option>
-                <option value="142">México</option>
-                <option value="143">Micronésia</option>
-                <option value="144">Moldávia</option>
-                <option value="145">Mônaco</option>
-                <option value="146">Mongólia</option>
-                <option value="147">Montserrat</option>
-                <option value="148">Marrocos</option>
-                <option value="149">Moçambique</option>
-                <option value="150">Myanmar</option>
-                <option value="151">Namíbia</option>
-                <option value="152">Nauru</option>
-                <option value="153">Nepal</option>
-                <option value="154">Antilhas Neerlandesas</option>
-                <option value="155">Países Baixos</option>
-                <option value="156">Nova Caledônia</option>
-                <option value="157">Nova Zelândia</option>
-                <option value="158">Nicarágua</option>
-                <option value="159">Níger</option>
-                <option value="160">Nigéria</option>
-                <option value="161">Niue</option>
-                <option value="162">Ilha Norfolk</option>
-                <option value="163">Ilhas Mariana do Norte</option>
-                <option value="164">Noruega</option>
-                <option value="165">Omã</option>
-                <option value="166">Paquistão</option>
-                <option value="167">Palau</option>
-                <option value="168">Território Palestino Ocupado</option>
-                <option value="169">Panamá</option>
-                <option value="170">Papua-Nova Guiné</option>
-                <option value="171">Paraguai</option>
-                <option value="172">Peru</option>
-                <option value="173">Filipinas</option>
-                <option value="174">Ilha Pitcairn</option>
-                <option value="175">Polônia</option>
-                <option value="176">Portugal</option>
-                <option value="177">Porto Rico</option>
-                <option value="178">Catar</option>
-                <option value="179">Reunião</option>
-                <option value="180">Romênia</option>
-                <option value="181">Rússia</option>
-                <option value="182">Ruanda</option>
-                <option value="183">Santa Helena</option>
-                <option value="184">São Cristóvão e Nevis</option>
-                <option value="185">Santa Lúcia</option>
-                <option value="186">São Pedro e Miquelon</option>
-                <option value="187">São Vicente e Granadinas</option>
-                <option value="188">Samoa</option>
-                <option value="189">San Marino</option>
-                <option value="190">São Tomé e Príncipe</option>
-                <option value="191">Arábia Saudita</option>
-                <option value="192">Senegal</option>
-                <option value="193">Sérvia</option>
-                <option value="194">Seychelles</option>
-                <option value="195">Serra Leoa</option>
-                <option value="196">Cingapura</option>
-                <option value="197">Eslováquia</option>
-                <option value="198">Eslovênia</option>
-                <option value="199">Territórios Menores do Reino Unido</option>
-                <option value="200">Ilhas Solomon</option>
-                <option value="201">Somália</option>
-                <option value="202">África do Sul</option>
-                <option value="203">Geórgia do Sul</option>
-                <option value="204">Sudão do Sul</option>
-                <option value="205">Espanha</option>
-                <option value="206">Sri Lanka</option>
-                <option value="207">Sudão</option>
-                <option value="208">Suriname</option>
-                <option value="209">Svalbard e Jan Mayen</option>
-                <option value="210">Eswatini</option>
-                <option value="211">Suécia</option>
-                <option value="212">Suíça</option>
-                <option value="213">Síria</option>
-                <option value="214">Taiwan</option>
-                <option value="215">Tajiquistão</option>
-                <option value="216">Tanzânia</option>
-                <option value="217">Tailândia</option>
-                <option value="218">Togo</option>
-                <option value="219">Tokelau</option>
-                <option value="220">Tonga</option>
-                <option value="221">Trinidad e Tobago</option>
-                <option value="222">Tunísia</option>
-                <option value="223">Turquia</option>
-                <option value="224">Turcomenistão</option>
-                <option value="225">Ilhas Turks e Caicos</option>
-                <option value="226">Tuvalu</option>
-                <option value="227">Uganda</option>
-                <option value="228">Ucrânia</option>
-                <option value="229">Emirados Árabes Unidos</option>
-                <option value="230">Reino Unido</option>
-                <option value="231">Estados Unidos</option>
-                <option value="232">Ilhas Menores dos EUA</option>
-                <option value="233">Uruguai</option>
-                <option value="234">Uzbequistão</option>
-                <option value="235">Vanuatu</option>
-                <option value="236">Cidade do Vaticano</option>
-                <option value="237">Venezuela</option>
-                <option value="238">Vietnã</option>
-                <option value="239">Ilhas Virgens (Britânicas)</option>
-                <option value="240">Ilhas Virgens (EUA)</option>
-                <option value="241">Wallis e Futuna</option>
-                <option value="242">Saara Ocidental</option>
-                <option value="243">Iémen</option>
-                <option value="244">Iugoslávia</option>
-                <option value="245">Zâmbia</option>
-                <option value="246">Zimbábue</option>
-
-                {/* Outras opções de países */}
+                <option value="">Selecione o país</option>
+                <option value="Andorra">Andorra</option>
+                <option value="Angola">Angola</option>
+                <option value="Antártica">Antártica</option>
+                <option value="Antígua e Barbuda">Antígua e Barbuda</option>
+                <option value="Argentina">Argentina</option>
+                <option value="Armênia">Armênia</option>
+                <option value="Aruba">Aruba</option>
+                <option value="Austrália">Austrália</option>
+                <option value="Áustria">Áustria</option>
+                <option value="Azerbaijão">Azerbaijão</option>
+                <option value="Bahamas">Bahamas</option>
+                <option value="Bahrein">Bahrein</option>
+                <option value="Bangladesh">Bangladesh</option>
+                <option value="Barbados">Barbados</option>
+                <option value="Bielorrússia">Bielorrússia</option>
+                <option value="Bélgica">Bélgica</option>
+                <option value="Belize">Belize</option>
+                <option value="Benin">Benin</option>
+                <option value="Bermudas">Bermudas</option>
+                <option value="Butão">Butão</option>
+                <option value="Bolívia">Bolívia</option>
+                <option value="Bósnia e Herzegovina">Bósnia e Herzegovina</option>
+                <option value="Botsuana">Botsuana</option>
+                <option value="Ilha Bouvet">Ilha Bouvet</option>
+                <option value="Brasil">Brasil</option>
+                <option value="Território Britânico do Oceano Índico">Território Britânico do Oceano Índico</option>
+                <option value="Brunei">Brunei</option>
+                <option value="Bulgária">Bulgária</option>
+                <option value="Burquina Faso">Burquina Faso</option>
+                <option value="Burundi">Burundi</option>
+                <option value="Camboja">Camboja</option>
+                <option value="Camarões">Camarões</option>
+                <option value="Canadá">Canadá</option>
+                <option value="Cabo Verde">Cabo Verde</option>
+                <option value="Ilhas Cayman">Ilhas Cayman</option>
+                <option value="República Centro-Africana">República Centro-Africana</option>
+                <option value="Chade">Chade</option>
+                <option value="Chile">Chile</option>
+                <option value="China">China</option>
+                <option value="Ilha Christmas">Ilha Christmas</option>
+                <option value="Ilhas Cocos (Keeling)">Ilhas Cocos (Keeling)</option>
+                <option value="Colômbia">Colômbia</option>
+                <option value="Comores">Comores</option>
+                <option value="Congo">Congo</option>
+                <option value="Congo (República Democrática)">Congo (República Democrática)</option>
+                <option value="Ilhas Cook">Ilhas Cook</option>
+                <option value="Costa Rica">Costa Rica</option>
+                <option value="Costa do Marfim">Costa do Marfim</option>
+                <option value="Croácia">Croácia</option>
+                <option value="Cuba">Cuba</option>
+                <option value="Chipre">Chipre</option>
+                <option value="República Tcheca">República Tcheca</option>
+                <option value="Dinamarca">Dinamarca</option>
+                <option value="Djibuti">Djibuti</option>
+                <option value="Dominica">Dominica</option>
+                <option value="República Dominicana">República Dominicana</option>
+                <option value="Timor-Leste">Timor-Leste</option>
+                <option value="Equador">Equador</option>
+                <option value="Egito">Egito</option>
+                <option value="El Salvador">El Salvador</option>
+                <option value="Guiné Equatorial">Guiné Equatorial</option>
+                <option value="Eritreia">Eritreia</option>
+                <option value="Estônia">Estônia</option>
+                <option value="Etiópia">Etiópia</option>
+                <option value="Territórios Externos da Austrália">Territórios Externos da Austrália</option>
+                <option value="Ilhas Falkland">Ilhas Falkland</option>
+                <option value="Ilhas Faroé">Ilhas Faroé</option>
+                <option value="Ilhas Fiji">Ilhas Fiji</option>
+                <option value="Finlândia">Finlândia</option>
+                <option value="França">França</option>
+                <option value="Guiana Francesa">Guiana Francesa</option>
+                <option value="Polinésia Francesa">Polinésia Francesa</option>
+                <option value="Territórios Franceses do Sul">Territórios Franceses do Sul</option>
+                <option value="Gabão">Gabão</option>
+                <option value="Gâmbia">Gâmbia</option>
+                <option value="Geórgia">Geórgia</option>
+                <option value="Alemanha">Alemanha</option>
+                <option value="Gana">Gana</option>
+                <option value="Gibraltar">Gibraltar</option>
+                <option value="Grécia">Grécia</option>
+                <option value="Groenlândia">Groenlândia</option>
+                <option value="Granada">Granada</option>
+                <option value="Guadalupe">Guadalupe</option>
+                <option value="Guam">Guam</option>
+                <option value="Guatemala">Guatemala</option>
+                <option value="Guernsey e Alderney">Guernsey e Alderney</option>
+                <option value="Guiné">Guiné</option>
+                <option value="Guiné-Bissau">Guiné-Bissau</option>
+                <option value="Guiana">Guiana</option>
+                <option value="Haiti">Haiti</option>
+                <option value="Ilhas Heard e McDonald">Ilhas Heard e McDonald</option>
+                <option value="Honduras">Honduras</option>
+                <option value="Hong Kong">Hong Kong</option>
+                <option value="Hungria">Hungria</option>
+                <option value="Islândia">Islândia</option>
+                <option value="Índia">Índia</option>
+                <option value="Indonésia">Indonésia</option>
+                <option value="Irã">Irã</option>
+                <option value="Iraque">Iraque</option>
+                <option value="Irlanda">Irlanda</option>
+                <option value="Israel">Israel</option>
+                <option value="Itália">Itália</option>
+                <option value="Jamaica">Jamaica</option>
+                <option value="Japão">Japão</option>
+                <option value="Jersey">Jersey</option>
+                <option value="Jordânia">Jordânia</option>
+                <option value="Cazaquistão">Cazaquistão</option>
+                <option value="Quênia">Quênia</option>
+                <option value="Kiribati">Kiribati</option>
+                <option value="Coreia do Norte">Coreia do Norte</option>
+                <option value="Coreia do Sul">Coreia do Sul</option>
+                <option value="Kuwait">Kuwait</option>
+                <option value="Quirguistão">Quirguistão</option>
+                <option value="Laos">Laos</option>
+                <option value="Letônia">Letônia</option>
+                <option value="Líbano">Líbano</option>
+                <option value="Lesoto">Lesoto</option>
+                <option value="Libéria">Libéria</option>
+                <option value="Líbia">Líbia</option>
+                <option value="Liechtenstein">Liechtenstein</option>
+                <option value="Lituânia">Lituânia</option>
+                <option value="Luxemburgo">Luxemburgo</option>
+                <option value="Macau">Macau</option>
+                <option value="Macedônia">Macedônia</option>
+                <option value="Madagascar">Madagascar</option>
+                <option value="Malawi">Malawi</option>
+                <option value="Malásia">Malásia</option>
+                <option value="Maldivas">Maldivas</option>
+                <option value="Mali">Mali</option>
+                <option value="Malta">Malta</option>
+                <option value="Ilha de Man">Ilha de Man</option>
+                <option value="Ilhas Marshall">Ilhas Marshall</option>
+                <option value="Martinica">Martinica</option>
+                <option value="Mauritânia">Mauritânia</option>
+                <option value="Maurício">Maurício</option>
+                <option value="Mayotte">Mayotte</option>
+                <option value="México">México</option>
+                <option value="Micronésia">Micronésia</option>
+                <option value="Moldávia">Moldávia</option>
+                <option value="Mônaco">Mônaco</option>
+                <option value="Mongólia">Mongólia</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Marrocos">Marrocos</option>
+                <option value="Moçambique">Moçambique</option>
+                <option value="Myanmar">Myanmar</option>
+                <option value="Namíbia">Namíbia</option>
+                <option value="Nauru">Nauru</option>
+                <option value="Nepal">Nepal</option>
+                <option value="Antilhas Neerlandesas">Antilhas Neerlandesas</option>
+                <option value="Países Baixos">Países Baixos</option>
+                <option value="Nova Caledônia">Nova Caledônia</option>
+                <option value="Nova Zelândia">Nova Zelândia</option>
+                <option value="Nicarágua">Nicarágua</option>
+                <option value="Níger">Níger</option>
+                <option value="Nigéria">Nigéria</option>
+                <option value="Niue">Niue</option>
+                <option value="Ilha Norfolk">Ilha Norfolk</option>
+                <option value="Ilhas Mariana do Norte">Ilhas Mariana do Norte</option>
+                <option value="Noruega">Noruega</option>
+                <option value="Omã">Omã</option>
+                <option value="Paquistão">Paquistão</option>
+                <option value="Palau">Palau</option>
+                <option value="Território Palestino Ocupado">Território Palestino Ocupado</option>
+                <option value="Panamá">Panamá</option>
+                <option value="Papua-Nova Guiné">Papua-Nova Guiné</option>
+                <option value="Paraguai">Paraguai</option>
+                <option value="Peru">Peru</option>
+                <option value="Filipinas">Filipinas</option>
+                <option value="Ilha Pitcairn">Ilha Pitcairn</option>
+                <option value="Polônia">Polônia</option>
+                <option value="Portugal">Portugal</option>
+                <option value="Porto Rico">Porto Rico</option>
+                <option value="Catar">Catar</option>
+                <option value="Reunião">Reunião</option>
+                <option value="Romênia">Romênia</option>
+                <option value="Rússia">Rússia</option>
+                <option value="Ruanda">Ruanda</option>
+                <option value="Santa Helena">Santa Helena</option>
+                <option value="São Cristóvão e Nevis">São Cristóvão e Nevis</option>
+                <option value="Santa Lúcia">Santa Lúcia</option>
+                <option value="São Pedro e Miquelon">São Pedro e Miquelon</option>
+                <option value="São Vicente e Granadinas">São Vicente e Granadinas</option>
+                <option value="Samoa">Samoa</option>
+                <option value="San Marino">San Marino</option>
+                <option value="São Tomé e Príncipe">São Tomé e Príncipe</option>
+                <option value="Arábia Saudita">Arábia Saudita</option>
+                <option value="Senegal">Senegal</option>
+                <option value="Sérvia">Sérvia</option>
+                <option value="Seychelles">Seychelles</option>
+                <option value="Serra Leoa">Serra Leoa</option>
+                <option value="Cingapura">Cingapura</option>
+                <option value="Eslováquia">Eslováquia</option>
+                <option value="Eslovênia">Eslovênia</option>
+                <option value="Territórios Menores do Reino Unido">Territórios Menores do Reino Unido</option>
+                <option value="Ilhas Solomon">Ilhas Solomon</option>
+                <option value="Somália">Somália</option>
+                <option value="África do Sul">África do Sul</option>
+                <option value="Geórgia do Sul">Geórgia do Sul</option>
+                <option value="Sudão do Sul">Sudão do Sul</option>
+                <option value="Espanha">Espanha</option>
+                <option value="Sri Lanka">Sri Lanka</option>
+                <option value="Sudão">Sudão</option>
+                <option value="Suriname">Suriname</option>
+                <option value="Svalbard e Jan Mayen">Svalbard e Jan Mayen</option>
+                <option value="Eswatini">Eswatini</option>
+                <option value="Suécia">Suécia</option>
+                <option value="Suíça">Suíça</option>
+                <option value="Síria">Síria</option>
+                <option value="Taiwan">Taiwan</option>
+                <option value="Tajiquistão">Tajiquistão</option>
+                <option value="Tanzânia">Tanzânia</option>
+                <option value="Tailândia">Tailândia</option>
+                <option value="Togo">Togo</option>
+                <option value="Tokelau">Tokelau</option>
+                <option value="Tonga">Tonga</option>
+                <option value="Trinidad e Tobago">Trinidad e Tobago</option>
+                <option value="Tunísia">Tunísia</option>
+                <option value="Turquia">Turquia</option>
+                <option value="Turcomenistão">Turcomenistão</option>
+                <option value="Ilhas Turks e Caicos">Ilhas Turks e Caicos</option>
+                <option value="Tuvalu">Tuvalu</option>
+                <option value="Uganda">Uganda</option>
+                <option value="Ucrânia">Ucrânia</option>
+                <option value="Emirados Árabes Unidos">Emirados Árabes Unidos</option>
+                <option value="Reino Unido">Reino Unido</option>
+                <option value="Estados Unidos">Estados Unidos</option>
+                <option value="Ilhas Menores dos EUA">Ilhas Menores dos EUA</option>
+                <option value="Uruguai">Uruguai</option>
+                <option value="Uzbequistão">Uzbequistão</option>
+                <option value="Vanuatu">Vanuatu</option>
+                <option value="Cidade do Vaticano">Cidade do Vaticano</option>
+                <option value="Venezuela">Venezuela</option>
+                <option value="Vietnã">Vietnã</option>
+                <option value="Ilhas Virgens (Britânicas)">Ilhas Virgens (Britânicas)</option>
+                <option value="Ilhas Virgens (EUA)">Ilhas Virgens (EUA)</option>
+                <option value="Wallis e Futuna">Wallis e Futuna</option>
+                <option value="Saara Ocidental">Saara Ocidental</option>
+                <option value="Iémen">Iémen</option>
+                <option value="Iugoslávia">Iugoslávia</option>
+                <option value="Zâmbia">Zâmbia</option>
+                <option value="Zimbábue">Zimbábue</option>
               </Form.Control>
+
             </div>
           </Form.Group>
         </Col>

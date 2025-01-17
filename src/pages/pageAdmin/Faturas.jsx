@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 import imgErro from "../../assets/error.webp";
-// Estilos customizados para a tabela
+import logoMarca from "../../assets/lgo.png";
 import "../../css/StylesAdmin/homeAdministrador.css";
 import 'react-toastify/dist/ReactToastify.css';
 import imgN from "../../assets/not-found.png"; // Imagem para mostrar enquanto carrega
@@ -370,8 +370,8 @@ export function ListarFacturas() {
                   )}
                 </Modal.Body>
 
-                <Modal.Footer>
-                  <button className="btn btn-secondary" onClick={handleCloseModal}>Fechar</button>
+                <Modal.Footer className='p-0'>
+                                              <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
                 </Modal.Footer>
               </Modal>
             </div>

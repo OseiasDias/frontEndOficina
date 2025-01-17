@@ -14,6 +14,7 @@ import { RiAddLargeFill, RiArrowDownSLine } from "react-icons/ri";
 import { Modal, Button, Form } from "react-bootstrap";
 import { FaCar } from "react-icons/fa";
 import imgN from "../../assets/not-found.png";
+import logoMarca from "../../assets/lgo.png";
 
 import imgErro from "../../assets/error.webp";
 
@@ -257,6 +258,10 @@ export  function ListarMarcasVeiculos() {
             </div>
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
     </>
   );

@@ -10,10 +10,9 @@ import 'react-toastify/dist/ReactToastify.css'; // Importando o estilo do Toast
 import { FaCar } from "react-icons/fa";
 import axios from "axios";
 import { MdDelete, MdEditNote } from "react-icons/md";
-import { IoEye } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom'; // Hook do React Router para navegação
 import { RiAddLargeFill } from "react-icons/ri";
 import imgN from "../../assets/not-found.png";
+import logoMarca from "../../assets/lgo.png";
 
 import imgErro from "../../assets/error.webp";
 
@@ -40,12 +39,8 @@ export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para controlar a modal de exclusão
   const [selectedTipo, setSelectedTipo] = useState(null); // Estado para armazenar o tipo de veículo selecionado
 
-  const navigate = useNavigate(); // Hook do React Router para navegação
-
   // Função para abrir a modal de visualização (caso deseje adicionar uma visualização detalhada)
-  const handleView = (tipo) => {
-    navigate(`/verTipoVeiculo/${tipo.id}`);
-  };
+
 
   // Função para abrir a modal de confirmação de exclusão
   const handleDelete = (tipo) => {
@@ -80,10 +75,7 @@ export function TabelaVizualizarTiposVeiculos({setShowModal}) {
         <Dropdown className="btnDrop" drop="up">
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
           <Dropdown.Menu className="cimaAll">
-            <Dropdown.Item onClick={() => handleView(row)}>
-              <IoEye fontSize={20} />
-              &nbsp;&nbsp;Visualizar
-            </Dropdown.Item>
+         
             <Dropdown.Item onClick={() => handleDelete(row)}>
               <MdEditNote fontSize={23} />
               &nbsp;&nbsp;Editar
@@ -267,6 +259,10 @@ export default function ListarTiposVeiculos() {
             </Form.Group>
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+                                              <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
     </>
   );

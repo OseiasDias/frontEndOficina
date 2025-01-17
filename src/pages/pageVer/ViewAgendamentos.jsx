@@ -19,6 +19,8 @@ import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import Accordion from 'react-bootstrap/Accordion';
 import 'react-toastify/dist/ReactToastify.css';
+import logoMarca from "../../assets/lgo.png";
+
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -47,8 +49,10 @@ export function ListarAgendamentos() {
   const [showViewModal, setShowViewModal] = useState(false); // Controle da visibilidade do modal
   const [selectedAgendamento, setSelectedAgendamento] = useState(null); // Agendamento selecionado para visualização
   const navigate = useNavigate(); // Navegação após sucesso
-  const [cliente, setCliente] = useState(null); 
+  const [cliente, setCliente] = useState(null);
   const [veiculo, setVeiculo] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Novo estado para a modal de confirmação
+  const [agendamentoToDelete, setAgendamentoToDelete] = useState(null); // Agendamento a ser excluído
 
 
 
@@ -90,16 +94,7 @@ export function ListarAgendamentos() {
   };
 
   // Função para excluir um agendamento
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${id}`);
-      setAgendamentos(agendamentos.filter((item) => item.id !== id)); // Remove o agendamento excluído
-      toast.success("Agendamento excluído com sucesso!");
-    } catch (error) {
-      console.error("Erro ao excluir o agendamento:", error);
-      toast.error("Erro ao excluir o agendamento.");
-    }
-  };
+
 
   // Função para abrir o modal e setar o agendamento selecionado
   // Função para visualizar os detalhes
@@ -114,13 +109,13 @@ export function ListarAgendamentos() {
         setLoading(false);
       });
 
-      axios.get(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`)
+    axios.get(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`)
       .then(response => {
         setVeiculo(response.data);
         setLoading(false);
       })
 
-    
+
 
 
   };
@@ -173,7 +168,7 @@ export function ListarAgendamentos() {
               <FiEdit />
               &nbsp;&nbsp;Editar
             </Dropdown.Item>
-            <Dropdown.Item className="text-danger" onClick={() => handleDelete(row.id)}>
+            <Dropdown.Item className="text-danger" onClick={() => { setAgendamentoToDelete(row); setShowDeleteModal(true); }}>
               <MdDeleteOutline />
               &nbsp;&nbsp;Excluir
             </Dropdown.Item>
@@ -219,6 +214,40 @@ export function ListarAgendamentos() {
     window.open(url, '_blank');
   };
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${agendamentoToDelete.id}`);
+      setAgendamentos(agendamentos.filter((item) => item.id !== agendamentoToDelete.id));
+      toast.success("Agendamento excluído com sucesso!");
+    } catch (error) {
+      console.error("Erro ao excluir o agendamento:", error);
+      toast.error("Erro ao excluir o agendamento.");
+    } finally {
+      setShowDeleteModal(false); // Fechar a modal de confirmação
+    }
+  };
+
+
+  // Modal de Confirmação de Exclusão
+  const confirmDeleteModal = (
+    <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirmar Exclusão</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Tem certeza que deseja excluir este agendamento?</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+          Cancelar
+        </Button>
+        <Button variant="danger" onClick={handleDelete}>
+          Excluir
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+
   return (
     <>
       <div className="contai">
@@ -259,8 +288,13 @@ export function ListarAgendamentos() {
       {/* Modal de Visualização do Agendamento */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes do Agendamento</Modal.Title>
+          <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes do Agendamento</h4>
+            <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
+          </Modal.Title>
+
         </Modal.Header>
+
+
         <Modal.Body>
           <Accordion defaultActiveKey="0" flush>
             <Accordion.Item eventKey="0">
@@ -451,7 +485,7 @@ export function ListarAgendamentos() {
                 )}
               </Accordion.Body>
             </Accordion.Item>
-      
+
           </Accordion>
 
         </Modal.Body>
@@ -483,6 +517,9 @@ export function ListarAgendamentos() {
           </div>
         </Modal.Footer>
       </Modal>
+
+      {/* Modal de confirmação de exclusão */}
+      {confirmDeleteModal}
     </>
   );
 }
@@ -494,7 +531,7 @@ const Agendamentos = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Agendamentos" direccao="" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <TopoAdmin entrada="Lista de Agendamentos" direccao="/marcarAgendamentoAdimin" icone={<RiAddFill />} />
             <div className="vh-100 alturaPereita">
               <ListarAgendamentos />
             </div>

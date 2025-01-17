@@ -16,6 +16,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaFilePdf, FaPrint } from "react-icons/fa";
 import { jsPDF } from "jspdf";  // Importar a biblioteca jsPDF para geração de PDF
+import logoMarca from "../../assets/lgo.png";
+
 
 const customStyles = {
   headCells: {
@@ -188,7 +190,9 @@ export function TabelaVizualizarCompras() {
       {/* Modal de Visualização de Compra */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-          <Modal.Title>Detalhes da Compra</Modal.Title>
+           <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes da Compra</h4>
+                      <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
+                    </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedCompra && (

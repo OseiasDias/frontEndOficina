@@ -7,6 +7,9 @@ import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FaCalendarAlt, FaCar, FaClipboardList, FaUser } from "react-icons/fa";
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 
 const FormularioAgendamento = () => {
     const [loading, setLoading] = useState(true);
@@ -16,6 +19,7 @@ const FormularioAgendamento = () => {
     const [servicos, setServicos] = useState([]);
     const [filteredServicos, setFilteredServicos] = useState([]);
     const [filteredClientes, setFilteredClientes] = useState([]);
+    const navigate = useNavigate(); // Hook de navegação
     const [formData, setFormData] = useState({
         data: '',
         id_cliente: '',
@@ -78,7 +82,7 @@ const FormularioAgendamento = () => {
             clienteNome: `${cliente.primeiro_nome} ${cliente.sobrenome}`, // Atualiza o nome do cliente no estado
         });
         setFilteredClientes([]); // Limpar a lista de resultados ao selecionar um cliente
-    
+
         // Requisição para pegar os veículos do cliente selecionado
         fetch(`http://127.0.0.1:8000/api/veiculos/cliente/${cliente.id}`)
             .then((response) => response.json())
@@ -90,7 +94,7 @@ const FormularioAgendamento = () => {
                 setVeiculos([]); // Limpa os veículos em caso de erro
             });
     };
-    
+
 
     const handleServicoSelect = (servico) => {
         setFormData({
@@ -103,35 +107,75 @@ const FormularioAgendamento = () => {
 
 
     // Função de envio do formulário
+    // Função para enviar o formulário (criar o agendamento)
     const handleSubmit = (e) => {
         e.preventDefault();
-
+    
         setLoading(true);
         setError(null);
-
+    
+        // Garantir que todos os dados necessários estão presentes
+        if (!formData.id_cliente || !formData.id_veiculo || !formData.id_servico || !formData.data || !formData.descricao) {
+            setError('Por favor, preencha todos os campos obrigatórios.');
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            setLoading(false);
+            return;
+        }
+    
+        const agendamento = {
+            data: formData.data,
+            id_cliente: formData.id_cliente,
+            id_veiculo: formData.id_veiculo,
+            id_servico: formData.id_servico,
+            status: formData.status,
+            descricao: formData.descricao
+        };
+    
+        // Enviar o agendamento para a API
         fetch('http://127.0.0.1:8000/api/agendamentos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(formData),
+            body: JSON.stringify(agendamento),
         })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Erro ao criar o agendamento');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('Agendamento criado:', data);
-            })
-            .catch((error) => {
-                setError(error.message);
-            })
-            .finally(() => {
-                setLoading(false);
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Erro ao criar o agendamento');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Agendamento criado:', data);
+      
+    
+            // Limpar os dados do formulário
+            setFormData({
+                data: '',
+                id_cliente: '',
+                id_veiculo: '',
+                id_servico: '',
+                status: 'agendado',
+                descricao: ''
             });
+    
+            // Atraso de 4 segundos antes de redirecionar
+            setTimeout(() => {
+                // Redirecionar para a página de agendamentos
+                toast.success('Agendamento criado com sucesso!');
+                navigate('/viewAgendamentos');
+            }, 4000); // 4000ms = 4 segundos
+        })
+        .catch((error) => {
+            setError(error.message);
+            toast.error('Erro ao criar o agendamento!');
+        })
+        .finally(() => {
+            setLoading(false);
+        });
     };
+    
+
 
     useEffect(() => {
         const currentDate = new Date();
@@ -184,6 +228,8 @@ const FormularioAgendamento = () => {
     }
 
     return (
+        <>  
+        <ToastContainer position="top-center"/>
         <Form method="post" onSubmit={handleSubmit}>
             <div className="col-md-12 mt-5">
                 <h6>DETALHES DE AGENDAMENTO</h6>
@@ -223,31 +269,31 @@ const FormularioAgendamento = () => {
                     )}
                 </Col>
                 <Col md={6}>
-    <Form.Label>Veículo <span className="text-danger">*</span></Form.Label>
-    <div className="input-group">
-        <span className="input-group-text"><FaCar fontSize={22} color="#0070fa" /></span>
-        <Form.Control
-            as="select"
-            name="id_veiculo"
-            value={formData.id_veiculo}
-            onChange={handleChange}
-            required
-            disabled={!formData.id_cliente} // Desabilita o campo se não houver cliente selecionado
-        >
-            <option value="">Selecionar Veículo</option>
-            {/* Verifica se há veículos associados ao cliente */}
-            {formData.id_cliente && veiculos.length > 0 ? (
-                veiculos.map(veiculo => (
-                    <option key={veiculo.id} value={veiculo.id}>
-                        {`${veiculo.marca_veiculo} ${veiculo.modelo_veiculo} - ${veiculo.numero_placa}`}
-                    </option>
-                ))
-            ) : (
-                <option value="">Nenhum veículo disponível</option>
-            )}
-        </Form.Control>
-    </div>
-</Col>
+                    <Form.Label>Veículo <span className="text-danger">*</span></Form.Label>
+                    <div className="input-group">
+                        <span className="input-group-text"><FaCar fontSize={22} color="#0070fa" /></span>
+                        <Form.Control
+                            as="select"
+                            name="id_veiculo"
+                            value={formData.id_veiculo}
+                            onChange={handleChange}
+                            required
+                            disabled={!formData.id_cliente} // Desabilita o campo se não houver cliente selecionado
+                        >
+                            <option value="">Selecionar Veículo</option>
+                            {/* Verifica se há veículos associados ao cliente */}
+                            {formData.id_cliente && veiculos.length > 0 ? (
+                                veiculos.map(veiculo => (
+                                    <option key={veiculo.id} value={veiculo.id}>
+                                        {`${veiculo.marca_veiculo} ${veiculo.modelo_veiculo} - ${veiculo.numero_placa}`}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">Nenhum veículo disponível</option>
+                            )}
+                        </Form.Control>
+                    </div>
+                </Col>
 
             </Row>
 
@@ -325,6 +371,7 @@ const FormularioAgendamento = () => {
 
             <input type="hidden" name="_token" value="3SdpCZa7Aj50aKHh555Fyl67CfET8SQ996mEr2dl" />
         </Form>
+        </>
     );
 };
 
@@ -338,7 +385,7 @@ export default function AddAgendamento() {
                     <SideBar />
 
                     <div className="flexAuto w-100">
-                        <TopoAdmin entrada="  Marcar Agendamento" leftSeta={<FaArrowLeftLong />} leftR="/AgendamentosPage" />
+                        <TopoAdmin entrada="  Marcar Agendamento" leftSeta={<FaArrowLeftLong />} leftR="/viewAgendamentos" />
 
                         <div className="vh-100 alturaPereita">
                             <FormularioAgendamento />

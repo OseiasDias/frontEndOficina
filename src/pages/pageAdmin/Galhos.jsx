@@ -1,21 +1,20 @@
-import { useState, useEffect } from 'react'; 
-import "../../css/StylesAdmin/homeAdministrador.css";
-import SideBar from "../../components/compenentesAdmin/SideBar";
-import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import { RiAddFill } from "react-icons/ri";
-import axios from "axios";
-import DataTable from "react-data-table-component";
-import { Dropdown } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import DataTable from 'react-data-table-component';
+import { Dropdown } from 'react-bootstrap';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FiEdit } from "react-icons/fi";
-import { MdDeleteOutline } from "react-icons/md";
-import imgN from "../../assets/not-found.png";
-import imgErro from "../../assets/error.webp";
-
-
-// Estilos customizados para a tabela
-
+import { FiEdit } from 'react-icons/fi';
+import { MdDeleteOutline, MdEditNote } from 'react-icons/md';
+import { FaFilePdf, FaPrint, FaRegEye } from 'react-icons/fa';
+import { Modal, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { ImWhatsapp } from 'react-icons/im';
+import logoMarca from '../../assets/lgo.png';
+import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
+import SideBar from '../../components/compenentesAdmin/SideBar';
+import { RiAddFill } from 'react-icons/ri';
+import jsPDF from 'jspdf';
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -39,19 +38,24 @@ const customStyles = {
 
 export function ListarFiliais() {
   const [filiais, setFiliais] = useState([]); // Lista de filiais
-  const [loading, setLoading] = useState(true); // Controle de carregamento
-  const [error, setError] = useState(null); // Armazenamento de erro
+  const [loading, setLoading] = useState(true); // Variável de estado para carregamento
+  const [error, setError] = useState(null); // Variável de estado para erro
+  const [showViewModal, setShowViewModal] = useState(false); // Controle da visibilidade do modal
+  const [selectedFilial, setSelectedFilial] = useState(null); // Filial selecionada para visualização
+  const navigate = useNavigate(); // Navegação após sucesso
 
   // Buscar filiais da API
   const fetchFiliais = async () => {
+    setLoading(true);  // Ativa o estado de carregamento
+    setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/filiais");
+      const response = await axios.get('http://127.0.0.1:8000/api/filiais');
       setFiliais(response.data); // Preenche a lista com os dados recebidos
-      setLoading(false); // Desativa o estado de carregamento
     } catch (error) {
-      console.error("Erro ao carregar as filiais:", error);
-      toast.error("Erro ao carregar as filiais.");
-      setError("Erro ao carregar as filiais.");
+      console.error('Erro ao carregar as filiais:', error);
+      setError('Erro ao carregar as filiais.'); // Define a mensagem de erro
+      toast.error('Erro ao carregar as filiais.');
+    } finally {
       setLoading(false); // Desativa o estado de carregamento
     }
   };
@@ -65,15 +69,13 @@ export function ListarFiliais() {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     if (!query) {
-      fetchFiliais(); // Refaz a busca se a pesquisa estiver vazia
+      fetchFiliais();
     } else {
       const filteredRecords = filiais.filter((item) =>
-        item.nome_filial.toLowerCase().includes(query) || 
-        item.endereco.toLowerCase().includes(query) ||
-        item.numero_contato.includes(query) ||
-        item.email.toLowerCase().includes(query)
+        item.nome_filial.toLowerCase().includes(query) ||
+        item.numero_contato.toLowerCase().includes(query)
       );
-      setFiliais(filteredRecords); // Exibe os registros filtrados
+      setFiliais(filteredRecords);
     }
   };
 
@@ -81,42 +83,47 @@ export function ListarFiliais() {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/filiais/${id}`);
-      setFiliais(filiais.filter((item) => item.id !== id)); // Remove a filial excluída da lista
-      toast.success("Filial excluída com sucesso!");
+      setFiliais(filiais.filter((item) => item.id !== id)); // Remove a filial excluída
+      toast.success('Filial excluída com sucesso!');
     } catch (error) {
-      console.error("Erro ao excluir a filial:", error);
-      toast.error("Erro ao excluir a filial.");
+      console.error('Erro ao excluir a filial:', error);
+      toast.error('Erro ao excluir a filial.');
     }
+  };
+
+  // Função para abrir o modal e setar a filial selecionada
+  const handleVisualizar = (filial) => {
+    setSelectedFilial(filial);
+    setShowViewModal(true);
   };
 
   // Colunas da tabela
   const columns = [
     {
-      name: "Nome da Filial",
+      name: 'Nome da Filial',
       selector: (row) => row.nome_filial,
       sortable: true,
     },
     {
-      name: "Número de Contato",
+      name: 'Contato',
       selector: (row) => row.numero_contato,
       sortable: true,
     },
     {
-      name: "Email",
-      selector: (row) => row.email,
+      name: 'Localização',
+      selector: (row) => `${row.municipio}, ${row.provincia}`,
       sortable: true,
     },
     {
-      name: "Endereço",
-      selector: (row) => row.endereco,
-      sortable: true,
-    },
-    {
-      name: "Ações",
+      name: 'Ações',
       cell: (row) => (
         <Dropdown className="btnDrop" drop="up">
           <Dropdown.Toggle variant="link" id="dropdown-basic"></Dropdown.Toggle>
           <Dropdown.Menu className="cimaAll">
+            <Dropdown.Item onClick={() => handleVisualizar(row)}>
+              <FaRegEye />
+              &nbsp;&nbsp;Visualizar
+            </Dropdown.Item>
             <Dropdown.Item>
               <FiEdit />
               &nbsp;&nbsp;Editar
@@ -130,22 +137,34 @@ export function ListarFiliais() {
       ),
     },
   ];
+  const generatePDF = () => {
+      const doc = new jsPDF();
+      doc.html(document.querySelector("#productDetailsTable"), {
+        callback: function (doc) {
+          doc.save(`${item.jobno}.pdf`);
+        },
+        x: 10,
+        y: 10,
+      });
+    };
 
+  // Exibe a tela de carregamento
   if (loading) {
     return (
       <div className="text-center">
         <h4>Carregando...</h4>
-        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
       </div>
     );
   }
 
-
- if (error) {
-    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
-      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-    </div>);
-  };
+  // Exibe mensagem de erro
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -156,7 +175,7 @@ export function ListarFiliais() {
               <div className="homeDiv">
                 <div className="search row d-flex justify-content-between">
                   <div className="col-12 col-md-6 col-lg-6 d-flex mt-2">
-                    {/* Botão de adicionar filial */}
+                    {/* Espaço vazio para futuras funcionalidades */}
                   </div>
                   <div className="col-12 col-md-6 col-lg-6">
                     <input
@@ -183,9 +202,82 @@ export function ListarFiliais() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Visualização da Filial */}
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title className="d-flex justify-content-between w-100">
+            <h4 className="mt-3">Detalhes da Filial</h4>
+            <img src={logoMarca} className="d-block mx-3" alt="logo da empresa" width={160} height={60} />
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedFilial && (
+            <div>
+              <h4 className="text-center text-underline">Detalhes da Filial</h4>
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Nome da Filial:</strong></td>
+                    <td>{selectedFilial.nome_filial}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Contato:</strong></td>
+                    <td>{selectedFilial.numero_contato}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{selectedFilial.email}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Endereço:</strong></td>
+                    <td>{selectedFilial.endereco}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Localização:</strong></td>
+                    <td>{`${selectedFilial.municipio}, ${selectedFilial.provincia}, ${selectedFilial.pais_id}`}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-end mt-4">
+            <div className="ms-2">
+              <Button variant="outline-secondary" onClick={() => window.print()}>
+                <FaPrint className="me-2" fontSize={20} />
+                Imprimir
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="outline-danger" onClick={generatePDF}>
+                <FaFilePdf className="me-2" fontSize={20} />
+                Gerar PDF
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button  className='links-acessos' onClick={() => window.location.href = `/editarFilial/${selectedFilial.id}`}>
+                <MdEditNote fontSize={24} />
+                Editar Filial
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="success" onClick={() => {
+                const message = `Confira a filial: ${selectedFilial.nome_filial}\nContato: ${selectedFilial.numero_contato}`;
+                const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                window.open(url, '_blank');
+              }}>
+                <ImWhatsapp /> Compartilhar no WhatsApp
+              </Button>
+            </div>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
+
 
 
 const Filiais = () => {

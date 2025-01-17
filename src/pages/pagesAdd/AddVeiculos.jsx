@@ -12,6 +12,8 @@ import { GiGearStick } from "react-icons/gi";
 import { PiEngineBold } from "react-icons/pi";
 import { AiOutlineEdit, AiOutlineFileText } from "react-icons/ai";
 import { RiAddLargeFill } from "react-icons/ri";
+import logoMarca from "../../assets/lgo.png";
+
 
 
 
@@ -834,6 +836,10 @@ export function FormularioVeiculo() {
             <hr />
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+                                    <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
 
       {/* Modal para adicionar ou remover marcas */}
@@ -885,6 +891,10 @@ export function FormularioVeiculo() {
             <hr />
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+                                    <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
 
       {/* Modal para adicionar ou remover modelos */}
@@ -936,6 +946,10 @@ export function FormularioVeiculo() {
             <hr />
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+                                          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+                
+        </Modal.Footer>
       </Modal>
 
 
@@ -989,6 +1003,10 @@ export function FormularioVeiculo() {
             <hr />
           </Form>
         </Modal.Body>
+        <Modal.Footer className="p-0">
+               <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+          
+        </Modal.Footer>
       </Modal>
     </Form >
   );

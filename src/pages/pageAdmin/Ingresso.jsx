@@ -16,6 +16,8 @@ import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import { ImWhatsapp } from "react-icons/im";
 import jsPDF from "jspdf";
+import logoMarca from "../../assets/lgo.png";
+
 
 const customStyles = {
   headCells: {
@@ -160,23 +162,23 @@ export function TabelaVizualizarGatepasses() {
   };
 
 
-     const generatePDF = () => {
-          const doc = new jsPDF();
-          doc.html(document.querySelector("#productDetailsTable"), {
-              callback: function (doc) {
-                  doc.save(`${ordemData.jobno}.pdf`);
-              },
-              x: 10,
-              y: 10,
-          });
-      };
-  
-      const shareOnWhatsApp = () => {
-          const message = `Confira a ordem de reparação: ${ordemData.jobno}\nDetalhes: ${ordemData.defeito_ou_servico}`;
-          const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-          window.open(url, '_blank');
-      };
-  
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.html(document.querySelector("#productDetailsTable"), {
+      callback: function (doc) {
+        doc.save(`${ordemData.jobno}.pdf`);
+      },
+      x: 10,
+      y: 10,
+    });
+  };
+
+  const shareOnWhatsApp = () => {
+    const message = `Confira a ordem de reparação: ${ordemData.jobno}\nDetalhes: ${ordemData.defeito_ou_servico}`;
+    const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
 
   return (
     <div className="homeDiv">
@@ -233,82 +235,83 @@ export function TabelaVizualizarGatepasses() {
       <ToastContainer position="top-center" />
 
       {/* Modal de Visualização de Gatepass */}
-<Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
-  <Modal.Header closeButton>
-    <Modal.Title>Detalhes da Passagem de Portão</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {selectedGatepass && (
-      <div>
-        <h4 className="text-center text-underline">Detalhes da Passagem de Portão</h4>
-        <table className="table table-striped">
-          <tbody>
-            <tr>
-              <td><strong>Nº do catrão:</strong></td>
-              <td>{selectedGatepass.jobcard || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Número da Passagem de Portão:</strong></td>
-              <td>{selectedGatepass.gatepass_no || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Nome do Cliente:</strong></td>
-              <td>{selectedGatepass.customer_name || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Sobrenome:</strong></td>
-              <td>{selectedGatepass.lastname || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Telefone:</strong></td>
-              <td>{selectedGatepass.mobile || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Veículo:</strong></td>
-              <td>{selectedGatepass.vehicle_name || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>Tipo de Veículo:</strong></td>
-              <td>{selectedGatepass.veh_type || "Sem informação"}</td>
-            </tr>
-            <tr>
-              <td><strong>KM:</strong></td>
-              <td>{selectedGatepass.kms || "Sem informação"} KM</td>
-            </tr>
-            {/* Adicione outras colunas conforme necessário */}
-          </tbody>
-        </table>
-      </div>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-  <div className="d-flex justify-content-end mt-4">
-                                        {/* Botões: Imprimir, Gerar PDF, Editar e WhatsApp */}
-                                        <div className="ms-2">
-                                            <Button variant="outline-secondary" onClick={() => window.print()}>
-                                                <FaPrint className="me-2" fontSize={20} />
-                                                Imprimir
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="outline-danger" onClick={generatePDF}>
-                                                <FaFilePdf className="me-2" fontSize={20} />
-                                                Gerar PDF
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
-                                                <MdEditNote fontSize={24} />
-                                                Editar Ordem
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="success" onClick={shareOnWhatsApp}>
-                                                <ImWhatsapp />  Compartilhar no WhatsApp
-                                            </Button>
-                                        </div>
-                                    </div>  </Modal.Footer>
-</Modal>
+      <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
+        <Modal.Header closeButton>
+          <Modal.Title className="d-flex justify-content-between w-100"><h4 className="mt-3">Detalhes da Passagem de Portão</h4> <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedGatepass && (
+            <div>
+              <h4 className="text-center text-underline">Detalhes da Passagem de Portão</h4>
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Nº do catrão:</strong></td>
+                    <td>{selectedGatepass.jobcard || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Número da Passagem de Portão:</strong></td>
+                    <td>{selectedGatepass.gatepass_no || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nome do Cliente:</strong></td>
+                    <td>{selectedGatepass.customer_name || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Sobrenome:</strong></td>
+                    <td>{selectedGatepass.lastname || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Telefone:</strong></td>
+                    <td>{selectedGatepass.mobile || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Veículo:</strong></td>
+                    <td>{selectedGatepass.vehicle_name || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tipo de Veículo:</strong></td>
+                    <td>{selectedGatepass.veh_type || "Sem informação"}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>KM:</strong></td>
+                    <td>{selectedGatepass.kms || "Sem informação"} KM</td>
+                  </tr>
+                  {/* Adicione outras colunas conforme necessário */}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="d-flex justify-content-end mt-4">
+            {/* Botões: Imprimir, Gerar PDF, Editar e WhatsApp */}
+            <div className="ms-2">
+              <Button variant="outline-secondary" onClick={() => window.print()}>
+                <FaPrint className="me-2" fontSize={20} />
+                Imprimir
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="outline-danger" onClick={generatePDF}>
+                <FaFilePdf className="me-2" fontSize={20} />
+                Gerar PDF
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="primary" className='links-acessos' onClick={() => navigate(`/editarOrdemReparacao/${ordemData.id}`)}>
+                <MdEditNote fontSize={24} />
+                Editar Ordem
+              </Button>
+            </div>
+            <div className="ms-2">
+              <Button variant="success" onClick={shareOnWhatsApp}>
+                <ImWhatsapp />  Compartilhar no WhatsApp
+              </Button>
+            </div>
+          </div>  </Modal.Footer>
+      </Modal>
 
     </div>
   );

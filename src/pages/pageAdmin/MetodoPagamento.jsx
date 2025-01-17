@@ -13,6 +13,7 @@ import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline, MdOutlinePayments } from "react-icons/md";
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
+import logoMarca from "../../assets/lgo.png";
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -244,6 +245,10 @@ export function ListarMetodosPagamento() {
             </Row>
           </Form>
         </Modal.Body>
+        <Modal.Footer className='p-0'>
+                        <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
+            
+        </Modal.Footer>
       </Modal>
     </>
   );
