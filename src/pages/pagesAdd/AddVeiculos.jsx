@@ -63,7 +63,7 @@ export function FormularioVeiculo() {
 
 
   const [showModal, setShowModal] = useState(false);
-  //const [tipoVeiculo, setTipoVeiculo] = useState("");
+  const [tipoVeiculo] = useState("");
   const [novoTipo, setNovoTipo] = useState(""); // Estado para o novo tipo de veículo
   const [tiposVeiculos, setTiposVeiculos] = useState([
     { id: "1", nome: "Turismo" },
