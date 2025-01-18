@@ -488,7 +488,7 @@ export default function AddDispesas() {
           <SideBar />
 
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Adicionar Filial" leftSeta={<FaArrowLeftLong />} leftR="/galhosPage" />
+            <TopoAdmin entrada="  Adicionar Filial" leftSeta={<FaArrowLeftLong />} leftR="/galhosPage" />
 
             <div className="vh-100 alturaPereita">
               <FormularioFilial />

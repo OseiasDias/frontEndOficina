@@ -76,34 +76,38 @@ function FormularioProduto() {
 
   const [novaUnidade, setNovaUnidade] = useState(""); // Estado para adicionar nova unidade
   const [produto, setProduto] = useState({
-    numeroProduto: 'PR286549',
-    dataCompra: '2024-11-22',
-    nome: '',
-    galho: '1',
-    fabricante: '',
-    preco: '',
-    unidadeMedida: '',
-    fornecedor: '',
-    cor: '',
-    garantia: '',
+    numeroProduto: "",
+    dataCompra: "",
+    nome: "",
+    galho: "",
+    fabricante: "",
+    preco: "",
+    unidadeMedida: "",
+    fornecedor: "",
+    garantia: "",
     imagem: null,
-    notas: [
-      {
-        textoNota: '',
-        arquivosNota: [],
-        interna: false,
-        compartilhada: false,
-      },
-    ],
+    nota: "",  // Nota como string
+    interna: false,  // Valor para "Nota Interna"
+    compartilhada: false,  // Valor para "Compartilhado com fornecedor"
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduto({ ...produto, [name]: value });
-
-
-
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setProduto((prevProduto) => ({
+      ...prevProduto,
+      [name]: value,
+    }));
   };
+
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    setProduto((prevProduto) => ({
+      ...prevProduto,
+      [name]: checked,
+    }));
+  };
+
+
 
   const handleImageChange = (e) => {
     setProduto({ ...produto, imagem: e.target.files[0] });
@@ -336,352 +340,338 @@ function FormularioProduto() {
   return (
     <>
 
-      <Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="col-md-12 mt-5">
-          <h6>INFORMAÇÕES DO PRODUTO</h6>
-          <hr />
-        </div>
-        <Row>
-          {/* Número do Produto */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="numeroProduto">
-              <Form.Label className="fortificarLetter">Número de Produto <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><AiOutlineFieldNumber fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="text"
-                  name="numeroProduto"
-                  value={produto.numeroProduto}
-                  onChange={handleChange}
-                  readOnly
-                />
-              </div>
-            </Form.Group>
-          </Col>
+<Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
+      <div className="col-md-12 mt-5">
+        <h6>INFORMAÇÕES DO PRODUTO</h6>
+        <hr />
+      </div>
 
-          {/* Data de Compra */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="dataCompra">
-              <Form.Label className="fortificarLetter">Data de Compra <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdDateRange fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="date"
-                  name="dataCompra"
-                  value={produto.dataCompra}
-                  onChange={handleChange}
-                />
-              </div>
-            </Form.Group>
-          </Col>
-        </Row>
+      <Row>
+        {/* Número do Produto */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="numeroProduto">
+            <Form.Label className="fortificarLetter">Número de Produto <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><AiOutlineFieldNumber fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="numeroProduto"
+                value={produto.numeroProduto}
+                onChange={handleChange}
+                readOnly
+              />
+            </div>
+          </Form.Group>
+        </Col>
 
-        {/* Nome */}
-        <Row>
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="nome">
-              <Form.Label className="fortificarLetter">Nome do produto<span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdTextFields fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="text"
-                  name="nome"
-                  value={produto.nome}
-                  onChange={handleChange}
-                  placeholder="Digite o nome do produto"
-                  maxLength="30"
-                  required
-                />
-              </div>
-            </Form.Group>
-          </Col>
+        {/* Data de Compra */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="dataCompra">
+            <Form.Label className="fortificarLetter">Data de Compra <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdDateRange fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="date"
+                name="dataCompra"
+                value={produto.dataCompra}
+                onChange={handleChange}
+              />
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
 
-          {/* Galho */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="galho">
-              <Form.Label className="fortificarLetter">Galho <span className="text-danger">*</span></Form.Label>
+      {/* Nome */}
+      <Row>
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="nome">
+            <Form.Label className="fortificarLetter">Nome do produto<span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdTextFields fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="nome"
+                value={produto.nome}
+                onChange={handleChange}
+                placeholder="Digite o nome do produto"
+                maxLength="30"
+                required
+              />
+            </div>
+          </Form.Group>
+        </Col>
+
+        {/* Galho */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="galho">
+            <Form.Label className="fortificarLetter">Galho <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdCategory fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                as="select"
+                name="galho"
+                value={produto.galho}
+                onChange={handleChange}
+              >
+                <option value="1">Galho Principal</option>
+              </Form.Control>
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Fabricante */}
+      <Row>
+        <Col xs={12} md={6}>
+          <Form.Group controlId="fabricante">
+            <Form.Label>Nome do Fabricante <span className="text-danger">*</span></Form.Label>
+            <div className="d-flex">
               <div className="input-group">
-                <span className="input-group-text"><MdCategory fontSize={22} color="#0070fa" /></span>
+                <span className="input-group-text">
+                  <MdBusiness fontSize={22} color="#0070fa" />
+                </span>
                 <Form.Control
                   as="select"
-                  name="galho"
-                  value={produto.galho}
+                  name="fabricante"
+                  value={produto.fabricante}
                   onChange={handleChange}
                 >
-
-
-                  <option value="1">Galho Principal</option>
+                  <option value="">--Selecione o nome da fabricação--</option>
+                  {fabricantes.map((fabricante) => (
+                    <option key={fabricante.id} value={fabricante.id}>
+                      {fabricante.nome}
+                    </option>
+                  ))}
                 </Form.Control>
               </div>
-            </Form.Group>
-          </Col>
-        </Row>
 
-        {/* Fabricante */}
-        <Row>
-          <Col xs={12} md={6}>
-            <Form.Group controlId="fabricante">
-              <Form.Label>
-                Nome do Fabricante <span className="text-danger">*</span>
-              </Form.Label>
-              <div className="d-flex">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <MdBusiness fontSize={22} color="#0070fa" />
-                  </span>
-                  <Form.Control
-                    as="select"
-                    name="fabricante"
-                    value={produto.fabricante}
-                    onChange={handleChange}
-                  >
-                    <option value="">--Selecione o nome da fabricação--</option>
-                    {fabricantes.map((fabricante) => (
-                      <option key={fabricante.id} value={fabricante.id}>
-                        {fabricante.nome}
-                      </option>
-                    ))}
-                  </Form.Control>
-                </div>
-
-                <Button
-                  onClick={handleOpenFabricanteModal}
-                  className="btn btn-primary ms-3 links-acessos d-flex px-4"
-                >
-                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
-                </Button>
-
-              </div>
-            </Form.Group>
-          </Col>
-          {/* Preço */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="preco">
-              <Form.Label className="fortificarLetter">Preço ($) <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdAttachMoney fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="text"
-                  name="preco"
-                  value={produto.preco}
-                  onChange={handleChange}
-                  placeholder="Digite o preço do produto"
-                  maxLength="10"
-                  required
-                />
-              </div>
-            </Form.Group>
-          </Col>
-        </Row>
-
-        <Row>
-          {/* Unidade de Medida */}
-          {/* Unidade de Medida */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="unidadeMedida">
-              <Form.Label className="fortificarLetter">
-                Unidade de Medida <span className="text-danger">*</span>
-              </Form.Label>
-              <div className="d-flex">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <MdStraighten fontSize={22} color="#0070fa" />
-                  </span>
-                  <Form.Control
-                    as="select"
-                    name="unidadeMedida"
-                    value={produto.unidadeMedida}
-                    onChange={handleChange}
-                  >
-                    <option value="">- Selecionar Unidade -</option>
-                    {unidades.length > 0 ? (
-                      unidades.map((unidade) => (
-                        <option key={unidade.id} value={unidade.id}>
-                          {unidade.unidade}
-                        </option>
-                      ))
-                    ) : (
-                      <option>Carregando...</option>  // Exibe uma opção enquanto os dados não são carregados
-                    )}
-                  </Form.Control>
-                </div>
-                <button
-                  onClick={handleOpenUnidadeMedidaModalUnidade}
-                  className="btn btn-primary ms-3 links-acessos d-flex px-4"
-                >
-                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
-                </button>
-              </div>
-            </Form.Group>
-          </Col>
-
-          {/* Selecione o fornecedor */}
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="fornecedor">
-              <Form.Label className="fortificarLetter">
-                Fornecedor <span className="text-danger">*</span>
-              </Form.Label>
-              <div className="d-flex">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <MdBusiness fontSize={22} color="#0070fa" />
-                  </span>
-                  <Form.Control
-                    as="select"
-                    name="fornecedor"
-                    value={produto.fornecedor}
-                    onChange={handleChange}
-                  >
-                    <option value="">- Selecionar Fornecedor -</option>
-                    {fornecedores.length > 0 ? (
-                      fornecedores.map((fornecedor) => (
-                        <option key={fornecedor.id} value={fornecedor.id}>
-                          {`${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome} - ${fornecedor.nome_empresa}`}
-                        </option>
-                      ))
-                    ) : (
-                      <option>Carregando...</option>  // Exibe uma opção enquanto os dados não são carregados
-                    )}
-                  </Form.Control>
-                </div>
-                <Button className="btn btn-primary ms-3 links-acessos" onClick={handleShowFornecedorModal}>+</Button>
-
-                <Modal show={showFornecedorModal} scrollable size="xl" onHide={handleCloseFornecedorModal}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Adicionar Fornecedor Agora</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <AddFornecedor />
-                  </Modal.Body>
-                  <Modal.Footer className="p-0">
-                    <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
-                  </Modal.Footer>
-                </Modal>
-              </div>
-            </Form.Group>
-          </Col>
-        </Row>
-
-        {/* Cor */}
-        <Row>
-
-
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="garantia">
-              <Form.Label className="fortificarLetter">Garantia</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdSecurity fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="text"
-                  name="garantia"
-                  value={produto.garantia}
-                  onChange={handleChange}
-                  placeholder="Insira a garantia do produto"
-                  maxLength="20"
-                />
-              </div>
-            </Form.Group>
-          </Col>
-          <Col xs={12} md={6} lg={6}>
-            <Form.Group controlId="imagem">
-              <Form.Label className="fortificarLetter">Imagem</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdImage fontSize={22} color="#0070fa" /></span>
-                <Form.Control
-                  type="file"
-                  name="imagem"
-                  onChange={handleImageChange}
-                  disabled
-                />
-              </div>
-              {produto.imagem && (
-                <img
-                  src={URL.createObjectURL(produto.imagem)}
-                  alt="Imagem do produto"
-                  style={{ width: 100, marginTop: '10px' }}
-                />
-              )}
-            </Form.Group>
-          </Col>
-        </Row>
-
-
-
-        {/* Notas */}
-
-        <Form.Group>
-          <div className="d-flex justify-content-between">
-            <h6 className="mt-5">Adicionar Notas</h6>
-           
-          </div>
-          <hr />
-        
-            <div  className="nota d-flex">
-              <Row>
-                <Col xs={12} md={6} lg={4}>
-                  <Form.Group controlId={`nota-texto`}>
-                    <Form.Label className="fortificarLetter">Notas</Form.Label>
-                    <div className="input-group">
-                      <span className="input-group-text"><MdNote fontSize={22} color="#0070fa" /></span>
-                      <Form.Control
-                        as="textarea"
-                        name="textoNota"
-                        value=""
-                        onChange=""
-                        maxLength="100"
-                      />
-                    </div>
-                  </Form.Group>
-                </Col>
-
-                <Col xs={12} md={6} lg={4}>
-                  <Form.Group controlId={`nota-arquivos`}>
-                    <Form.Label className="fortificarLetter">Arquivos</Form.Label>
-                    <div className="input-group">
-                      <span className="input-group-text"><MdOutlineFileCopy fontSize={22} color="#0070fa" /></span>
-                      <Form.Control
-                        type="file"
-                        name={`nota-arquivos`}
-                        onChange=""
-                        multiple
-                      />
-                    </div>
-
-                  </Form.Group>
-                </Col>
-
-                <Col xs={12} md={6} lg={4} className="pt-4">
-                  <Form.Check
-                    type="checkbox"
-                    label="Nota Interna"
-                    name="interna"
-                    checked=""
-                    onChange=""
-                  />
-
-                  <Form.Check
-                    type="checkbox"
-                    label="Compartilhado com fornecedor"
-                    name="compartilhada"
-                    checked=""
-                    onChange=""
-                  />
-                </Col>
-              </Row>
-
-              {/* Botão de Remover Nota */}
-             
+              <Button
+                onClick={handleOpenFabricanteModal}
+                className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
+              >
+                <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+              </Button>
             </div>
-          
+          </Form.Group>
+        </Col>
+
+        {/* Preço */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="preco">
+            <Form.Label className="fortificarLetter">Preço ($) <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdAttachMoney fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="preco"
+                value={produto.preco}
+                onChange={handleChange}
+                placeholder="Digite o preço do produto"
+                maxLength="10"
+                required
+              />
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row>
+        {/* Unidade de Medida */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="unidadeMedida">
+            <Form.Label className="fortificarLetter">
+              Unidade de Medida <span className="text-danger">*</span>
+            </Form.Label>
+            <div className="d-flex">
+              <div className="input-group">
+                <span className="input-group-text">
+                  <MdStraighten fontSize={22} color="#0070fa" />
+                </span>
+                <Form.Control
+                  as="select"
+                  name="unidadeMedida"
+                  value={produto.unidadeMedida}
+                  onChange={handleChange}
+                >
+                  <option value="">- Selecionar Unidade -</option>
+                  {unidades.length > 0 ? (
+                    unidades.map((unidade) => (
+                      <option key={unidade.id} value={unidade.id}>
+                        {unidade.unidade}
+                      </option>
+                    ))
+                  ) : (
+                    <option>Carregando...</option>
+                  )}
+                </Form.Control>
+              </div>
+              <button
+                onClick={handleOpenUnidadeMedidaModalUnidade}
+                className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
+              >
+                <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+              </button>
+            </div>
+          </Form.Group>
+        </Col>
+
+        {/* Selecione o fornecedor */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="fornecedor">
+            <Form.Label className="fortificarLetter">
+              Fornecedor <span className="text-danger">*</span>
+            </Form.Label>
+            <div className="d-flex">
+              <div className="input-group">
+                <span className="input-group-text">
+                  <MdBusiness fontSize={22} color="#0070fa" />
+                </span>
+                <Form.Control
+                  as="select"
+                  name="fornecedor"
+                  value={produto.fornecedor}
+                  onChange={handleChange}
+                >
+                  <option value="">- Selecionar Fornecedor -</option>
+                  {fornecedores.length > 0 ? (
+                    fornecedores.map((fornecedor) => (
+                      <option key={fornecedor.id} value={fornecedor.id}>
+                        {`${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome} - ${fornecedor.nome_empresa}`}
+                      </option>
+                    ))
+                  ) : (
+                    <option>Carregando...</option>
+                  )}
+                </Form.Control>
+              </div>
+              <Button className="btn btn-primary ms-3 links-acessos" onClick={handleShowFornecedorModal}>+</Button>
+
+              <Modal show={showFornecedorModal} scrollable size="xl" onHide={handleCloseFornecedorModal}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Adicionar Fornecedor Agora</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <AddFornecedor />
+                </Modal.Body>
+                <Modal.Footer className="p-0">
+                  <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+                </Modal.Footer>
+              </Modal>
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      <Row>
+        {/* Cor */}
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="garantia">
+            <Form.Label className="fortificarLetter">Garantia</Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdSecurity fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="garantia"
+                value={produto.garantia}
+                onChange={handleChange}
+                placeholder="Insira a garantia do produto"
+                maxLength="20"
+              />
+            </div>
+          </Form.Group>
+        </Col>
+
+        <Col xs={12} md={6} lg={6}>
+          <Form.Group controlId="imagem">
+            <Form.Label className="fortificarLetter">Imagem</Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><MdImage fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="file"
+                name="imagem"
+                onChange={handleImageChange}
+                disabled
+              />
+            </div>
+            {produto.imagem && (
+              <img
+                src={URL.createObjectURL(produto.imagem)}
+                alt="Imagem do produto"
+                style={{ width: 100, marginTop: '10px' }}
+              />
+            )}
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Notas */}
+      <Form.Group>
+        <div className="d-flex justify-content-between">
+          <h6 className="mt-5">Adicionar Notas</h6>
+        </div>
+        <hr />
+        <div className="nota d-flex">
+          <Row>
+            <Col xs={12} md={6} lg={4}>
+              <Form.Group controlId={`nota-texto`}>
+                <Form.Label className="fortificarLetter">Notas</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text"><MdNote fontSize={22} color="#0070fa" /></span>
+                  <Form.Control
+                    as="textarea"
+                    name="nota"  // Agora estamos controlando "nota" como uma string
+                    value={produto.nota}  // Valor da nota
+                    onChange={handleChange}  // Atualiza o estado da nota
+                    maxLength="100"
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} md={6} lg={4}>
+              <Form.Group controlId={`nota-arquivos`}>
+                <Form.Label className="fortificarLetter">Arquivos</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text"><MdOutlineFileCopy fontSize={22} color="#0070fa" /></span>
+                  <Form.Control
+                    type="file"
+                    name={`nota-arquivos`}
+                    onChange=""  // Se precisar de manipulação de arquivos, adicione aqui
+                    multiple
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+
+            <Col xs={12} md={6} lg={4} className="pt-4">
+              {/* Checkbox para Nota Interna */}
+              <Form.Check
+                type="checkbox"
+                label="Nota Interna"
+                name="interna"
+                checked={produto.interna}
+                onChange={handleCheckboxChange}
+              />
+
+              {/* Checkbox para Compartilhado com Fornecedor */}
+              <Form.Check
+                type="checkbox"
+                label="Compartilhado com fornecedor"
+                name="compartilhada"
+                checked={produto.compartilhada}
+                onChange={handleCheckboxChange}
+              />
+            </Col>
+          </Row>
+        </div>
+      </Form.Group>
 
 
-        </Form.Group>
-
-        {/* Botão de Enviar */}
-        <Button variant="success" type="submit" className="links-acessos w-25 px-5 mt-5 d-block mx-auto">
-          Enviar
-        </Button>
-      </Form>
+      {/* Botão de Enviar */}
+      <Button variant="success" type="submit" className="links-acessos w-25 px-5 mt-5 d-block mx-auto">
+        Enviar
+      </Button>
+    </Form>
 
       {/* Modal para adicionar nova cor */}
       <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable>

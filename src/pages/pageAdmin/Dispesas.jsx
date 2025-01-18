@@ -318,7 +318,7 @@ const Despesas = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Despesas" direccao="/addDespesa" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <TopoAdmin entrada="Lista de Despesas" direccao="/addDispesas" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
               <ListarDespesas />
             </div>
