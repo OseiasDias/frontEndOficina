@@ -283,7 +283,7 @@ export default function AddCompras() {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Adicionar Gate Pass" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/ingressoPage" />
+            <TopoAdmin entrada="  Adicionar Gate Pass" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/ingressoPage" />
             <div className="vh-100 alturaPereita">
               <GatepassForm />
             </div>

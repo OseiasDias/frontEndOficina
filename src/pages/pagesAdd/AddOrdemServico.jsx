@@ -19,6 +19,7 @@ import logoMarca from "../../assets/lgo.png";
 const ServiceAddForm = () => {
 
 
+  // eslint-disable-next-line no-unused-vars
   const [formValues, setFormValues] = useState({
     jobno: 'J000005', // Ordem de Reparação
     cust_id: '', // Nome do cliente
@@ -124,7 +125,7 @@ const ServiceAddForm = () => {
             <h6>PASSO - 1: ADICIONAR DETALHES DO SERVIÇO...</h6>
             <hr />
           </div>
-          <Form id="ServiceAdd-Form" method="post" action="/garage/service/store" encType="multipart/form-data">
+          <Form id="ServiceAdd-Form" method="post"  encType="multipart/form-data">
             <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="jobno">
@@ -467,7 +468,7 @@ const ServiceAddForm = () => {
                       </Col>
 
                       {/* Arquivos */}
-                      <Col xs={6} md={3}>
+                      <Col xs={6} md={4}>
                         <h6>Arquivos</h6>
                         <div className="input-group">
                           <span className="input-group-text">< FaFileAlt fontSize={20} color="#0070fa" /></span>
@@ -481,7 +482,7 @@ const ServiceAddForm = () => {
                       </Col>
 
                       {/* Checkboxes em coluna única */}
-                      <Col xs={12} md={3}>
+                      <Col xs={12} md={4}>
                         <h6>Opções</h6>
                         <Form.Check
                           type="checkbox"
@@ -499,18 +500,7 @@ const ServiceAddForm = () => {
                         />
                       </Col>
 
-                      {/* Remover Nota */}
-                      <Col xs={12} md={1}>
-                        <Button
-
-                          
-                          size="sm"
-                          className="mt-2 border-radius-zero borderSem colorirBTN"
-                        >
-                          <MdDeleteForever className="links-acessos colorirBTN" fontSize={30} />
-
-                        </Button>
-                      </Col>
+                    
                     </Row>
                 
 

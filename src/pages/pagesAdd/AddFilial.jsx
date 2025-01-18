@@ -2,6 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { FaBuilding, FaPhone, FaEnvelope, FaImage, FaGlobe, FaMap, FaMapMarkerAlt, FaHome } from 'react-icons/fa';
 
 
 
@@ -59,6 +60,10 @@ const FormularioFilial = () => {
         <Col xs={12} md={6}>
           <Form.Group controlId="nomeFilial">
             <Form.Label>Nome da filial <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaBuilding fontSize={20} color="#0070fa" /></span>
+
+          
             <Form.Control
               type="text"
               name="nomeFilial"
@@ -68,12 +73,16 @@ const FormularioFilial = () => {
               onChange={lidarComMudanca}
               required
             />
+            </div>
           </Form.Group>
         </Col>
 
         <Col xs={12} md={6}>
           <Form.Group controlId="numeroContato">
             <Form.Label>Número do contato <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaPhone fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               type="text"
               name="numeroContato"
@@ -84,6 +93,7 @@ const FormularioFilial = () => {
               onChange={lidarComMudanca}
               required
             />
+            </div>
           </Form.Group>
         </Col>
       </Row>
@@ -93,6 +103,9 @@ const FormularioFilial = () => {
         <Col xs={12} md={6}>
           <Form.Group controlId="email">
             <Form.Label>E-mail <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaEnvelope fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               type="email"
               name="email"
@@ -102,17 +115,22 @@ const FormularioFilial = () => {
               onChange={lidarComMudanca}
               required
             />
+            </div>
           </Form.Group>
         </Col>
 
         <Col xs={12} md={6}>
           <Form.Group controlId="imagem">
             <Form.Label>Imagem</Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaImage fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               type="file"
               name="imagem"
               onChange={lidarComImagemMudanca}
             />
+            </div>
             {dadosFormulario.imagem && (
               <img
                 src={URL.createObjectURL(dadosFormulario.imagem)}
@@ -130,6 +148,9 @@ const FormularioFilial = () => {
         <Col xs={12} md={6}>
           <Form.Group controlId="paisId">
             <Form.Label>País <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               as="select"
               name="paisId"
@@ -137,6 +158,7 @@ const FormularioFilial = () => {
               onChange={lidarComMudanca}
               required
             >
+            
              <option value="">Selecione o país</option>
                 <option value="5">Andorra</option>
                 <option value="8">Antártica</option>
@@ -378,13 +400,18 @@ const FormularioFilial = () => {
                 <option value="244">Iugoslávia</option>
                 <option value="245">Zâmbia</option>
                 <option value="246">Zimbábue</option>
+                
             </Form.Control>
+            </div>
           </Form.Group>
         </Col>
 
         <Col xs={12} md={6}>
           <Form.Group controlId="provincia">
             <Form.Label>Província</Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaMap fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               type="text"
               name="provincia"
@@ -392,6 +419,7 @@ const FormularioFilial = () => {
               placeholder="Digite o nome da província"
               onChange={lidarComMudanca}
             />
+            </div>
           </Form.Group>
         </Col>
       </Row>
@@ -400,6 +428,9 @@ const FormularioFilial = () => {
         <Col xs={12} md={6}>
           <Form.Group controlId="municipio">
             <Form.Label>Município</Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaMapMarkerAlt fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               type="text"
               name="municipio"
@@ -407,12 +438,16 @@ const FormularioFilial = () => {
               placeholder="Digite o nome do município"
               onChange={lidarComMudanca}
             />
+            </div>
           </Form.Group>
         </Col>
 
         <Col xs={12} md={6}>
           <Form.Group controlId="endereco">
             <Form.Label>Endereço <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaHome fontSize={20} color="#0070fa" /></span>
+
             <Form.Control
               as="textarea"
               name="endereco"
@@ -422,6 +457,7 @@ const FormularioFilial = () => {
               onChange={lidarComMudanca}
               required
             />
+            </div>
           </Form.Group>
         </Col>
       </Row>
