@@ -205,75 +205,88 @@ const generatePDF = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedProduto && (
-            <div>
-              <div className="topBarraVe w-100 d-flex">
-                <div className="divFoto">
-                  <FaUserGear className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
-                </div>
+        {selectedProduto && ( 
+  <div>
+    <div className="topBarraVe w-100 d-flex">
+      <div className="divFoto">
+        <FaUserGear className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
+      </div>
 
-                <div className="divInfo mt-2 pt-4 ms-3 text-black">
-                  <p className="ajusteParagrafo">
-                    <span className="me-2">
-                      <b>Número de produto: </b>{selectedProduto.numero_produto}
-                    </span>
-                  </p>
-                  <p className="ajusteParagrafo">
-                    <span className="me-2">
-                      <b>Nome do Produto: </b>{selectedProduto.nome}
-                    </span>
-                  </p>
-                </div>
-              </div>
-              <hr />
-              <h4 className="text-center text-underline">Detalhes do Produto</h4>
+      <div className="divInfo mt-2 pt-4 ms-3 text-black">
+        <p className="ajusteParagrafo">
+          <span className="me-2">
+            <b>Número de produto: </b>{selectedProduto.numero_produto}
+          </span>
+        </p>
+        <p className="ajusteParagrafo">
+          <span className="me-2">
+            <b>Nome do Produto: </b>{selectedProduto.nome}
+          </span>
+        </p>
+      </div>
+    </div>
+    <hr />
+    <h4 className="text-center text-underline">Detalhes do Produto</h4>
 
-              <table className="table table-striped">
-                <tbody>
-                  <tr>
-                    <td><strong>Código do Produto:</strong></td>
-                    <td>{selectedProduto.numero_produto}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Data de Compra:</strong></td>
-                    <td>{selectedProduto.data_compra}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Nome:</strong></td>
-                    <td>{selectedProduto.nome}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Categoria:</strong></td>
-                    <td>{selectedProduto.galho}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Fabricante:</strong></td>
-                    <td>{selectedProduto.fabricante}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Preço:</strong></td>
-                    <td>{selectedProduto.preco} Kz</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Unidade de Medida:</strong></td>
-                    <td>{selectedProduto.unidade_medida}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Fornecedor:</strong></td>
-                    <td>{selectedProduto.fornecedor}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Cor:</strong></td>
-                    <td>{selectedProduto.cor}</td>
-                  </tr>
-                  <tr>
-                    <td><strong>Garantia:</strong></td>
-                    <td>{selectedProduto.garantia}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
+    <table className="table table-striped">
+      <tbody>
+        <tr>
+          <td><strong>Código do Produto:</strong></td>
+          <td>{selectedProduto.numero_produto}</td>
+        </tr>
+        <tr>
+          <td><strong>Data de Compra:</strong></td>
+          <td>{selectedProduto.data_compra}</td>
+        </tr>
+        <tr>
+          <td><strong>Nome:</strong></td>
+          <td>{selectedProduto.nome}</td>
+        </tr>
+        <tr>
+          <td><strong>Categoria:</strong></td>
+          <td>{selectedProduto.galho}</td>
+        </tr>
+        <tr>
+          <td><strong>Fabricante:</strong></td>
+          <td>{selectedProduto.fabricante}</td>
+        </tr>
+        <tr>
+          <td><strong>Preço:</strong></td>
+          <td>{selectedProduto.preco} Kz</td>
+        </tr>
+        <tr>
+          <td><strong>Unidade de Medida:</strong></td>
+          <td>{selectedProduto.unidade_medida}</td>
+        </tr>
+        <tr>
+          <td><strong>Fornecedor:</strong></td>
+          <td>{selectedProduto.fornecedor}</td>
+        </tr>
+        <tr>
+          <td><strong>Cor:</strong></td>
+          <td>{selectedProduto.cor}</td>
+        </tr>
+        <tr>
+          <td><strong>Garantia:</strong></td>
+          <td>{selectedProduto.garantia}</td>
+        </tr>
+        <tr>
+          <td><strong>Nota:</strong></td>
+          <td className='text-justify'>{selectedProduto.nota}</td>
+        </tr>
+        <tr>
+          <td><strong>Nota Interna:</strong></td>
+          <td>{selectedProduto.interna === 1 ? 'Sim' : 'Não'}</td>
+        </tr>
+        <tr>
+          <td><strong>Compartilhada:</strong></td>
+          <td>{selectedProduto.compartilhada === 1 ? 'Sim' : 'Não'}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+)}
+
         </Modal.Body>
         <Modal.Footer>
           {/* Botões de Ação */}
