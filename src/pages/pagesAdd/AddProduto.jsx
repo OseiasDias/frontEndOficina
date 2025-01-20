@@ -1,12 +1,11 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import { IoIosAdd} from "react-icons/io";
+import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
 import { Form, Button, Col, Row, Modal } from 'react-bootstrap';
 import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdSecurity, MdStraighten, MdTextFields } from "react-icons/md";
-import { AiOutlineFieldNumber } from "react-icons/ai";
 import logoMarca from "../../assets/lgo.png";
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify'; // Importando react-toastify
@@ -20,10 +19,6 @@ function FormularioProduto() {
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
 
   //const [unidadeMedida, setUnidadeMedida] = useState(""); // Estado para o select
-  
-
-
-
   const [novaCor, setNovaCor] = useState({ nome: '', hex: '' });
 
   const [cores, setCores] = useState([
@@ -39,16 +34,11 @@ function FormularioProduto() {
     { nome: 'Marrom', hex: '#6f4f37' },
   ]);
 
-
-
-
   //const handleShowCorModal = () => setShowCorModal(true);
   const handleCloseCorModal = () => setShowCorModal(false);
 
   //const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
-
-
 
   const handleAddCor = () => {
     if (novaCor.nome && novaCor.hex) {
@@ -76,7 +66,6 @@ function FormularioProduto() {
 
   const [novaUnidade, setNovaUnidade] = useState(""); // Estado para adicionar nova unidade
   const [produto, setProduto] = useState({
-    numeroProduto: "",
     dataCompra: "",
     nome: "",
     galho: "",
@@ -86,18 +75,12 @@ function FormularioProduto() {
     fornecedor: "",
     garantia: "",
     imagem: null,
-    nota: "",  // Nota como string
-    interna: false,  // Valor para "Nota Interna"
-    compartilhada: false,  // Valor para "Compartilhado com fornecedor"
+    nota: "",
+    notaArquivos: null,
+    interna: false,
+    compartilhada: false
   });
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setProduto((prevProduto) => ({
-      ...prevProduto,
-      [name]: value,
-    }));
-  };
+  
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -110,20 +93,95 @@ function FormularioProduto() {
 
 
   const handleImageChange = (e) => {
-    setProduto({ ...produto, imagem: e.target.files[0] });
+    const { name, files } = e.target;
+    setProduto(prev => ({ ...prev, [name]: files[0] }));
   };
-
-  
-
-  const handleSubmit = (e) => {
+  // Função para o envio do formulário
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(produto);
+  
+    const formData = new FormData();
+    formData.append("data_compra", produto.dataCompra);
+    formData.append("nome", produto.nome);
+    formData.append("galho", produto.galho);
+    formData.append("fabricante", produto.fabricante);
+    formData.append("preco", produto.preco);
+    formData.append("unidade_medida", produto.unidadeMedida);
+    formData.append("fornecedor", produto.fornecedor);
+    formData.append("garantia", produto.garantia);
+    formData.append("imagem", produto.imagem);
+    formData.append("nota", produto.nota);
+    formData.append("nota_arquivos", produto.notaArquivos);
+    formData.append("interna", produto.interna ? 1 : 0);
+    formData.append("compartilhada", produto.compartilhada ? 1 : 0);
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/produtos/", {
+        method: "POST",
+        body: formData
+      });
+  
+      if (response.ok) {
+        // eslint-disable-next-line no-unused-vars
+        const data = await response.json();
+        toast.success("Produto cadastrado com sucesso!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        });
+        // Limpar os campos do formulário após sucesso
+        setProduto({
+          dataCompra: "",
+          nome: "",
+          galho: "",
+          fabricante: "",
+          preco: "",
+          unidadeMedida: "",
+          fornecedor: "",
+          garantia: "",
+          imagem: null,
+          nota: "",
+          notaArquivos: null,
+          interna: false,
+          compartilhada: false
+        });
+      } else {
+        const errorData = await response.json();
+        toast.error(`Erro ao cadastrar produto: ${errorData.message}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined
+        });
+      }
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      toast.error("Erro de conexão com o servidor. Tente novamente.", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined
+      });
+    }
   };
 
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduto(prev => ({ ...prev, [name]: value }));
+  };
   
-
-
-
 
 
 
@@ -340,271 +398,262 @@ function FormularioProduto() {
   return (
     <>
 
-<Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
-      <div className="col-md-12 mt-5">
-        <h6>INFORMAÇÕES DO PRODUTO</h6>
-        <hr />
-      </div>
+    <ToastContainer />
 
-      <Row>
-        {/* Número do Produto */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="numeroProduto">
-            <Form.Label className="fortificarLetter">Número de Produto <span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><AiOutlineFieldNumber fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="text"
-                name="numeroProduto"
-                value={produto.numeroProduto}
-                onChange={handleChange}
-                readOnly
-              />
-            </div>
-          </Form.Group>
-        </Col>
+      <Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
+        <div className="col-md-12 mt-5">
+          <h6>INFORMAÇÕES DO PRODUTO</h6>
+          <hr />
+        </div>
 
-        {/* Data de Compra */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="dataCompra">
-            <Form.Label className="fortificarLetter">Data de Compra <span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdDateRange fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="date"
-                name="dataCompra"
-                value={produto.dataCompra}
-                onChange={handleChange}
-              />
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
+        <Row>
+          {/* Número do Produto */}
 
-      {/* Nome */}
-      <Row>
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="nome">
-            <Form.Label className="fortificarLetter">Nome do produto<span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdTextFields fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="text"
-                name="nome"
-                value={produto.nome}
-                onChange={handleChange}
-                placeholder="Digite o nome do produto"
-                maxLength="30"
-                required
-              />
-            </div>
-          </Form.Group>
-        </Col>
 
-        {/* Galho */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="galho">
-            <Form.Label className="fortificarLetter">Galho <span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdCategory fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                as="select"
-                name="galho"
-                value={produto.galho}
-                onChange={handleChange}
-              >
-                <option value="1">Galho Principal</option>
-              </Form.Control>
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      {/* Fabricante */}
-      <Row>
-        <Col xs={12} md={6}>
-          <Form.Group controlId="fabricante">
-            <Form.Label>Nome do Fabricante <span className="text-danger">*</span></Form.Label>
-            <div className="d-flex">
+          {/* Data de Compra */}
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="dataCompra">
+              <Form.Label className="fortificarLetter">Data de Compra <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
-                <span className="input-group-text">
-                  <MdBusiness fontSize={22} color="#0070fa" />
-                </span>
+                <span className="input-group-text"><MdDateRange fontSize={22} color="#0070fa" /></span>
+                <Form.Control
+                  type="date"
+                  name="dataCompra"
+                  value={produto.dataCompra}
+                  onChange={handleChange}
+                />
+              </div>
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="garantia">
+              <Form.Label className="fortificarLetter">Garantia</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><MdSecurity fontSize={22} color="#0070fa" /></span>
+                <Form.Control
+                  type="text"
+                  name="garantia"
+                  value={produto.garantia}
+                  onChange={handleChange}
+                  placeholder="Insira a garantia do produto"
+                  maxLength="20"
+                />
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        {/* Nome */}
+        <Row>
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="nome">
+              <Form.Label className="fortificarLetter">Nome do produto<span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><MdTextFields fontSize={22} color="#0070fa" /></span>
+                <Form.Control
+                  type="text"
+                  name="nome"
+                  value={produto.nome}
+                  onChange={handleChange}
+                  placeholder="Digite o nome do produto"
+                  maxLength="30"
+                  required
+                />
+              </div>
+            </Form.Group>
+          </Col>
+
+          {/* Galho */}
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="galho">
+              <Form.Label className="fortificarLetter">Galho <span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><MdCategory fontSize={22} color="#0070fa" /></span>
                 <Form.Control
                   as="select"
-                  name="fabricante"
-                  value={produto.fabricante}
+                  name="galho"
+                  value={produto.galho}
                   onChange={handleChange}
                 >
-                  <option value="">--Selecione o nome da fabricação--</option>
-                  {fabricantes.map((fabricante) => (
-                    <option key={fabricante.id} value={fabricante.id}>
-                      {fabricante.nome}
-                    </option>
-                  ))}
+                  <option value="1">Galho Principal</option>
+                  <option value="Galho Central">Galho Central</option>
                 </Form.Control>
               </div>
+            </Form.Group>
+          </Col>
+        </Row>
 
-              <Button
-                onClick={handleOpenFabricanteModal}
-                className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
-              >
-                <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
-              </Button>
-            </div>
-          </Form.Group>
-        </Col>
-
-        {/* Preço */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="preco">
-            <Form.Label className="fortificarLetter">Preço ($) <span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdAttachMoney fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="text"
-                name="preco"
-                value={produto.preco}
-                onChange={handleChange}
-                placeholder="Digite o preço do produto"
-                maxLength="10"
-                required
-              />
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        {/* Unidade de Medida */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="unidadeMedida">
-            <Form.Label className="fortificarLetter">
-              Unidade de Medida <span className="text-danger">*</span>
-            </Form.Label>
-            <div className="d-flex">
-              <div className="input-group">
-                <span className="input-group-text">
-                  <MdStraighten fontSize={22} color="#0070fa" />
-                </span>
-                <Form.Control
-                  as="select"
-                  name="unidadeMedida"
-                  value={produto.unidadeMedida}
-                  onChange={handleChange}
-                >
-                  <option value="">- Selecionar Unidade -</option>
-                  {unidades.length > 0 ? (
-                    unidades.map((unidade) => (
-                      <option key={unidade.id} value={unidade.id}>
-                        {unidade.unidade}
+        {/* Fabricante */}
+        <Row>
+          <Col xs={12} md={6}>
+            <Form.Group controlId="fabricante">
+              <Form.Label>Nome do Fabricante <span className="text-danger">*</span></Form.Label>
+              <div className="d-flex">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <MdBusiness fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    as="select"
+                    name="fabricante"
+                    value={produto.fabricante}
+                    onChange={handleChange}
+                  >
+                    <option value="">--Selecione o nome da fabricação--</option>
+                    {fabricantes.map((fabricante) => (
+                      <option key={fabricante.id} value={fabricante.id}>
+                        {fabricante.nome}
                       </option>
-                    ))
-                  ) : (
-                    <option>Carregando...</option>
-                  )}
-                </Form.Control>
-              </div>
-              <button
-                onClick={handleOpenUnidadeMedidaModalUnidade}
-                className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
-              >
-                <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
-              </button>
-            </div>
-          </Form.Group>
-        </Col>
+                    ))}
+                  </Form.Control>
+                </div>
 
-        {/* Selecione o fornecedor */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="fornecedor">
-            <Form.Label className="fortificarLetter">
-              Fornecedor <span className="text-danger">*</span>
-            </Form.Label>
-            <div className="d-flex">
-              <div className="input-group">
-                <span className="input-group-text">
-                  <MdBusiness fontSize={22} color="#0070fa" />
-                </span>
-                <Form.Control
-                  as="select"
-                  name="fornecedor"
-                  value={produto.fornecedor}
-                  onChange={handleChange}
+                <Button
+                  onClick={handleOpenFabricanteModal}
+                  className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
                 >
-                  <option value="">- Selecionar Fornecedor -</option>
-                  {fornecedores.length > 0 ? (
-                    fornecedores.map((fornecedor) => (
-                      <option key={fornecedor.id} value={fornecedor.id}>
-                        {`${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome} - ${fornecedor.nome_empresa}`}
-                      </option>
-                    ))
-                  ) : (
-                    <option>Carregando...</option>
-                  )}
-                </Form.Control>
+                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+                </Button>
               </div>
-              <Button className="btn btn-primary ms-3 links-acessos" onClick={handleShowFornecedorModal}>+</Button>
+            </Form.Group>
+          </Col>
 
-              <Modal show={showFornecedorModal} scrollable size="xl" onHide={handleCloseFornecedorModal}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Adicionar Fornecedor Agora</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <AddFornecedor />
-                </Modal.Body>
-                <Modal.Footer className="p-0">
-                  <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
-                </Modal.Footer>
-              </Modal>
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
+          {/* Preço */}
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="preco">
+              <Form.Label className="fortificarLetter">Preço ($) <span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><MdAttachMoney fontSize={22} color="#0070fa" /></span>
+                <Form.Control
+                  type="text"
+                  name="preco"
+                  value={produto.preco}
+                  onChange={handleChange}
+                  placeholder="Digite o preço do produto"
+                  maxLength="10"
+                  required
+                />
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
 
-      <Row>
-        {/* Cor */}
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="garantia">
-            <Form.Label className="fortificarLetter">Garantia</Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdSecurity fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="text"
-                name="garantia"
-                value={produto.garantia}
-                onChange={handleChange}
-                placeholder="Insira a garantia do produto"
-                maxLength="20"
-              />
-            </div>
-          </Form.Group>
-        </Col>
+        <Row>
+          {/* Unidade de Medida */}
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="unidadeMedida">
+              <Form.Label className="fortificarLetter">
+                Unidade de Medida <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="d-flex">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <MdStraighten fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    as="select"
+                    name="unidadeMedida"
+                    value={produto.unidadeMedida}
+                    onChange={handleChange}
+                  >
+                    <option value="">- Selecionar Unidade -</option>
+                    {unidades.length > 0 ? (
+                      unidades.map((unidade) => (
+                        <option key={unidade.id} value={unidade.id}>
+                          {unidade.unidade}
+                        </option>
+                      ))
+                    ) : (
+                      <option>Carregando...</option>
+                    )}
+                  </Form.Control>
+                </div>
+                <button
+                  onClick={handleOpenUnidadeMedidaModalUnidade}
+                  className="btn btn-primary ms-3 links-acessos d-flex px-4 pt-2"
+                >
+                  <RiAddLargeLine size={19} className="me-2" />  /  <MdDeleteForever className="ms-2" size={19} />
+                </button>
+              </div>
+            </Form.Group>
+          </Col>
 
-        <Col xs={12} md={6} lg={6}>
-          <Form.Group controlId="imagem">
-            <Form.Label className="fortificarLetter">Imagem</Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><MdImage fontSize={22} color="#0070fa" /></span>
-              <Form.Control
-                type="file"
-                name="imagem"
-                onChange={handleImageChange}
-                disabled
-              />
-            </div>
-            {produto.imagem && (
-              <img
-                src={URL.createObjectURL(produto.imagem)}
-                alt="Imagem do produto"
-                style={{ width: 100, marginTop: '10px' }}
-              />
-            )}
-          </Form.Group>
-        </Col>
-      </Row>
+          {/* Selecione o fornecedor */}
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="fornecedor">
+              <Form.Label className="fortificarLetter">
+                Fornecedor <span className="text-danger">*</span>
+              </Form.Label>
+              <div className="d-flex">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <MdBusiness fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    as="select"
+                    name="fornecedor"
+                    value={produto.fornecedor}
+                    onChange={handleChange}
+                  >
+                    <option value="">- Selecionar Fornecedor -</option>
+                    {fornecedores.length > 0 ? (
+                      fornecedores.map((fornecedor) => (
+                        <option key={fornecedor.id} value={fornecedor.id}>
+                          {`${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome} - ${fornecedor.nome_empresa}`}
+                        </option>
+                      ))
+                    ) : (
+                      <option>Carregando...</option>
+                    )}
+                  </Form.Control>
+                </div>
+                <Button className="btn btn-primary ms-3 links-acessos" onClick={handleShowFornecedorModal}>+</Button>
 
-      {/* Notas */}
+                <Modal show={showFornecedorModal} scrollable size="xl" onHide={handleCloseFornecedorModal}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Adicionar Fornecedor Agora</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <AddFornecedor />
+                  </Modal.Body>
+                  <Modal.Footer className="p-0">
+                    <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+                  </Modal.Footer>
+                </Modal>
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
+
+        <Row>
+          {/* Cor */}
+          
+
+          <Col xs={12} md={6} lg={6}>
+            <Form.Group controlId="imagem">
+              <Form.Label className="fortificarLetter">Imagem</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><MdImage fontSize={22} color="#0070fa" /></span>
+                <Form.Control
+                  type="file"
+                  name="imagem"
+                  onChange={handleImageChange}
+                  disabled
+                />
+              </div>
+              {produto.imagem && (
+                <img
+                  src={URL.createObjectURL(produto.imagem)}
+                  alt="Imagem do produto"
+                  style={{ width: 100, marginTop: '10px' }}
+                />
+              )}
+            </Form.Group>
+          </Col>
+        </Row>
+
+        {/* Notas */}
+         {/* Notas */}
       <Form.Group>
         <div className="d-flex justify-content-between">
           <h6 className="mt-5">Adicionar Notas</h6>
@@ -638,6 +687,7 @@ function FormularioProduto() {
                     name={`nota-arquivos`}
                     onChange=""  // Se precisar de manipulação de arquivos, adicione aqui
                     multiple
+                    disabled
                   />
                 </div>
               </Form.Group>
@@ -667,279 +717,289 @@ function FormularioProduto() {
       </Form.Group>
 
 
-      {/* Botão de Enviar */}
-      <Button variant="success" type="submit" className="links-acessos w-25 px-5 mt-5 d-block mx-auto">
-        Enviar
-      </Button>
-    </Form>
+        {/* Botão de Enviar */}
+        <Button variant="success" type="submit" className="links-acessos w-25 px-5 mt-5 d-block mx-auto">
+          Enviar
+        </Button>
+      </Form>
 
-      {/* Modal para adicionar nova cor */}
-      <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable>
-        <Modal.Header closeButton>
-          <Modal.Title>Adicionar Nova Cor</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="d-flex">
-              <Form.Group controlId="novaCorNome" className="w-100">
-                <Form.Label className="fortificarLetter">Nome da Cor</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={novaCor.nome}
-                  onChange={(e) => setNovaCor({ ...novaCor, nome: e.target.value })}
-                  placeholder="Digite o nome da cor"
-                />
-              </Form.Group>
-              <Form.Group controlId="novaCorHex" >
-                <Form.Label className="fortificarLetter"><span className="opacity-0"> b</span></Form.Label>
-                <Form.Control
-                  type="color"
-                  value={novaCor.hex}
-                  onChange={(e) => setNovaCor({ ...novaCor, hex: e.target.value })}
-                  placeholder="Digite o código hexadecimal"
-                />
-              </Form.Group>
-            </div>
-            <div className="d-flex justify-content-end my-2">
-              <Button variant="primary" onClick={handleAddCor} className="links-acessos btnAddCor">
-                Adicionar
-              </Button>
-            </div>
-          </Form>
-          <hr />
-          <h5>Cores Atuais</h5>
-          <ul className="list-group">
-            {cores.map((cor) => (
-              <li
-                key={cor.hex}
-                className="list-group-item  d-flex justify-content-between align-items-center"
-                style={{ backgroundColor: cor.hex }}
-              >
-                {cor.nome}
 
-                <MdDeleteForever
-                  className="text-black"
-                  fontSize={20}
-                  onClick={() => handleRemoveCor(cor.hex)}
-                  style={{ cursor: 'pointer' }}
-                />
-              </li>
-            ))}
-          </ul>
-        </Modal.Body>
-      </Modal>
 
-      {/* Modal para adicionar nova unidade */}
-      <Modal show={showUnidadeModal} onHide={handleCloseUnidadeModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Adicionar unidade de medida</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="d-flex">
-              <Form.Group className="mb-3 w-100">
-                <Form.Control
-                  type="text"
-                  value={novaUnidade}
-                  onChange={(e) => setNovaUnidade(e.target.value)}
-                  placeholder="Digite a unidade de medida"
-                  maxLength="30"
-                />
-              </Form.Group>
+      <div className="modaisl">
 
-              <Button className="h-25 ms-2" onClick={handleAddUnidade}>
-                Enviar
-              </Button>
-            </div>
-          </Form>
+        {/* Modal para adicionar nova cor */}
+        <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable>
+          <Modal.Header closeButton>
+            <Modal.Title>Adicionar Nova Cor</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <div className="d-flex">
+                <Form.Group controlId="novaCorNome" className="w-100">
+                  <Form.Label className="fortificarLetter">Nome da Cor</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={novaCor.nome}
+                    onChange={(e) => setNovaCor({ ...novaCor, nome: e.target.value })}
+                    placeholder="Digite o nome da cor"
+                  />
+                </Form.Group>
+                <Form.Group controlId="novaCorHex" >
+                  <Form.Label className="fortificarLetter"><span className="opacity-0"> b</span></Form.Label>
+                  <Form.Control
+                    type="color"
+                    value={novaCor.hex}
+                    onChange={(e) => setNovaCor({ ...novaCor, hex: e.target.value })}
+                    placeholder="Digite o código hexadecimal"
+                  />
+                </Form.Group>
+              </div>
+              <div className="d-flex justify-content-end my-2">
+                <Button variant="primary" onClick={handleAddCor} className="links-acessos btnAddCor">
+                  Adicionar
+                </Button>
+              </div>
+            </Form>
+            <hr />
+            <h5>Cores Atuais</h5>
+            <ul className="list-group">
+              {cores.map((cor) => (
+                <li
+                  key={cor.hex}
+                  className="list-group-item  d-flex justify-content-between align-items-center"
+                  style={{ backgroundColor: cor.hex }}
+                >
+                  {cor.nome}
 
-          <table className="table unitproductname mt-3">
-            <tbody>
-              {unidades.map((unidade) => (
-                <tr key={unidade.id} className="delete-1 data_unit_name row mx-1 border my-2">
-                  <td className="text-start col-6 ">{unidade.nome}</td>
-                  <td className="text-end col-6">
-                    <Button
-                      variant="danger"
-                      onClick={() => handleRemoveUnidade(unidade.id)}
-                    >
-                      <MdDeleteForever fontSize={26} />
-                    </Button>
-                  </td>
-                </tr>
+                  <MdDeleteForever
+                    className="text-black"
+                    fontSize={20}
+                    onClick={() => handleRemoveCor(cor.hex)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </li>
               ))}
-            </tbody>
-          </table>
-        </Modal.Body>
-      </Modal>
+            </ul>
+          </Modal.Body>
+        </Modal>
+
+        {/* Modal para adicionar nova unidade */}
+        <Modal show={showUnidadeModal} onHide={handleCloseUnidadeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Adicionar unidade de medida</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <div className="d-flex">
+                <Form.Group className="mb-3 w-100">
+                  <Form.Control
+                    type="text"
+                    value={novaUnidade}
+                    onChange={(e) => setNovaUnidade(e.target.value)}
+                    placeholder="Digite a unidade de medida"
+                    maxLength="30"
+                  />
+                </Form.Group>
+
+                <Button className="h-25 ms-2" onClick={handleAddUnidade}>
+                  Enviar
+                </Button>
+              </div>
+            </Form>
+
+            <table className="table unitproductname mt-3">
+              <tbody>
+                {unidades.map((unidade) => (
+                  <tr key={unidade.id} className="delete-1 data_unit_name row mx-1 border my-2">
+                    <td className="text-start col-6 ">{unidade.nome}</td>
+                    <td className="text-end col-6">
+                      <Button
+                        variant="danger"
+                        onClick={() => handleRemoveUnidade(unidade.id)}
+                      >
+                        <MdDeleteForever fontSize={26} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Modal.Body>
+        </Modal>
 
 
-      {/* Modal para adicionar nova unidade */}
-      {/* Modal para adicionar/remover fabricante */}
+        {/* Modal para adicionar nova unidade */}
+        {/* Modal para adicionar/remover fabricante */}
 
-      {/* Modal Principal */}
-      <Modal show={showFabricanteModal} size="lg" scrollable onHide={handleCloseFabricanteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Adicionar Nome do Fabricante</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="d-flex">
-              <Form.Group className="mb-3 w-100">
-                <Form.Control
-                  type="text"
-                  value={novoFabricante}
-                  onChange={(e) => setNovoFabricante(e.target.value)}
-                  placeholder="Nome do Fabricante"
-                  maxLength="30"
-                />
-              </Form.Group>
-              <Button className="h-25 ms-2 links-acessos" onClick={handleAddFabricante}>
-                Adicionar
-              </Button>
-            </div>
-          </Form>
+        {/* Modal Principal */}
+        <Modal show={showFabricanteModal} size="lg" scrollable onHide={handleCloseFabricanteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Adicionar Nome do Fabricante</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <div className="d-flex">
+                <Form.Group className="mb-3 w-100">
+                  <Form.Control
+                    type="text"
+                    value={novoFabricante}
+                    onChange={(e) => setNovoFabricante(e.target.value)}
+                    placeholder="Nome do Fabricante"
+                    maxLength="30"
+                  />
+                </Form.Group>
+                <Button className="h-25 ms-2 links-acessos" onClick={handleAddFabricante}>
+                  Adicionar
+                </Button>
+              </div>
+            </Form>
 
-          <ToastContainer position="top-center" />
+            <ToastContainer position="top-center" />
 
-          <table className="table unitproductname mt-3 table-striped">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th className="text-end">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fabricantes.map((fabricante) => (
-                <tr key={fabricante.id}>
-                  <td className="pt-3">{fabricante.nome}</td>
-                  <td className="text-end">
-                    <Button
-                      variant="danger"
-                      onClick={() => handleOpenConfirmDeleteModal(fabricante.id)}
-                    >
-                      <MdDeleteForever fontSize={22} />
-                    </Button>
-                  </td>
+            <table className="table unitproductname mt-3 table-striped">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th className="text-end">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </Modal.Body>
-        <Modal.Footer className="p-0">
+              </thead>
+              <tbody>
+                {fabricantes.map((fabricante) => (
+                  <tr key={fabricante.id}>
+                    <td className="pt-3">{fabricante.nome}</td>
+                    <td className="text-end">
+                      <Button
+                        variant="danger"
+                        onClick={() => handleOpenConfirmDeleteModal(fabricante.id)}
+                      >
+                        <MdDeleteForever fontSize={22} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Modal.Body>
+          <Modal.Footer className="p-0">
 
-          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+            <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
 
-        </Modal.Footer>
-      </Modal>
+          </Modal.Footer>
+        </Modal>
 
-      {/* Modal de Confirmação de Exclusão */}
-      <Modal
-        show={showConfirmDeleteModal}
-        onHide={handleCloseConfirmDeleteModal}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Essa ação não pode ser desfeita.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseConfirmDeleteModal}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleRemoveFabricante}>
-            Excluir
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        {/* Modal de Confirmação de Exclusão */}
+        <Modal
+          show={showConfirmDeleteModal}
+          onHide={handleCloseConfirmDeleteModal}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Essa ação não pode ser desfeita.</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseConfirmDeleteModal}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleRemoveFabricante}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
-      {/**MODAL UNIDADES */}
+        {/**MODAL UNIDADES */}
 
 
-      {/* Modal Principal */}
-      <Modal show={showUnidadeMedidaModalUnidade} size="lg" scrollable onHide={handleCloseUnidadeMedidaModalUnidade}>
-        <Modal.Header closeButton>
-          <Modal.Title>Adicionar Unidade de Medida</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <div className="d-flex">
-              <Form.Group className="mb-3 w-100">
-                <Form.Control
-                  type="text"
-                  value={novaUnidadeMedidaUnidade}
-                  onChange={(e) => setNovaUnidadeMedidaUnidade(e.target.value)}
-                  placeholder="Nome da Unidade de Medida"
-                  maxLength="30"
-                />
-              </Form.Group>
-              <Button className="h-25 ms-2 links-acessos" onClick={handleAddUnidadeMedidaUnidade}>
-                Adicionar
-              </Button>
-            </div>
-          </Form>
+        {/* Modal Principal */}
+        <Modal show={showUnidadeMedidaModalUnidade} size="lg" scrollable onHide={handleCloseUnidadeMedidaModalUnidade}>
+          <Modal.Header closeButton>
+            <Modal.Title>Adicionar Unidade de Medida</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <div className="d-flex">
+                <Form.Group className="mb-3 w-100">
+                  <Form.Control
+                    type="text"
+                    value={novaUnidadeMedidaUnidade}
+                    onChange={(e) => setNovaUnidadeMedidaUnidade(e.target.value)}
+                    placeholder="Nome da Unidade de Medida"
+                    maxLength="30"
+                  />
+                </Form.Group>
+                <Button className="h-25 ms-2 links-acessos" onClick={handleAddUnidadeMedidaUnidade}>
+                  Adicionar
+                </Button>
+              </div>
+            </Form>
 
-          <ToastContainer position="top-center" />
+            <ToastContainer position="top-center" />
 
-          <table className="table unitproductname mt-3 table-striped">
-            <thead>
-              <tr>
-                <th>Unidade</th>
-                <th className="text-end">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {unidades.map((unidade) => (
-                <tr key={unidade.id}>
-                  <td className="pt-3">{unidade.unidade}</td>
-                  <td className="text-end">
-                    <Button
-                      variant="danger"
-                      onClick={() => handleOpenConfirmDeleteModalUnidade(unidade.id)}
-                    >
-                      <MdDeleteForever fontSize={22} />
-                    </Button>
-                  </td>
+            <table className="table unitproductname mt-3 table-striped">
+              <thead>
+                <tr>
+                  <th>Unidade</th>
+                  <th className="text-end">Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </Modal.Body>
-        <Modal.Footer className="p-0">
-          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
-        </Modal.Footer>
-      </Modal>
+              </thead>
+              <tbody>
+                {unidades.map((unidade) => (
+                  <tr key={unidade.id}>
+                    <td className="pt-3">{unidade.unidade}</td>
+                    <td className="text-end">
+                      <Button
+                        variant="danger"
+                        onClick={() => handleOpenConfirmDeleteModalUnidade(unidade.id)}
+                      >
+                        <MdDeleteForever fontSize={22} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Modal.Body>
+          <Modal.Footer className="p-0">
+            <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+          </Modal.Footer>
+        </Modal>
 
-      {/* Modal de Confirmação de Exclusão */}
-      <Modal
-        show={showConfirmDeleteModalUnidade}
-        onHide={handleCloseConfirmDeleteModalUnidade}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
+        {/* Modal de Confirmação de Exclusão */}
+        <Modal
+          show={showConfirmDeleteModalUnidade}
+          onHide={handleCloseConfirmDeleteModalUnidade}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Tem certeza que deseja excluir?</Modal.Title>
 
-        </Modal.Header>
-        <Modal.Body>
-          <p>Essa ação não pode ser desfeita.</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseConfirmDeleteModalUnidade}>
-            Cancelar
-          </Button>
-          <Button variant="danger" onClick={handleRemoveUnidadeMedidaUnidade}>
-            Excluir
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Essa ação não pode ser desfeita.</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseConfirmDeleteModalUnidade}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleRemoveUnidadeMedidaUnidade}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
 
     </>
   );
 }
+
+
+
+
+
 
 
 
@@ -967,7 +1027,7 @@ export default function AddProdutos() {
               <hr />
               <p className="text-center">
 
-                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
+                Copycenter © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos
                 reservados.
                 <br />
                 Desenvolvido por: <b>Oseias Dias</b>
@@ -979,3 +1039,7 @@ export default function AddProdutos() {
     </>
   );
 };
+
+
+
+

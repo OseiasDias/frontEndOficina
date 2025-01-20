@@ -78,8 +78,11 @@ export function TabelaVizualizarProdutos() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Número do Produto", selector: (row) => row.numero_produto || "Sem informação" },
-    { name: "Nome", selector: (row) => row.nome || "Sem informação" },
+    { 
+      name: "Número do Produto", 
+      selector: (row) => row.id ? `P00${row.id}` : "Sem informação" 
+    },
+        { name: "Nome", selector: (row) => row.nome || "Sem informação" },
     { name: "Fabricante", selector: (row) => row.fabricante || "Sem informação" },
     { name: "Preço", selector: (row) => `${row.preco || "0.00"} Kz` },
     { name: "Unidade de Medida", selector: (row) => row.unidade_medida || "Sem informação" },
@@ -176,7 +179,7 @@ const generatePDF = () => {
               } else {
                 const filteredRecords = originalRecords.filter(
                   (item) =>
-                    item.numero_produto.toLowerCase().includes(query) ||
+                    item.id.toLowerCase().includes(query) ||
                     item.nome.toLowerCase().includes(query)
                 );
                 setRecords(filteredRecords);
@@ -215,7 +218,7 @@ const generatePDF = () => {
       <div className="divInfo mt-2 pt-4 ms-3 text-black">
         <p className="ajusteParagrafo">
           <span className="me-2">
-            <b>Número de produto: </b>{selectedProduto.numero_produto}
+            <b>Número de produto: </b>{selectedProduto.id}
           </span>
         </p>
         <p className="ajusteParagrafo">
@@ -232,7 +235,7 @@ const generatePDF = () => {
       <tbody>
         <tr>
           <td><strong>Código do Produto:</strong></td>
-          <td>{selectedProduto.numero_produto}</td>
+          <td>P00{selectedProduto.id}</td>
         </tr>
         <tr>
           <td><strong>Data de Compra:</strong></td>
