@@ -362,65 +362,6 @@ function FormularioAddCompra() {
 
 
 
-const CompraForm = () => {
-  // Estado para armazenar os fabricantes e os dados de compra
-  const [fabricantesComoFabricante, setFabricantesComoFabricante] = useState([]);
-  const [dadosCompraComoFabricante, setDadosCompraComoFabricante] = useState({
-    fabricanteIdComoFabricante: '',  // ID do fabricante selecionado
-  });
-
-  // Função para buscar os produtos da API e extrair os fabricantes únicos
-  useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/produtos/')
-      .then(responseComoFabricante => {
-        // Extrair fabricantes únicos a partir dos produtos
-        const produtosComoFabricante = responseComoFabricante.data;
-        const fabricantesUnicosComoFabricante = [
-          ...new Set(produtosComoFabricante.map(produtoComoFabricante => produtoComoFabricante.fabricante))  // Extrair fabricantes únicos
-        ];
-        setFabricantesComoFabricante(fabricantesUnicosComoFabricante);  // Atualizar o estado com os fabricantes
-      })
-      .catch(errorComoFabricante => {
-        console.error('Erro ao carregar os produtos:', errorComoFabricante);
-      });
-  }, []);
-
-  // Função para tratar a mudança de valor no formulário
-  const handleMudancaComoFabricante = (eComoFabricante) => {
-    const { nameComoFabricante, valueComoFabricante } = eComoFabricante.target;
-    setDadosCompraComoFabricante({
-      ...dadosCompraComoFabricante,
-      [nameComoFabricante]: valueComoFabricante,  // Atualiza o estado 'dadosCompra' com o valor selecionado
-    });
-  };
-
-  return (
-    <Form>
-      {/* Select para Fabricantes */}
-      <Form.Group as={Col} md={6} controlId="fabricanteIdComoFabricante">
-        <Form.Label>
-          Fabricante <span className="text-danger">*</span>
-        </Form.Label>
-        <div className="input-group">
-          <Form.Control
-            as="select"
-            name="fabricanteIdComoFabricante"
-            value={dadosCompraComoFabricante.fabricanteIdComoFabricante}
-            onChange={handleMudancaComoFabricante}  // Chama a função de atualização ao alterar
-            required
-          >
-            <option value="">Selecione o fabricante</option>
-            {fabricantesComoFabricante.map((fabricanteComoFabricante, indexComoFabricante) => (
-              <option key={indexComoFabricante} value={fabricanteComoFabricante}>
-                {fabricanteComoFabricante}  {/* Exibe o nome do fabricante */}
-              </option>
-            ))}
-          </Form.Control>
-        </div>
-      </Form.Group>
-    </Form>
-  );
-};
 
 
 
@@ -442,7 +383,7 @@ export default function AddCompras() {
                     <div className="flexAuto w-100 ">
                         <TopoAdmin entrada="  Adicionar Compra" leftSeta={<FaArrowLeftLong />} icone={<IoIosAdd />} leftR="/comprasPage" />
                         <div className="vh-100 alturaPereita">
-                            <CompraForm/>
+                            <FormularioAddCompra/>
                         </div>
                         <div className="div text-center np pt-2 mt-2 ppAr">
                             <hr />

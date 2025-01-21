@@ -265,10 +265,7 @@ const generatePDF = () => {
           <td><strong>Fornecedor:</strong></td>
           <td>{selectedProduto.fornecedor}</td>
         </tr>
-        <tr>
-          <td><strong>Cor:</strong></td>
-          <td>{selectedProduto.cor}</td>
-        </tr>
+      
         <tr>
           <td><strong>Garantia:</strong></td>
           <td>{selectedProduto.garantia}</td>

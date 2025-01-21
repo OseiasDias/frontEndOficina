@@ -88,19 +88,25 @@ function FormularioProduto() {
     formData.append("data_compra", produto.dataCompra);
     formData.append("nome", produto.nome);
     formData.append("galho", produto.galho);
-    formData.append("fabricante", produto.fabricante);
-    formData.append("preco", produto.preco);
+    formData.append("fabricante_id", produto.fabricante); // Ajuste para `fabricante_id`
+    formData.append("preco", produto.preco); // O preço é enviado como string
     formData.append("unidade_medida", produto.unidadeMedida);
-    formData.append("fornecedor", produto.fornecedor);
+    formData.append("distribuidor_id", produto.fornecedor); // Aqui você está usando `fornecedor` como distribuidor_id, ajuste conforme a lógica da API
     formData.append("garantia", produto.garantia);
     formData.append("nota", produto.nota);
-    formData.append("nota_arquivos", produto.notaArquivos);
-    formData.append("interna", produto.interna ? 1 : 0);
-    formData.append("compartilhada", produto.compartilhada ? 1 : 0);
+    formData.append("interna", produto.interna ? 1 : 0); // Envia 1 para true e 0 para false
+    formData.append("compartilhada", produto.compartilhada ? 1 : 0); // Envia 1 para true e 0 para false
   
     // Se houver uma imagem, adiciona ao FormData
     if (produto.imagem) {
-      formData.append('imagem', produto.imagem);
+      formData.append('imagem', produto.imagem); // Aqui a imagem será enviada como arquivo
+    }
+  
+    // Se houver arquivos de nota, adicione-os (ajustado para múltiplos arquivos)
+    if (produto.notaArquivos) {
+      Array.from(produto.notaArquivos).forEach((file) => {
+        formData.append('nota_arquivos[]', file);
+      });
     }
   
     // Configuração de loading
@@ -112,7 +118,7 @@ function FormularioProduto() {
       .then((response) => {
         toast.success("Produto cadastrado com sucesso!", {
           position: "top-center",
-          autoClose: 5000, // Tempo para a notificação ficar visível
+          autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -120,7 +126,6 @@ function FormularioProduto() {
           progress: undefined
         });
   
-        // Usando setTimeout para esperar o tempo do toast antes de limpar o formulário
         setTimeout(() => {
           // Limpar os campos do formulário após o tempo do toast
           setProduto({
@@ -170,7 +175,7 @@ function FormularioProduto() {
           });
         }
         setIsLoading(false); // Corrigido o estado de loading para false após erro
-      })
+      });
   };
   
 
