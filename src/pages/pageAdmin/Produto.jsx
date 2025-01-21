@@ -76,17 +76,64 @@ export function TabelaVizualizarProdutos() {
     }
   };
 
-  // Colunas da tabela
+
+  const [fabricantes, setFabricantes] = useState([]);
+  const [distribuidores, setDistribuidores] = useState([]);
+  const [produtos, setProdutos] = useState([]); // Supondo que você também tenha um estado para os produtos
+  
+  useEffect(() => {
+    // Função assíncrona para realizar as requisições
+    const fetchData = async () => {
+      try {
+        // Requisição para obter os fabricantes e distribuidores paralelamente
+        const [fabricantesResponse, distribuidoresResponse] = await Promise.all([
+          axios.get('http://127.0.0.1:8000/api/fabricantes/'),
+          axios.get('http://127.0.0.1:8000/api/distribuidores/')
+        ]);
+
+        // Armazenar os dados no estado
+        setFabricantes(fabricantesResponse.data);
+        setDistribuidores(distribuidoresResponse.data);
+
+      } catch (error) {
+        // Caso haja erro em uma das requisições
+        console.error("Erro ao carregar dados:", error);
+      }
+    };
+
+    fetchData(); // Chama a função assíncrona para obter os dados
+  }, []); 
+
+  // Função para obter o nome do fabricante a partir do id
+  const getFabricanteNome = (id) => {
+    const fabricante = fabricantes.find(fab => fab.id === id);
+    return fabricante ? fabricante.nome : "Sem informação";
+  };
+
+  // Função para obter o nome do fornecedor/distribuidor a partir do id
+  const getFornecedorNome = (id) => {
+    if (!id) return "Sem informação"; // Se o id não for válido ou não existir
+  
+    const fornecedor = distribuidores.find(dist => dist.id === id);
+    
+    if (fornecedor) {
+      return `${fornecedor.primeiro_nome} ${fornecedor.ultimo_nome}`;
+    } else {
+      return "Sem informação"; // Caso o fornecedor não seja encontrado
+    }
+  };
+  
+
   const columns = [
-    { 
-      name: "Número do Produto", 
-      selector: (row) => row.id ? `P00${row.id}` : "Sem informação" 
+    {
+      name: "Número do Produto",
+      selector: (row) => row.id ? `P00${row.id}` : "Sem informação"
     },
-        { name: "Nome", selector: (row) => row.nome || "Sem informação" },
-    { name: "Fabricante", selector: (row) => row.fabricante || "Sem informação" },
+    { name: "Nome", selector: (row) => row.nome || "Sem informação" },
+    { name: "Fabricante", selector: (row) => getFabricanteNome(row.fabricante_id) },
     { name: "Preço", selector: (row) => `${row.preco || "0.00"} Kz` },
     { name: "Unidade de Medida", selector: (row) => row.unidade_medida || "Sem informação" },
-    { name: "Fornecedor", selector: (row) => row.fornecedor || "Sem informação" },
+    { name: "Fornecedor", selector: (row) => getFornecedorNome(row.fornecedor_id) },
     {
       name: "Ações",
       cell: (row) => (
@@ -107,18 +154,17 @@ export function TabelaVizualizarProdutos() {
       ),
     },
   ];
-
   // Função para gerar PDF
-const generatePDF = () => {
-  const doc = new jsPDF();
-  doc.html(document.querySelector("#productDetailsTable"), {
-    callback: function (doc) {
-      doc.save(`${selectedProduto.nome}.pdf`);  // Salva o PDF com o nome do produto
-    },
-    x: 10,
-    y: 10,
-  });
-};
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.html(document.querySelector("#productDetailsTable"), {
+      callback: function (doc) {
+        doc.save(`${selectedProduto.nome}.pdf`);  // Salva o PDF com o nome do produto
+      },
+      x: 10,
+      y: 10,
+    });
+  };
 
   // Função para buscar os dados da API
   const fetchData = async () => {
@@ -153,6 +199,9 @@ const generatePDF = () => {
   }
 
   // Exibe erro se ocorrer durante a busca dos dados
+
+
+
   if (error) {
     return (
       <div className="text-center">
@@ -161,6 +210,9 @@ const generatePDF = () => {
       </div>
     );
   }
+
+  /**INFORMACAO DA MODAL PRODUTO */
+
 
   return (
     <div className="homeDiv">
@@ -204,93 +256,93 @@ const generatePDF = () => {
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
           <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes do Produto</h4>
-            <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60}/>
+            <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        {selectedProduto && ( 
-  <div>
-    <div className="topBarraVe w-100 d-flex">
-      <div className="divFoto">
-        <FaUserGear className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
-      </div>
+          {selectedProduto && (
+            <div>
+              <div className="topBarraVe w-100 d-flex">
+                <div className="divFoto">
+                  <FaUserGear className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
+                </div>
 
-      <div className="divInfo mt-2 pt-4 ms-3 text-black">
-        <p className="ajusteParagrafo">
-          <span className="me-2">
-            <b>Número de produto: </b>{selectedProduto.id}
-          </span>
-        </p>
-        <p className="ajusteParagrafo">
-          <span className="me-2">
-            <b>Nome do Produto: </b>{selectedProduto.nome}
-          </span>
-        </p>
-      </div>
-    </div>
-    <hr />
-    <h4 className="text-center text-underline">Detalhes do Produto</h4>
+                <div className="divInfo mt-2 pt-4 ms-3 text-black">
+                  <p className="ajusteParagrafo">
+                    <span className="me-2">
+                      <b>Número de produto: </b>{selectedProduto.id}
+                    </span>
+                  </p>
+                  <p className="ajusteParagrafo">
+                    <span className="me-2">
+                      <b>Nome do Produto: </b>{selectedProduto.nome}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <hr />
+              <h4 className="text-center text-underline">Detalhes do Produto</h4>
 
-    <table className="table table-striped">
-      <tbody>
-        <tr>
-          <td><strong>Código do Produto:</strong></td>
-          <td>P00{selectedProduto.id}</td>
-        </tr>
-        <tr>
-          <td><strong>Data de Compra:</strong></td>
-          <td>{selectedProduto.data_compra}</td>
-        </tr>
-        <tr>
-          <td><strong>Nome:</strong></td>
-          <td>{selectedProduto.nome}</td>
-        </tr>
-        <tr>
-          <td><strong>Categoria:</strong></td>
-          <td>{selectedProduto.galho}</td>
-        </tr>
-        <tr>
-          <td><strong>Fabricante:</strong></td>
-          <td>{selectedProduto.fabricante}</td>
-        </tr>
-        <tr>
-          <td><strong>Preço:</strong></td>
-          <td>{selectedProduto.preco} Kz</td>
-        </tr>
-        <tr>
-          <td><strong>Unidade de Medida:</strong></td>
-          <td>{selectedProduto.unidade_medida}</td>
-        </tr>
-        <tr>
-          <td><strong>Fornecedor:</strong></td>
-          <td>{selectedProduto.fornecedor}</td>
-        </tr>
-      
-        <tr>
-          <td><strong>Garantia:</strong></td>
-          <td>{selectedProduto.garantia}</td>
-        </tr>
-        <tr>
-          <td><strong>Nota:</strong></td>
-          <td className='text-justify'>{selectedProduto.nota}</td>
-        </tr>
-        <tr>
-          <td><strong>Nota Interna:</strong></td>
-          <td>{selectedProduto.interna === 1 ? 'Sim' : 'Não'}</td>
-        </tr>
-        <tr>
-          <td><strong>Compartilhada:</strong></td>
-          <td>{selectedProduto.compartilhada === 1 ? 'Sim' : 'Não'}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-)}
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <td><strong>Código do Produto:</strong></td>
+                    <td>P00{selectedProduto.id}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Data de Compra:</strong></td>
+                    <td>{selectedProduto.data_compra}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nome:</strong></td>
+                    <td>{selectedProduto.nome}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Categoria:</strong></td>
+                    <td>{selectedProduto.galho}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fabricante:</strong></td>
+                    <td>{selectedProduto.fabricante}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preço:</strong></td>
+                    <td>{selectedProduto.preco} Kz</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Unidade de Medida:</strong></td>
+                    <td>{selectedProduto.unidade_medida}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Fornecedor:</strong></td>
+                    <td>{selectedProduto.fornecedor}</td>
+                  </tr>
+
+                  <tr>
+                    <td><strong>Garantia:</strong></td>
+                    <td>{selectedProduto.garantia}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nota:</strong></td>
+                    <td className='text-justify'>{selectedProduto.nota}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nota Interna:</strong></td>
+                    <td>{selectedProduto.interna === 1 ? 'Sim' : 'Não'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Compartilhada:</strong></td>
+                    <td>{selectedProduto.compartilhada === 1 ? 'Sim' : 'Não'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
 
         </Modal.Body>
         <Modal.Footer>
           {/* Botões de Ação */}
-        
+
 
           {/* Ícones de Imprimir e Gerar PDF */}
           <div className="ms-2">
@@ -306,7 +358,7 @@ const generatePDF = () => {
             </Button>
           </div>
           <Button variant="primary" className='links-acessos ms-2' onClick={() => navigate(`/editarProduto/${selectedProduto.id}`)}><MdEditNote fontSize={24} />
-          Editar Produto</Button>
+            Editar Produto</Button>
         </Modal.Footer>
       </Modal>
 
@@ -329,6 +381,14 @@ const generatePDF = () => {
     </div>
   );
 }
+
+
+
+
+
+
+
+
 
 
 // Componente para a página de produtos, que inclui o sidebar e o topo da página

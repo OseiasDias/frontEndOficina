@@ -29,19 +29,68 @@ function FormularioAddCompra() {
         notaArquivos: []
     });
 
-    const handleMudanca = (event) => {
-        const { name, value, type, checked } = event.target;
-        setDadosCompra({
-            ...dadosCompra,
-            [name]: type === 'checkbox' ? checked : value
-        });
-    };
-
     const [distribuidores, setDistribuidores] = useState([]);  // Lista de distribuidores
     const [dadosCompraFilias, setDadosCompraFilias] = useState({
         filial: '',  // valor do campo de filial selecionada
         fornecedor: '',  // valor do campo de fornecedor selecionado
     });
+
+    const [filias, setFilias] = useState([]);  // Lista de filiais
+
+
+    // Carregar filiais e distribuidores
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const filiasResponse = await axios.get('http://127.0.0.1:8000/api/filiais'); // API para as filiais
+        const distribuidoresResponse = await axios.get('http://127.0.0.1:8000/api/distribuidores/'); // API para distribuidores
+        setFilias(filiasResponse.data);
+        setDistribuidores(distribuidoresResponse.data);
+      } catch (error) {
+        console.error('Erro ao carregar filiais ou distribuidores:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Função para lidar com mudanças nos inputs
+  const handleMudanca = (e) => {
+    const { name, value } = e.target;
+    setDadosCompra((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleMudancaFilias = (e) => {
+    const { name, value } = e.target;
+    setDadosCompraFilias((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+
+    // Verificar se o campo alterado foi o fornecedor, se sim, fazer a requisição
+    if (name === 'fornecedor' && value) {
+      // Requisição para buscar o fornecedor
+      axios.get(`http://127.0.0.1:8000/api/distribuidores/${value}`)
+        .then((response) => {
+          const fornecedor = response.data;
+          setDadosCompra((prevState) => ({
+            ...prevState,
+            celular: fornecedor.celular,
+            email: fornecedor.email,
+            endereco: fornecedor.endereco
+          }));
+        })
+        .catch((error) => {
+          console.error('Erro ao carregar fornecedor:', error);
+        });
+    }
+  };
+
+
+
+   
 
 
     const handleSubmit = (event) => {
@@ -52,7 +101,7 @@ function FormularioAddCompra() {
     /**LOGICA PARA EXIBIR OS DADOS DA FIALIS */
 
     // Variáveis com nomes terminando em 'filias'
-    const [filias, setFilias] = useState([]);  // Lista de filiais
+
 
 
     // Função para buscar os distribuidores da API
@@ -78,13 +127,9 @@ function FormularioAddCompra() {
     }, []);
 
     // Função para tratar a mudança de valor no formulário
-    const handleMudancaFilias = (e) => {
-        const { name, value } = e.target;
-        setDadosCompraFilias({
-            ...dadosCompraFilias,
-            [name]: value,  // Atualiza o estado 'dadosCompraFilias' com o valor da filial selecionada
-        });
-    };
+  
+
+    
 
 
 
@@ -92,134 +137,131 @@ function FormularioAddCompra() {
     return (
         <Form onSubmit={handleSubmit}>
             <div className="col-md-12 mt-5">
-                <h6>INFORMAÇÕES DA COMPRA</h6>
-                <hr />
-            </div>
-            <Row className="mb-3">
+        <h6>INFORMAÇÕES DA COMPRA</h6>
+        <hr />
+      </div>
+      <Row className="mb-3">
+        <Form.Group as={Col} md={6} controlId="dataCompra">
+          <Form.Label>
+            Data de Compra <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text"><FaCalendarAlt fontSize={22} color="#0070fa" /></span>
+            <Form.Control
+              type="date"
+              name="dataCompra"
+              value={dadosCompra.dataCompra}
+              onChange={handleMudanca}
+              required
+            />
+          </div>
+        </Form.Group>
 
+        <Form.Group as={Col} md={6} controlId="filial">
+          <Form.Label>
+            Filial <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text">
+              <FaTree fontSize={22} color="#0070fa" />
+            </span>
+            <Form.Control
+              as="select"
+              name="filial"
+              value={dadosCompraFilias.filial}
+              onChange={handleMudancaFilias}
+              required
+            >
+              <option value="">Selecione a Filial</option>
+              {filias.map((filia) => (
+                <option key={filia.id} value={filia.id}>
+                  {filia.nome_filial}
+                </option>
+              ))}
+            </Form.Control>
+          </div>
+        </Form.Group>
+      </Row>
 
-                <Form.Group as={Col} md={6} controlId="dataCompra">
-                    <Form.Label>
-                        Data de Compra <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text"><FaCalendarAlt fontSize={22} color="#0070fa" /></span>
-                        <Form.Control
-                            type="date"
-                            name="dataCompra"
-                            value={dadosCompra.dataCompra}
-                            onChange={handleMudanca}
-                            required
-                        />
-                    </div>
-                </Form.Group>
+      <Row className="mb-3">
+        <Form.Group as={Col} md={6} controlId="fornecedor">
+          <Form.Label>
+            Nome do Fornecedor <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text">
+              <FaIndustry fontSize={22} color="#0070fa" />
+            </span>
+            <Form.Control
+              as="select"
+              name="fornecedor"
+              value={dadosCompraFilias.fornecedor}
+              onChange={handleMudancaFilias}
+              required
+            >
+              <option value="">Selecione o Fornecedor</option>
+              {distribuidores.map((distribuidor) => (
+                <option key={distribuidor.id} value={distribuidor.id}>
+                  {distribuidor.nome_empresa}
+                </option>
+              ))}
+            </Form.Control>
+          </div>
+        </Form.Group>
 
-                <Form.Group as={Col} md={6} controlId="filial">
-                    <Form.Label>
-                        Filial <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text">
-                            <FaTree fontSize={22} color="#0070fa" />
-                        </span>
-                        <Form.Control
-                            as="select"
-                            name="filial"  // Nome do campo que será enviado no formulário
-                            value={dadosCompraFilias.filial}  // Valor do campo selecionado
-                            onChange={handleMudancaFilias}  // Chama a função de atualização ao alterar
-                            required
-                        >
-                            <option value="">Selecione a Filial</option>
-                            {filias.map((filia) => (
-                                <option key={filia.id} value={filia.id}>
-                                    {filia.nome_filial}  {/* Exibe o nome da filial */}
-                                </option>
-                            ))}
-                        </Form.Control>
-                    </div>
-                </Form.Group>
-            </Row>
+        <Form.Group as={Col} md={6} controlId="celular">
+          <Form.Label>
+            Não Móvel <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text"><FaPhoneAlt fontSize={22} color="#0070fa" /></span>
+            <Form.Control
+              type="text"
+              name="celular"
+              value={dadosCompra.celular}
+              onChange={handleMudanca}
+              placeholder="Digite o número de celular"
+              readOnly
+            />
+          </div>
+        </Form.Group>
+      </Row>
 
-            <Row className="mb-3">
-                <Form.Group as={Col} md={6} controlId="fornecedor">
-                    <Form.Label>
-                        Nome do Fornecedor <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text">
-                            <FaIndustry fontSize={22} color="#0070fa" />
-                        </span>
-                        <Form.Control
-                            as="select"
-                            name="fornecedor"  // Nome do campo que será enviado no formulário
-                            value={dadosCompraFilias.fornecedor}  // Valor do fornecedor selecionado
-                            onChange={handleMudancaFilias}  // Chama a função de atualização ao alterar
-                            required
-                        >
-                            <option value="">Selecione o Fornecedor</option>
-                            {distribuidores.map((distribuidor) => (
-                                <option key={distribuidor.id} value={distribuidor.id}>
-                                    {distribuidor.nome_empresa}  {/* Exibe o nome da empresa (Fornecedor) */}
-                                </option>
-                            ))}
-                        </Form.Control>
-                    </div>
-                </Form.Group>
+      <Row className="mb-3">
+        <Form.Group as={Col} md={6} controlId="email">
+          <Form.Label>
+            E-mail <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text"><FaEnvelope fontSize={22} color="#0070fa" /></span>
+            <Form.Control
+              type="email"
+              name="email"
+              value={dadosCompra.email}
+              onChange={handleMudanca}
+              placeholder="Digite o e-mail"
+              readOnly
+            />
+          </div>
+        </Form.Group>
 
-                <Form.Group as={Col} md={6} controlId="celular">
-                    <Form.Label>
-                        Não Móvel <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text"><FaPhoneAlt fontSize={22} color="#0070fa" /></span>
-                        <Form.Control
-                            type="text"
-                            name="celular"
-                            value={dadosCompra.celular}
-                            onChange={handleMudanca}
-                            placeholder="Digite o número de celular"
-                            readOnly
-                        />
-                    </div>
-                </Form.Group>
-            </Row>
-
-            <Row className="mb-3">
-                <Form.Group as={Col} md={6} controlId="email">
-                    <Form.Label>
-                        E-mail <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text"><FaEnvelope fontSize={22} color="#0070fa" /></span>
-                        <Form.Control
-                            type="email"
-                            name="email"
-                            value={dadosCompra.email}
-                            onChange={handleMudanca}
-                            placeholder="Digite o e-mail"
-                            readOnly
-                        />
-                    </div>
-                </Form.Group>
-
-                <Form.Group as={Col} md={6} controlId="endereco">
-                    <Form.Label>
-                        Endereço de Cobrança <span className="text-danger">*</span>
-                    </Form.Label>
-                    <div className="input-group">
-                        <span className="input-group-text"><FaMapMarkedAlt fontSize={22} color="#0070fa" /></span>
-                        <Form.Control
-                            as="textarea"
-                            name="endereco"
-                            value={dadosCompra.endereco}
-                            onChange={handleMudanca}
-                            readOnly
-                            placeholder="Digite o Endereço de Cobrança "
-                        />
-                    </div>
-                </Form.Group>
-            </Row>
-
+        <Form.Group as={Col} md={6} controlId="endereco">
+          <Form.Label>
+            Endereço de Cobrança <span className="text-danger">*</span>
+          </Form.Label>
+          <div className="input-group">
+            <span className="input-group-text"><FaMapMarkedAlt fontSize={22} color="#0070fa" /></span>
+            <Form.Control
+              as="textarea"
+              name="endereco"
+              value={dadosCompra.endereco}
+              onChange={handleMudanca}
+              readOnly
+              placeholder="Digite o Endereço de Cobrança"
+            />
+          </div>
+        </Form.Group>
+      </Row>
 
 
             <div className="mt-5">

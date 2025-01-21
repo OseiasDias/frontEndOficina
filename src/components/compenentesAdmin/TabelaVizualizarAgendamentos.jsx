@@ -9,9 +9,7 @@ import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline, MdEditNote } from "react-icons/md";
 import { FaFilePdf, FaPrint, FaRegEye } from 'react-icons/fa';
 import { Modal, Button } from "react-bootstrap";
-import SideBar from '../../components/compenentesAdmin/SideBar';
-import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
-import { RiAddFill } from 'react-icons/ri';
+
 import { ImWhatsapp } from 'react-icons/im';
 import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
@@ -36,7 +34,7 @@ const customStyles = {
   },
 };
 
-export function ListarAgendamentos() {
+export default function ListarAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
   const [error, setError] = useState(null); // Variável de estado para erro
@@ -98,6 +96,14 @@ export function ListarAgendamentos() {
     setShowViewModal(true);
   };
 
+  const truncateText = (text, length = 30) => {
+    if (text && text.length > length) {
+      return text.substring(0, length) + "...";
+    }
+    return text;
+  };
+  
+
   // Colunas da tabela
   const columns = [
     {
@@ -107,22 +113,22 @@ export function ListarAgendamentos() {
     },
     {
       name: "Cliente",
-      selector: (row) => row.cliente.nome_exibicao,
+      selector: (row) => truncateText(row.cliente.nome_exibicao), // Limitar o nome do cliente
       sortable: true,
     },
     {
       name: "Serviço",
-      selector: (row) => row.servico ? row.servico.nome_servico : "Não informado",
+      selector: (row) => truncateText(row.servico ? row.servico.nome_servico : "Não informado"), // Limitar o nome do serviço
       sortable: true,
     },
     {
       name: "Status",
-      selector: (row) => row.status,
+      selector: (row) => truncateText(row.status), // Limitar o status se necessário
       sortable: true,
     },
     {
       name: "Descrição",
-      selector: (row) => row.descricao,
+      selector: (row) => truncateText(row.descricao), // Limitar a descrição
       sortable: true,
     },
     {
@@ -148,7 +154,7 @@ export function ListarAgendamentos() {
       ),
     },
   ];
-
+  
   // Exibe a tela de carregamento
   if (loading) {
     return (
@@ -288,32 +294,3 @@ export function ListarAgendamentos() {
     </>
   );
 }
-
-const Agendamentos = () => {
-  return (
-    <>
-      <div className="container-fluid">
-        <div className="d-flex">
-          <SideBar />
-          <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Agendamentos" direccao="/addAgendamento" icone={<RiAddFill />} leftR="/ProdutosList" />
-            <div className="vh-100 alturaPereita">
-              <ListarAgendamentos />
-            </div>
-
-            <div className="div text-center np pt-2 mt-2 ppAr">
-              <hr />
-              <p className="text-center">
-                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
-                <br />
-                Desenvolvido por: <b>Oseias Dias</b>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default Agendamentos;

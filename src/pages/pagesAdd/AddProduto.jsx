@@ -19,13 +19,13 @@ function FormularioProduto() {
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
 
   //const [unidadeMedida, setUnidadeMedida] = useState(""); // Estado para o select
- 
+
   //const handleShowCorModal = () => setShowCorModal(true);
 
   //const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
 
-  
+
 
   const handleAddUnidade = () => {
     if (novaUnidade) {
@@ -55,7 +55,7 @@ function FormularioProduto() {
     interna: false,
     compartilhada: false
   });
-  
+
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -66,6 +66,9 @@ function FormularioProduto() {
   };
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingFabricante, setIsLoadingFabricante] = useState(false);
+ // const [isLoading, setIsLoading] = useState(false);
+
 
 
 
@@ -79,10 +82,10 @@ function FormularioProduto() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // Validação do formulário (caso necessário)
     // if (!validateForm()) return;
-  
+
     // Montagem dos dados para envio
     const formData = new FormData();
     formData.append("data_compra", produto.dataCompra);
@@ -96,22 +99,22 @@ function FormularioProduto() {
     formData.append("nota", produto.nota);
     formData.append("interna", produto.interna ? 1 : 0); // Envia 1 para true e 0 para false
     formData.append("compartilhada", produto.compartilhada ? 1 : 0); // Envia 1 para true e 0 para false
-  
+
     // Se houver uma imagem, adiciona ao FormData
     if (produto.imagem) {
       formData.append('imagem', produto.imagem); // Aqui a imagem será enviada como arquivo
     }
-  
+
     // Se houver arquivos de nota, adicione-os (ajustado para múltiplos arquivos)
     if (produto.notaArquivos) {
       Array.from(produto.notaArquivos).forEach((file) => {
         formData.append('nota_arquivos[]', file);
       });
     }
-  
+
     // Configuração de loading
     setIsLoading(true);
-  
+
     // Envio dos dados via axios
     axios.post('http://127.0.0.1:8000/api/produtos/', formData)
       // eslint-disable-next-line no-unused-vars
@@ -125,7 +128,7 @@ function FormularioProduto() {
           draggable: true,
           progress: undefined
         });
-  
+
         setTimeout(() => {
           // Limpar os campos do formulário após o tempo do toast
           setProduto({
@@ -143,10 +146,10 @@ function FormularioProduto() {
             interna: false,
             compartilhada: false
           });
-  
+
           // Fechar a modal, se necessário
           setShowFabricanteModal(false);
-  
+
           // Redirecionamento após sucesso do cadastro
           navigate('/produtosPage'); // Isso irá redirecionar para /produtosPage
         }, 5000); // 5000ms corresponde ao tempo de autoClose do toast
@@ -177,13 +180,13 @@ function FormularioProduto() {
         setIsLoading(false); // Corrigido o estado de loading para false após erro
       });
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduto(prev => ({ ...prev, [name]: value }));
   };
-  
+
 
 
 
@@ -222,18 +225,40 @@ function FormularioProduto() {
       toast.error('O nome do fabricante não pode estar vazio.');
       return;
     }
+    setIsLoadingFabricante(true); // Inicia o estado de carregamento (botão desabilitado)
   
     try {
       await axios.post('http://127.0.0.1:8000/api/fabricantes/', { nome: novoFabricante });
       setNovoFabricante(''); // Limpa o campo de input
       fetchFabricantes(); // Recarrega a lista de fabricantes
-      toast.success('Fabricante adicionado com sucesso!');
+  
+      // Exibe o toast de sucesso
+      toast.success('Fabricante adicionado com sucesso!', {
+        position: "top-center",
+        autoClose: 3000, // Define o tempo de exibição do toast
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          // Fecha a modal quando o toast for fechado
+          setShowFabricanteModal(false);
+  
+          // Habilita o botão após o tempo do toast
+          setIsLoadingFabricante(false);
+        }
+      });
     } catch (error) {
-      console.error('Erro ao adicionar fabricante,Talvez esse fabricante ja existe:', error);
-      toast.error('Erro ao adicionar fabricante,Talvez esse fabricante ja existe:');
+      console.error('Erro ao adicionar fabricante, talvez esse fabricante já exista:', error);
+      toast.error('Erro ao adicionar fabricante, talvez esse fabricante já exista.');
+  
+      // Garante que o botão será habilitado em caso de erro também
+      setIsLoadingFabricante(false);
     }
   };
   
+
   // Função para abrir a modal de confirmação de exclusão
   const handleOpenConfirmDeleteModal = (fabricanteId) => {
     setFabricanteToDelete(fabricanteId);
@@ -251,9 +276,17 @@ function FormularioProduto() {
       await axios.delete(`http://127.0.0.1:8000/api/fabricantes/${fabricanteToDelete}`);
       fetchFabricantes(); // Recarrega a lista de fabricantes
       setShowConfirmDeleteModal(false);
-    
 
-      toast.success('Fabricante excluído com sucesso!!');
+
+      toast.success('Fabricante excluído com sucesso!!',{
+        position: "top-center",
+        autoClose: 3000, // Define o tempo de exibição do toast
+
+        onClose: () => {
+          // Fecha a modal quando o toast for fechado
+          setShowFabricanteModal(false);
+        }}
+      );
     } catch (error) {
       console.error('Erro ao remover fabricante:', error);
       toast.error('Erro ao excluir fabricante!');
@@ -299,17 +332,37 @@ function FormularioProduto() {
       toast.error('O nome da unidade de medida não pode estar vazio.');
       return;
     }
-
+  
+    setIsLoading(true);  // Inicia o estado de carregamento (desabilita o botão)
+  
     try {
       await axios.post('http://127.0.0.1:8000/api/unidade-medidas/', { unidade: novaUnidadeMedidaUnidade });
-      setNovaUnidadeMedidaUnidade('');
-      fetchUnidadesMedidaUnidade(); // Recarrega a lista de unidades de medida
-      toast.success('Unidade de medida adicionada com sucesso!');
+      setNovaUnidadeMedidaUnidade('');  // Limpa o campo de input
+      fetchUnidadesMedidaUnidade();  // Recarrega a lista de unidades de medida
+  
+      // Exibe o toast de sucesso
+      toast.success('Unidade de medida adicionada com sucesso!', {
+        position: "top-center",
+        autoClose: 3000,  // Tempo de exibição do toast
+        onClose: () => {
+          // Fecha a modal quando o toast for fechado
+          
+          setShowUnidadeMedidaModalUnidade(false);
+  
+          // Habilita o botão novamente após o tempo do toast
+          setIsLoading(false);
+        
+        }
+      });
     } catch (error) {
       console.error('Erro ao adicionar unidade de medida:', error);
       toast.error('Erro ao adicionar unidade de medida!');
+      
+      // Garante que o botão será habilitado também em caso de erro
+      setIsLoading(false);
     }
   };
+  
 
   // Função para abrir a modal de confirmação de exclusão
   const handleOpenConfirmDeleteModalUnidade = (unidadeMedidaIdUnidade) => {
@@ -402,7 +455,7 @@ function FormularioProduto() {
   return (
     <>
 
-    
+
 
       <Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="col-md-12 mt-5">
@@ -635,7 +688,7 @@ function FormularioProduto() {
 
         <Row>
           {/* Cor */}
-          
+
 
           <Col xs={12} md={6} lg={6}>
             <Form.Group controlId="imagem">
@@ -661,91 +714,91 @@ function FormularioProduto() {
         </Row>
 
         {/* Notas */}
-         {/* Notas */}
-      <Form.Group>
-        <div className="d-flex justify-content-between">
-          <h6 className="mt-5">Adicionar Notas</h6>
-        </div>
-        <hr />
-        <div className="nota d-flex">
-          <Row>
-            <Col xs={12} md={6} lg={4}>
-              <Form.Group controlId={`nota-texto`}>
-                <Form.Label className="fortificarLetter">Notas</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text"><MdNote fontSize={22} color="#0070fa" /></span>
-                  <Form.Control
-                    as="textarea"
-                    name="nota"  // Agora estamos controlando "nota" como uma string
-                    value={produto.nota}  // Valor da nota
-                    onChange={handleChange}  // Atualiza o estado da nota
-                    maxLength="100"
-                  />
-                </div>
-              </Form.Group>
-            </Col>
+        {/* Notas */}
+        <Form.Group>
+          <div className="d-flex justify-content-between">
+            <h6 className="mt-5">Adicionar Notas</h6>
+          </div>
+          <hr />
+          <div className="nota d-flex">
+            <Row>
+              <Col xs={12} md={6} lg={4}>
+                <Form.Group controlId={`nota-texto`}>
+                  <Form.Label className="fortificarLetter">Notas</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><MdNote fontSize={22} color="#0070fa" /></span>
+                    <Form.Control
+                      as="textarea"
+                      name="nota"  // Agora estamos controlando "nota" como uma string
+                      value={produto.nota}  // Valor da nota
+                      onChange={handleChange}  // Atualiza o estado da nota
+                      maxLength="100"
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
 
-            <Col xs={12} md={6} lg={4}>
-              <Form.Group controlId={`nota-arquivos`}>
-                <Form.Label className="fortificarLetter">Arquivos</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text"><MdOutlineFileCopy fontSize={22} color="#0070fa" /></span>
-                  <Form.Control
-                    type="file"
-                    name={`nota-arquivos`}
-                    onChange=""  // Se precisar de manipulação de arquivos, adicione aqui
-                    multiple
-                    disabled
-                  />
-                </div>
-              </Form.Group>
-            </Col>
+              <Col xs={12} md={6} lg={4}>
+                <Form.Group controlId={`nota-arquivos`}>
+                  <Form.Label className="fortificarLetter">Arquivos</Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text"><MdOutlineFileCopy fontSize={22} color="#0070fa" /></span>
+                    <Form.Control
+                      type="file"
+                      name={`nota-arquivos`}
+                      onChange=""  // Se precisar de manipulação de arquivos, adicione aqui
+                      multiple
+                      disabled
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
 
-            <Col xs={12} md={6} lg={4} className="pt-4">
-              {/* Checkbox para Nota Interna */}
-              <Form.Check
-                type="checkbox"
-                label="Nota Interna"
-                name="interna"
-                checked={produto.interna}
-                onChange={handleCheckboxChange}
-              />
+              <Col xs={12} md={6} lg={4} className="pt-4">
+                {/* Checkbox para Nota Interna */}
+                <Form.Check
+                  type="checkbox"
+                  label="Nota Interna"
+                  name="interna"
+                  checked={produto.interna}
+                  onChange={handleCheckboxChange}
+                />
 
-              {/* Checkbox para Compartilhado com Fornecedor */}
-              <Form.Check
-                type="checkbox"
-                label="Compartilhado com fornecedor"
-                name="compartilhada"
-                checked={produto.compartilhada}
-                onChange={handleCheckboxChange}
-              />
-            </Col>
-          </Row>
-        </div>
-      </Form.Group>
+                {/* Checkbox para Compartilhado com Fornecedor */}
+                <Form.Check
+                  type="checkbox"
+                  label="Compartilhado com fornecedor"
+                  name="compartilhada"
+                  checked={produto.compartilhada}
+                  onChange={handleCheckboxChange}
+                />
+              </Col>
+            </Row>
+          </div>
+        </Form.Group>
 
 
         {/* Botão de Enviar */}
-         {/* Botão de envio */}
-         <Button
-            variant="primary"
-            type="submit"
-            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-            ) : (
-              "Cadastrar"
-            )}
-          </Button>
+        {/* Botão de envio */}
+        <Button
+          variant="primary"
+          type="submit"
+          className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+          ) : (
+            "Cadastrar"
+          )}
+        </Button>
       </Form>
       <ToastContainer position="top-center" />
 
 
       <div className="modaisl">
 
-    
+
 
         {/* Modal para adicionar nova unidade */}
         <Modal show={showUnidadeModal} onHide={handleCloseUnidadeModal}>
@@ -765,8 +818,17 @@ function FormularioProduto() {
                   />
                 </Form.Group>
 
-                <Button className="h-25 ms-2" onClick={handleAddUnidade}>
-                  Enviar
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="h-25 ms-2 links-acessos" onClick={handleAddUnidade}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  ) : (
+                    "Adicionar"
+                  )}
                 </Button>
               </div>
             </Form>
@@ -812,13 +874,25 @@ function FormularioProduto() {
                     maxLength="30"
                   />
                 </Form.Group>
-                <Button className="h-25 ms-2 links-acessos" onClick={handleAddFabricante}>
-                  Adicionar
+
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="h-25 ms-2 links-acessos" onClick={handleAddFabricante}
+
+                  disabled={isLoadingFabricante}
+                >
+                  {isLoadingFabricante ? (
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  ) : (
+                    "Adicionar"
+                  )}
                 </Button>
+
               </div>
             </Form>
 
-           
+
 
             <table className="table unitproductname mt-3 table-striped">
               <thead>
@@ -899,8 +973,8 @@ function FormularioProduto() {
                 </Button>
               </div>
             </Form>
-         
-          
+
+
 
             <table className="table unitproductname mt-3 table-striped">
               <thead>

@@ -1,8 +1,8 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-import { FaHistory } from "react-icons/fa";
 import TabelaVizualizarAgendamento from "../../components/compenentesAdmin/TabelaVizualizarAgendamentos.jsx";
+import { RiAddFill } from "react-icons/ri";
 
 const Agendamento = () => {
   return (
@@ -12,10 +12,13 @@ const Agendamento = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Agendamentos" icone={<FaHistory />}  direccao="/agendamentoHistorico"/>
+          <TopoAdmin entrada="Lista de Agendamentos" direccao="/marcarAgendamentoAdimin" icone={<RiAddFill />} leftR="/ProdutosList" />
+
+            {/*<TopoAdmin entrada="Agendamentos" icone={<FaHistory />}  direccao="/agendamentoHistorico"/>
+            */}
 
             <div className="vh-100 alturaPereita">
-            <TabelaVizualizarAgendamento />
+              <TabelaVizualizarAgendamento />
             </div>
             <div className="div text-center np pt-2 mt-2 ppAr">
               <hr />
