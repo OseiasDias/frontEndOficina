@@ -82,7 +82,10 @@ export function TabelaVizualizarCompras() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Número da Compra", selector: (row) => row.numero_compra || "Sem informação" },
+    {
+      name: "Número da Compra",
+      selector: (row) => row.id ? `CMP-00${row.id}` : "Sem informação"
+    },
     { name: "Data da Compra", selector: (row) => new Date(row.data_compra).toLocaleDateString() || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
@@ -190,9 +193,9 @@ export function TabelaVizualizarCompras() {
       {/* Modal de Visualização de Compra */}
       <Modal show={showViewModal} scrollable onHide={() => setShowViewModal(false)} size="xl">
         <Modal.Header closeButton>
-           <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes da Compra</h4>
-                      <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
-                    </Modal.Title>
+          <Modal.Title className='d-flex justify-content-between w-100 '><h4 className='mt-3'>Detalhes da Compra</h4>
+            <img src={logoMarca} className="d-block mx-3" alt="logo da Biturbo" width={160} height={60} />
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedCompra && (
@@ -202,11 +205,19 @@ export function TabelaVizualizarCompras() {
                 <tbody>
                   <tr>
                     <td><strong>Número da Compra:</strong></td>
-                    <td>{selectedCompra.numero_compra}</td>
+                    <td>{selectedCompra.id}</td>
                   </tr>
                   <tr>
                     <td><strong>Data de Compra:</strong></td>
                     <td>{new Date(selectedCompra.data_compra).toLocaleDateString()}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Filial:</strong></td>
+                    <td>{selectedCompra.filial_id}</td> {/* Exibir o nome ou id da filial */}
+                  </tr>
+                  <tr>
+                    <td><strong>Distribuidor:</strong></td>
+                    <td>{selectedCompra.distribuidor_id}</td> {/* Exibir o nome ou id do distribuidor */}
                   </tr>
                   <tr>
                     <td><strong>Celular:</strong></td>
@@ -221,13 +232,43 @@ export function TabelaVizualizarCompras() {
                     <td>{selectedCompra.endereco}</td>
                   </tr>
                   <tr>
-                    <td><strong>Galho:</strong></td>
-                    <td>{selectedCompra.galho}</td>
+                    <td><strong>Fabricante:</strong></td>
+                    <td>{selectedCompra.fabricante_id}</td> {/* Exibir o nome ou id do fabricante */}
+                  </tr>
+                  <tr>
+                    <td><strong>Produto:</strong></td>
+                    <td>{selectedCompra.produto_id}</td> {/* Exibir o nome ou id do produto */}
+                  </tr>
+                  <tr>
+                    <td><strong>Quantidade:</strong></td>
+                    <td>{selectedCompra.quantidade}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preço Unitário (Kz):</strong></td>
+                    <td>{selectedCompra.preco}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Preço Total (Kz):</strong></td>
+                    <td>{selectedCompra.preco_total}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Texto da Nota:</strong></td>
+                    <td>{selectedCompra.texto_nota}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nota Interna:</strong></td>
+                    <td>{selectedCompra.interna ? 'Sim' : 'Não'}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Compartilhada com Fornecedor:</strong></td>
+                    <td>{selectedCompra.compartilhada ? 'Sim' : 'Não'}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           )}
+
+
         </Modal.Body>
         <Modal.Footer>
           {/* Ícones de Imprimir e Gerar PDF */}

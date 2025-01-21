@@ -4,53 +4,28 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
-import { Form, Button, Col, Row, Modal } from 'react-bootstrap';
+import { Form, Button, Col, Row, Modal, Spinner } from 'react-bootstrap';
 import { MdAttachMoney, MdBusiness, MdCategory, MdDateRange, MdDeleteForever, MdImage, MdNote, MdOutlineFileCopy, MdSecurity, MdStraighten, MdTextFields } from "react-icons/md";
 import logoMarca from "../../assets/lgo.png";
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify'; // Importando react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do toast
 import { RiAddLargeLine } from "react-icons/ri";
+import { useNavigate } from 'react-router-dom'; // Certifique-se de importar o useNavigate
 
 import { AddFornecedor } from "../pagesAdd/AddFornecedor.jsx";
 
 function FormularioProduto() {
-  const [showCorModal, setShowCorModal] = useState(false); // Modal para cores
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
 
   //const [unidadeMedida, setUnidadeMedida] = useState(""); // Estado para o select
-  const [novaCor, setNovaCor] = useState({ nome: '', hex: '' });
-
-  const [cores, setCores] = useState([
-    { nome: 'Preto', hex: '#080808' },
-    { nome: 'Branco', hex: '#faf9f9' },
-    { nome: 'Cinza', hex: '#808080' },
-    { nome: 'Prata', hex: '#c0c0c0' },
-    { nome: 'Vermelho', hex: '#f70202' },
-    { nome: 'Azul', hex: '#0f0ff0' },
-    { nome: 'Verde', hex: '#156f38' },
-    { nome: 'Bege', hex: '#f5f5dc' },
-    { nome: 'Amarelo', hex: '#ffff00' },
-    { nome: 'Marrom', hex: '#6f4f37' },
-  ]);
-
+ 
   //const handleShowCorModal = () => setShowCorModal(true);
-  const handleCloseCorModal = () => setShowCorModal(false);
 
   //const handleShowUnidadeModal = () => setShowUnidadeModal(true);
   const handleCloseUnidadeModal = () => setShowUnidadeModal(false);
 
-  const handleAddCor = () => {
-    if (novaCor.nome && novaCor.hex) {
-      setCores([...cores, novaCor]);
-      setNovaCor({ nome: '', hex: '' }); // Limpar os campos após adicionar
-      handleCloseCorModal();
-    }
-  };
-
-  const handleRemoveCor = (corHex) => {
-    setCores(cores.filter(cor => cor.hex !== corHex));
-  };
+  
 
   const handleAddUnidade = () => {
     if (novaUnidade) {
@@ -90,6 +65,9 @@ function FormularioProduto() {
     }));
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
+
 
 
   const handleImageChange = (e) => {
@@ -97,9 +75,15 @@ function FormularioProduto() {
     setProduto(prev => ({ ...prev, [name]: files[0] }));
   };
   // Função para o envio do formulário
-  const handleSubmit = async (e) => {
+  const navigate = useNavigate(); // Usando o useNavigate
+
+  const handleSubmit = (e) => {
     e.preventDefault();
   
+    // Validação do formulário (caso necessário)
+    // if (!validateForm()) return;
+  
+    // Montagem dos dados para envio
     const formData = new FormData();
     formData.append("data_compra", produto.dataCompra);
     formData.append("nome", produto.nome);
@@ -109,73 +93,86 @@ function FormularioProduto() {
     formData.append("unidade_medida", produto.unidadeMedida);
     formData.append("fornecedor", produto.fornecedor);
     formData.append("garantia", produto.garantia);
-    formData.append("imagem", produto.imagem);
     formData.append("nota", produto.nota);
     formData.append("nota_arquivos", produto.notaArquivos);
     formData.append("interna", produto.interna ? 1 : 0);
     formData.append("compartilhada", produto.compartilhada ? 1 : 0);
   
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/produtos/", {
-        method: "POST",
-        body: formData
-      });
+    // Se houver uma imagem, adiciona ao FormData
+    if (produto.imagem) {
+      formData.append('imagem', produto.imagem);
+    }
   
-      if (response.ok) {
-        // eslint-disable-next-line no-unused-vars
-        const data = await response.json();
+    // Configuração de loading
+    setIsLoading(true);
+  
+    // Envio dos dados via axios
+    axios.post('http://127.0.0.1:8000/api/produtos/', formData)
+      // eslint-disable-next-line no-unused-vars
+      .then((response) => {
         toast.success("Produto cadastrado com sucesso!", {
           position: "top-center",
-          autoClose: 5000,
+          autoClose: 5000, // Tempo para a notificação ficar visível
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
           progress: undefined
         });
-        // Limpar os campos do formulário após sucesso
-        setProduto({
-          dataCompra: "",
-          nome: "",
-          galho: "",
-          fabricante: "",
-          preco: "",
-          unidadeMedida: "",
-          fornecedor: "",
-          garantia: "",
-          imagem: null,
-          nota: "",
-          notaArquivos: null,
-          interna: false,
-          compartilhada: false
-        });
-      } else {
-        const errorData = await response.json();
-        toast.error(`Erro ao cadastrar produto: ${errorData.message}`, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        });
-      }
-    // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      toast.error("Erro de conexão com o servidor. Tente novamente.", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined
-      });
-    }
+  
+        // Usando setTimeout para esperar o tempo do toast antes de limpar o formulário
+        setTimeout(() => {
+          // Limpar os campos do formulário após o tempo do toast
+          setProduto({
+            dataCompra: "",
+            nome: "",
+            galho: "",
+            fabricante: "",
+            preco: "",
+            unidadeMedida: "",
+            fornecedor: "",
+            garantia: "",
+            imagem: null,
+            nota: "",
+            notaArquivos: null,
+            interna: false,
+            compartilhada: false
+          });
+  
+          // Fechar a modal, se necessário
+          setShowFabricanteModal(false);
+  
+          // Redirecionamento após sucesso do cadastro
+          navigate('/produtosPage'); // Isso irá redirecionar para /produtosPage
+        }, 5000); // 5000ms corresponde ao tempo de autoClose do toast
+      })
+      .catch((error) => {
+        // Tratamento de erro
+        if (error.response) {
+          toast.error(`Erro ao cadastrar produto: ${error.response.data.message || "Tente novamente."}`, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          });
+        } else {
+          toast.error("Erro ao cadastrar produto. Tente novamente.", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          });
+        }
+        setIsLoading(false); // Corrigido o estado de loading para false após erro
+      })
   };
-
-
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -220,18 +217,18 @@ function FormularioProduto() {
       toast.error('O nome do fabricante não pode estar vazio.');
       return;
     }
-
+  
     try {
       await axios.post('http://127.0.0.1:8000/api/fabricantes/', { nome: novoFabricante });
-      setNovoFabricante('');
+      setNovoFabricante(''); // Limpa o campo de input
       fetchFabricantes(); // Recarrega a lista de fabricantes
       toast.success('Fabricante adicionado com sucesso!');
     } catch (error) {
-      console.error('Erro ao adicionar fabricante:', error);
-      toast.error('Erro ao adicionar fabricante!');
+      console.error('Erro ao adicionar fabricante,Talvez esse fabricante ja existe:', error);
+      toast.error('Erro ao adicionar fabricante,Talvez esse fabricante ja existe:');
     }
   };
-
+  
   // Função para abrir a modal de confirmação de exclusão
   const handleOpenConfirmDeleteModal = (fabricanteId) => {
     setFabricanteToDelete(fabricanteId);
@@ -249,7 +246,9 @@ function FormularioProduto() {
       await axios.delete(`http://127.0.0.1:8000/api/fabricantes/${fabricanteToDelete}`);
       fetchFabricantes(); // Recarrega a lista de fabricantes
       setShowConfirmDeleteModal(false);
-      toast.success('Fabricante excluído com sucesso!');
+    
+
+      toast.success('Fabricante excluído com sucesso!!');
     } catch (error) {
       console.error('Erro ao remover fabricante:', error);
       toast.error('Erro ao excluir fabricante!');
@@ -398,7 +397,7 @@ function FormularioProduto() {
   return (
     <>
 
-    <ToastContainer />
+    
 
       <Form id="produtoForm" method="post" onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="col-md-12 mt-5">
@@ -421,6 +420,7 @@ function FormularioProduto() {
                   name="dataCompra"
                   value={produto.dataCompra}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </Form.Group>
@@ -437,6 +437,7 @@ function FormularioProduto() {
                   onChange={handleChange}
                   placeholder="Insira a garantia do produto"
                   maxLength="20"
+                  required
                 />
               </div>
             </Form.Group>
@@ -498,6 +499,7 @@ function FormularioProduto() {
                     name="fabricante"
                     value={produto.fabricante}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">--Selecione o nome da fabricação--</option>
                     {fabricantes.map((fabricante) => (
@@ -594,6 +596,7 @@ function FormularioProduto() {
                     name="fornecedor"
                     value={produto.fornecedor}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">- Selecionar Fornecedor -</option>
                     {fornecedores.length > 0 ? (
@@ -718,70 +721,26 @@ function FormularioProduto() {
 
 
         {/* Botão de Enviar */}
-        <Button variant="success" type="submit" className="links-acessos w-25 px-5 mt-5 d-block mx-auto">
-          Enviar
-        </Button>
+         {/* Botão de envio */}
+         <Button
+            variant="primary"
+            type="submit"
+            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+            ) : (
+              "Cadastrar"
+            )}
+          </Button>
       </Form>
-
+      <ToastContainer position="top-center" />
 
 
       <div className="modaisl">
 
-        {/* Modal para adicionar nova cor */}
-        <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable>
-          <Modal.Header closeButton>
-            <Modal.Title>Adicionar Nova Cor</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <div className="d-flex">
-                <Form.Group controlId="novaCorNome" className="w-100">
-                  <Form.Label className="fortificarLetter">Nome da Cor</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={novaCor.nome}
-                    onChange={(e) => setNovaCor({ ...novaCor, nome: e.target.value })}
-                    placeholder="Digite o nome da cor"
-                  />
-                </Form.Group>
-                <Form.Group controlId="novaCorHex" >
-                  <Form.Label className="fortificarLetter"><span className="opacity-0"> b</span></Form.Label>
-                  <Form.Control
-                    type="color"
-                    value={novaCor.hex}
-                    onChange={(e) => setNovaCor({ ...novaCor, hex: e.target.value })}
-                    placeholder="Digite o código hexadecimal"
-                  />
-                </Form.Group>
-              </div>
-              <div className="d-flex justify-content-end my-2">
-                <Button variant="primary" onClick={handleAddCor} className="links-acessos btnAddCor">
-                  Adicionar
-                </Button>
-              </div>
-            </Form>
-            <hr />
-            <h5>Cores Atuais</h5>
-            <ul className="list-group">
-              {cores.map((cor) => (
-                <li
-                  key={cor.hex}
-                  className="list-group-item  d-flex justify-content-between align-items-center"
-                  style={{ backgroundColor: cor.hex }}
-                >
-                  {cor.nome}
-
-                  <MdDeleteForever
-                    className="text-black"
-                    fontSize={20}
-                    onClick={() => handleRemoveCor(cor.hex)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                </li>
-              ))}
-            </ul>
-          </Modal.Body>
-        </Modal>
+    
 
         {/* Modal para adicionar nova unidade */}
         <Modal show={showUnidadeModal} onHide={handleCloseUnidadeModal}>
@@ -854,7 +813,7 @@ function FormularioProduto() {
               </div>
             </Form>
 
-            <ToastContainer position="top-center" />
+           
 
             <table className="table unitproductname mt-3 table-striped">
               <thead>
@@ -935,8 +894,8 @@ function FormularioProduto() {
                 </Button>
               </div>
             </Form>
-
-            <ToastContainer position="top-center" />
+         
+          
 
             <table className="table unitproductname mt-3 table-striped">
               <thead>
