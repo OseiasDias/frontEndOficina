@@ -6,7 +6,6 @@ import { IoPersonAdd } from "react-icons/io5";
 import { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, Image } from 'react-bootstrap';
 import { FaBuilding, FaCalendarAlt, FaCamera, FaEnvelope, FaGlobe, FaHome, FaIdCard, FaLock, FaMapMarkerAlt, FaPhone, FaPhoneAlt, FaRegEye, FaRegEyeSlash, FaTransgender, FaUser, FaUserCircle } from 'react-icons/fa';
-import { MdDeleteForever } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export function FormularioCliente() {
@@ -33,6 +32,9 @@ export function FormularioCliente() {
     interna: false,
     compartilhado: false,
   });
+
+  const [errors, setErrors] = useState({});
+
 
   const generateRandomPassword = () => {
     let password = Math.random().toString(36).slice(-10);
@@ -64,12 +66,93 @@ export function FormularioCliente() {
     }));
   };
 
-  const handleEnvio = (e) => {
-    e.preventDefault();
-    console.log('Dados do formulário:', dadosFormulario);
-    // Envie os dados para o servidor, por exemplo:
-    // axios.post('/api/cliente', dadosFormulario);
+
+  const validateForm = () => {
+    const newErrors = {};
+    const celularRegex = /^\d{9,}$/; // Apenas números, no mínimo 9 caracteres para o celular
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!dadosFormulario.primeiroNome) {
+      newErrors.primeiroNome = 'Primeiro nome é obrigatório.';
+    }
+
+    if (!dadosFormulario.sobrenome) {
+      newErrors.sobrenome = 'Sobrenome é obrigatório.';
+    }
+
+    if (!dadosFormulario.celular) {
+      newErrors.celular = 'Celular é obrigatório.';
+    } else if (!celularRegex.test(dadosFormulario.celular)) {
+      newErrors.celular = 'Celular deve ter pelo menos 9 dígitos.';
+    }
+
+    if (!dadosFormulario.email) {
+      newErrors.email = 'E-mail é obrigatório.';
+    } else if (!emailRegex.test(dadosFormulario.email)) {
+      newErrors.email = 'E-mail inválido.';
+    }
+
+    if (!dadosFormulario.senha) {
+      newErrors.senha = 'Senha é obrigatória.';
+    }
+
+    if (dadosFormulario.uploadArquivo && dadosFormulario.uploadArquivo.length > 1) {
+      newErrors.uploadArquivo = 'Você pode enviar apenas uma foto.';
+    }
+
+    if (!dadosFormulario.genero) {
+      newErrors.genero = 'Gênero é obrigatório.';
+    }
+
+
+    // Validar nome de exibição
+    if (!dadosFormulario.nomeExibicao) {
+      errors.nomeExibicao = 'Nome de exibição é obrigatório.';
+    }
+
+    // Validar nome da empresa
+    if (!dadosFormulario.nomeEmpresa) {
+      errors.nomeEmpresa = 'Nome da empresa é obrigatório.';
+    }
+
+    // Validar telefone fixo (opcional, mas se informado, precisa ter um formato válido)
+    const telefoneRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+    if (dadosFormulario.telefoneFixo && !telefoneRegex.test(dadosFormulario.telefoneFixo)) {
+      errors.telefoneFixo = 'Telefone fixo inválido. Exemplo: (XX) 1234-5678';
+    }
+
+    // Validar NIF (opcional, mas se informado, precisa ter 9 dígitos)
+    const nifRegex = /^\d{9}$/;
+    if (dadosFormulario.nif && !nifRegex.test(dadosFormulario.nif)) {
+      errors.nif = 'NIF inválido. Deve ter 9 dígitos.';
+    }
+
+    // Validar país
+    if (!dadosFormulario.pais) {
+      errors.pais = 'Selecione um país.';
+    }
+
+    // Validar endereço
+    if (!dadosFormulario.endereco) {
+      errors.endereco = 'Endereço é obrigatório.';
+    }
+
+    
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+
+
   };
+
+  const handleEnvio = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return; // Se a validação falhar, não prosseguir com o envio.
+
+
+  };
+
 
   return (
     <Form onSubmit={handleEnvio} encType="multipart/form-data">
@@ -81,23 +164,23 @@ export function FormularioCliente() {
         <hr />
       </div>
 
-      {/* Primeiro Nome e Sobrenome */}
+      {/* Nome e Sobrenome */}
       <Row>
         <Col md={6}>
-
           <Form.Group controlId="primeiroNome">
             <Form.Label>Primeiro nome <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="text"
                 name="primeiroNome"
                 value={dadosFormulario.primeiroNome}
                 onChange={handleMudanca}
                 placeholder="Introduza o primeiro nome"
+                isInvalid={!!errors.primeiroNome}
                 required
               />
+              <Form.Control.Feedback type="invalid">{errors.primeiroNome}</Form.Control.Feedback>
             </div>
           </Form.Group>
         </Col>
@@ -113,72 +196,59 @@ export function FormularioCliente() {
                 value={dadosFormulario.sobrenome}
                 onChange={handleMudanca}
                 placeholder="Insira o sobrenome"
+                isInvalid={!!errors.sobrenome}
                 required
               />
+              <Form.Control.Feedback type="invalid">{errors.sobrenome}</Form.Control.Feedback>
             </div>
           </Form.Group>
         </Col>
-
       </Row>
 
-      {/* Gênero e Celular */}
+      {/* Celular */}
       <Row>
-        <Col md={6}>
-          <Form.Group controlId="dataNascimento">
-            <Form.Label>Data de nascimento</Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
-              <Form.Control
-                type="date"
-                name="dataNascimento"
-                value={dadosFormulario.dataNascimento}
-                onChange={handleMudanca}
-                required
-              />
-            </div>
-          </Form.Group>
-        </Col>
-
-
         <Col md={6}>
           <Form.Group controlId="celular">
             <Form.Label>Celular <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaPhone fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="text"
                 name="celular"
                 value={dadosFormulario.celular}
                 onChange={handleMudanca}
                 placeholder="Digite o número de celular"
+                isInvalid={!!errors.celular}
                 required
               />
+              <Form.Control.Feedback type="invalid">{errors.celular}</Form.Control.Feedback>
             </div>
           </Form.Group>
         </Col>
-      </Row>
 
-      {/* E-mail e Senha */}
-      <Row>
+        {/* E-mail */}
         <Col md={6}>
           <Form.Group controlId="email">
             <Form.Label>E-mail <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaEnvelope fontSize={20} color="#0070fa" /></span>
-
               <Form.Control
                 type="email"
                 name="email"
                 value={dadosFormulario.email}
                 onChange={handleMudanca}
                 placeholder="Digite o e-mail"
+                isInvalid={!!errors.email}
                 required
               />
+              <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
             </div>
           </Form.Group>
         </Col>
+      </Row>
 
+      {/* Senha */}
+      <Row>
         <Col md={6}>
           <Form.Group controlId="senha">
             <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
@@ -186,15 +256,17 @@ export function FormularioCliente() {
               <span className="input-group-text"><FaLock fontSize={20} color="#0070fa" /></span>
               <Form.Control
                 type={showPassword ? "text" : "password"}
-                placeholder="Senha gerada automaticamente"
                 name="senha"
                 value={dadosFormulario.senha}
                 onChange={handleMudanca}
+                placeholder="Senha gerada automaticamente"
+                isInvalid={!!errors.senha}
                 disabled
               />
               <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
                 {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
               </Button>
+              <Form.Control.Feedback type="invalid">{errors.senha}</Form.Control.Feedback>
             </div>
           </Form.Group>
         </Col>
@@ -211,6 +283,7 @@ export function FormularioCliente() {
                 type="file"
                 name="uploadArquivo"
                 onChange={handleMudancaArquivo}
+                disabled
               />
             </div>
             <Image src={dadosFormulario.uploadArquivo ? URL.createObjectURL(dadosFormulario.uploadArquivo[0]) : ''} thumbnail />
@@ -251,8 +324,8 @@ export function FormularioCliente() {
         </Col>
       </Row>
 
-      {/* Nome de Exibição e Nome da Empresa */}
-      <Row>
+    {/* Nome de Exibição e Nome da Empresa */}
+    <Row>
         <Col md={6}>
           <Form.Group controlId="nomeExibicao">
             <Form.Label>Nome de exibição</Form.Label>
@@ -266,6 +339,7 @@ export function FormularioCliente() {
                 placeholder="Digite o nome de exibição"
               />
             </div>
+            {errors.nomeExibicao && <Form.Text className="text-danger">{errors.nomeExibicao}</Form.Text>}
           </Form.Group>
         </Col>
 
@@ -282,11 +356,12 @@ export function FormularioCliente() {
                 placeholder="Digite o nome da empresa"
               />
             </div>
+            {errors.nomeEmpresa && <Form.Text className="text-danger">{errors.nomeEmpresa}</Form.Text>}
           </Form.Group>
         </Col>
       </Row>
 
-      {/* Telefone Fixo e nif */}
+      {/* Telefone Fixo e NIF */}
       <Row>
         <Col md={6}>
           <Form.Group controlId="telefoneFixo">
@@ -301,6 +376,7 @@ export function FormularioCliente() {
                 placeholder="Digite o número de telefone fixo"
               />
             </div>
+            {errors.telefoneFixo && <Form.Text className="text-danger">{errors.telefoneFixo}</Form.Text>}
           </Form.Group>
         </Col>
 
@@ -317,11 +393,12 @@ export function FormularioCliente() {
                 placeholder="Digite o NIF"
               />
             </div>
+            {errors.nif && <Form.Text className="text-danger">{errors.nif}</Form.Text>}
           </Form.Group>
         </Col>
       </Row>
 
-      {/* Seção 3: Endereço */}
+      {/* Endereço */}
       <Row className="mt-3">
         <Col>
           <h6>ENDEREÇO</h6>
@@ -329,10 +406,10 @@ export function FormularioCliente() {
         </Col>
       </Row>
 
-      {/* País, Provincia e Cidade */}
+      {/* País, Província e Município */}
       <Row>
         <Col md={6}>
-          <Form.Group controlId="idPais">
+          <Form.Group controlId="pais">
             <Form.Label>País <span className="text-danger">*</span></Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
@@ -585,8 +662,8 @@ export function FormularioCliente() {
                 <option value="Zâmbia">Zâmbia</option>
                 <option value="Zimbábue">Zimbábue</option>
               </Form.Control>
-
             </div>
+            {errors.pais && <Form.Text className="text-danger">{errors.pais}</Form.Text>}
           </Form.Group>
         </Col>
 
@@ -605,10 +682,9 @@ export function FormularioCliente() {
             </div>
           </Form.Group>
         </Col>
-
-
       </Row>
 
+      {/* Município e Endereço */}
       <Row>
         <Col md={6}>
           <Form.Group controlId="municipio">
@@ -626,7 +702,6 @@ export function FormularioCliente() {
           </Form.Group>
         </Col>
 
-
         <Col md={6}>
           <Form.Group controlId="endereco">
             <Form.Label>Endereço <span className="text-danger">*</span></Form.Label>
@@ -641,45 +716,42 @@ export function FormularioCliente() {
                 required
               />
             </div>
+            {errors.endereco && <Form.Text className="text-danger">{errors.endereco}</Form.Text>}
           </Form.Group>
         </Col>
       </Row>
-
-
-
       {/* Notas */}
       <div className="die mt-5">
         <div className="itemNota d-flex justify-content-between bordarDiv">
-          <h6 className="baixarTexto">ADICIONAR NOTAS</h6>
+          <h6 className="baixarTexto pb-3">ADICIONAR NOTAS</h6>
 
         </div>
 
       </div>
 
-      <div className="d-flex ">
+      <div className="d-fl ">
         <Row>
 
-          <Col md={6}><Form.Group controlId={`nota-texto-`}><Form.Label>Nota</Form.Label>
+          <Col md={4}><Form.Group controlId={`nota-texto-`}><Form.Label>Nota</Form.Label>
             <div className="input-group">
               <span className="input-group-text"><FaMapMarkerAlt fontSize={20} color="#0070fa" /></span>
               <Form.Control as="textarea" name="textoNota" value="" />
             </div>
           </Form.Group></Col>
-          <Col md={6}><Form.Group controlId={`nota-arquivos-`}><Form.Label>Arquivos</Form.Label>
+          <Col md={4}><Form.Group controlId={`nota-arquivos-`}><Form.Label>Arquivos</Form.Label>
             <Form.Control type="file" name="arquivoNota" multiple />
-          </Form.Group></Col>
+          </Form.Group>
+          </Col>
+
+
+          {/* Checkbox */}
+          <Col md={4} className="mt-3">
+            <Form.Check type="checkbox" label="Nota Interna" name="interna" />
+            <Form.Check type="checkbox" label="Compartilhado com fornecedor" name="compartilhado" />
+          </Col>
         </Row>
 
-        {/* Checkbox */}
-        <Row className="m-4"><Col>
-          <Form.Check type="checkbox" label="Nota Interna" name="interna" />
-          <Form.Check type="checkbox" label="Compartilhado com fornecedor" name="compartilhado" />
-        </Col></Row>
 
-        {/* Remover Nota */}
-        <Button className="mt-2 btnAddEsp" type="button" >
-          <MdDeleteForever className="links-acessos colorirBTN" fontSize={30} />
-        </Button>
       </div>
 
 
@@ -706,7 +778,7 @@ const AddClientes = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="Adicionar Clientes" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/clienteList" />
+            <TopoAdmin entrada="  Adicionar Clientes" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/clienteList" />
 
             <div className="vh-100 alturaPereita">
               <FormularioCliente />

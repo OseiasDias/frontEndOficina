@@ -241,7 +241,7 @@ function FormularioAddCompra() {
                         >
                             <option value="">Selecione a Filial</option>
                             {filias.map((filia) => (
-                                <option key={filia.id} value={filia.id}>
+                                <option key={filia.id} value={filia.nome_filial}>
                                     {filia.nome_filial}
                                 </option>
                             ))}
