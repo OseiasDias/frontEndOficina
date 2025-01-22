@@ -72,7 +72,7 @@ export function TabelaVizualizarClient() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Nome Exibido", selector: (row) => row.nome_exibicao || "Sem informação" },
+    { name: "Nome Exibido", selector: (row) => row.primeiro_nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
@@ -158,7 +158,7 @@ export function TabelaVizualizarClient() {
               } else {
                 const filteredRecords = originalRecords.filter(
                   (item) =>
-                    item.nome_exibicao.toLowerCase().includes(query) ||
+                    item.primeiro_nome.toLowerCase().includes(query) ||
                     item.email.toLowerCase().includes(query)
                 );
                 setRecords(filteredRecords);
