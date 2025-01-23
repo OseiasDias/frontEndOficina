@@ -4,9 +4,12 @@ import {
   FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, 
   FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard 
 } from "react-icons/fa";
-import { InputGroup, Form, Button, Row, Col, Modal, Image } from 'react-bootstrap';
+import { InputGroup, Form, Button, Row, Col, Modal, Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';  // Certifique-se de importar o hook 'useNavigate'
+
 import axios from "axios";
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
@@ -36,6 +39,9 @@ const FormularioFuncionario = () => {
     endereco: '',
     bloqueado: false,
   });
+
+  const [isLoading, setIsLoading] = useState(false);  // Estado para o loading
+  const navigate = useNavigate();  // Hook para navegação
 
   const [novoCargo, setNovoCargo] = useState('');
   const [cargos, setCargos] = useState([
@@ -73,16 +79,28 @@ const FormularioFuncionario = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateForm()) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
+    setIsLoading(true);  // Ativa o estado de loading
+
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
       console.log('Funcionario cadastrado:', response.data);
+      toast.success('Funcionário cadastrado com sucesso!');
+      
+      // Após 4 segundos, redireciona para a página de lista de clientes
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/funcionariosList'); // Redireciona para /clienteList
+      }, 4000); // Atraso de 4 segundos
     } catch (error) {
       console.error('Erro ao cadastrar funcionário:', error);
+      toast.error('Erro ao cadastrar funcionário.');
+      setIsLoading(false);  // Desativa o estado de loading em caso de erro
     }
   };
 
@@ -119,6 +137,7 @@ const FormularioFuncionario = () => {
 
   return (
     <>
+      <ToastContainer position="top-center" />
       <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
         {/* Dados Pessoais */}
         <div className="col-md-12 mt-5">
@@ -330,6 +349,7 @@ const FormularioFuncionario = () => {
                   value={formData.foto}
                   onChange={handleChange}
                   disabled
+                  placeholder="Escolher a foto"
                 />
               </div>
               <Image src={formData.uploadArquivo ? URL.createObjectURL(formData.uploadArquivo[0]) : ''} thumbnail />
@@ -845,12 +865,21 @@ const FormularioFuncionario = () => {
           </Modal.Footer>
         </Modal>
         {/* Botão Enviar */}
-        <Button type="submit" variant="success" className="botaoSubmitFuncionario mt-5 links-acessos w-25 px-5 mx-auto d-block">
-          Cadastrar
-        </Button>
+        <Button
+            variant="primary"
+            type="submit"
+            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+            ) : (
+              "Cadastrar"
+            )}
+          </Button>
       </Form>
 
-      <ToastContainer position="center" />
+    
     </>
   );
 };
