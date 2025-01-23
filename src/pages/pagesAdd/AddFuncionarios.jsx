@@ -6,8 +6,8 @@ import {
 } from "react-icons/fa";
 import { InputGroup, Form, Button, Row, Col, Modal, Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'react-toastify'; // Certifique-se de importar o ToastContainer
+import 'react-toastify/dist/ReactToastify.css';  // Importando
 import { useNavigate } from 'react-router-dom';  // Certifique-se de importar o hook 'useNavigate'
 
 import axios from "axios";
@@ -77,32 +77,6 @@ const FormularioFuncionario = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-
-    setIsLoading(true);  // Ativa o estado de loading
-
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
-      console.log('Funcionario cadastrado:', response.data);
-      toast.success('Funcionário cadastrado com sucesso!');
-      
-      // Após 4 segundos, redireciona para a página de lista de clientes
-      setTimeout(() => {
-        setIsLoading(false);
-        navigate('/funcionariosList'); // Redireciona para /clienteList
-      }, 4000); // Atraso de 4 segundos
-    } catch (error) {
-      console.error('Erro ao cadastrar funcionário:', error);
-      toast.error('Erro ao cadastrar funcionário.');
-      setIsLoading(false);  // Desativa o estado de loading em caso de erro
-    }
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -129,6 +103,34 @@ const FormularioFuncionario = () => {
     return password.length < 8 ? password + Math.random().toString(36).slice(-2) : password;
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    setIsLoading(true);  // Ativa o estado de loading
+
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
+      console.log('Funcionario cadastrado:', response.data);
+      toast.success('Funcionário cadastrado com sucesso!');
+      
+      // Após 4 segundos, redireciona para a página de lista de clientes
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate('/funcionariosList'); // Redireciona para /funcionariosList
+      }, 4000); // Atraso de 4 segundos
+    } catch (error) {
+      console.error('Erro ao cadastrar funcionário:', error);
+      toast.error('Erro ao cadastrar funcionário.');
+      setIsLoading(false);  // Desativa o estado de loading em caso de erro
+    }
+  };
+
+
   useEffect(() => {
     const senhaGerada = generateRandomPassword();
     setFormData(prevValues => ({ ...prevValues, senha: senhaGerada }));
@@ -137,8 +139,19 @@ const FormularioFuncionario = () => {
 
   return (
     <>
-      <ToastContainer position="top-center" />
-      <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
+<ToastContainer 
+        position="top-right" 
+        autoClose={5000} 
+        hideProgressBar={false} 
+        newestOnTop={false} 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />    
+      
+        <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
         {/* Dados Pessoais */}
         <div className="col-md-12 mt-5">
           <h6>INFORMAÇÕES PESSOAIS</h6>
