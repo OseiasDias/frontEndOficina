@@ -74,7 +74,7 @@ export function TabelaVizualizarFuncionarios() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Nome Exibido", selector: (row) => row.nome_exibicao || "Sem informação" },
+    { name: "Nome Exibido", selector: (row) => row.nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Cargo", selector: (row) => row.cargo || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
@@ -163,7 +163,7 @@ export function TabelaVizualizarFuncionarios() {
               } else {
                 const filteredRecords = originalRecords.filter(
                   (item) =>
-                    item.nome_exibicao.toLowerCase().includes(query) ||
+                    item.nome.toLowerCase().includes(query) ||
                     item.email.toLowerCase().includes(query)
                 );
                 setRecords(filteredRecords);
