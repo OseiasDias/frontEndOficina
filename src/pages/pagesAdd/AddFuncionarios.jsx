@@ -1,18 +1,17 @@
+
+
 import "../../css/StylesAdmin/homeAdministrador.css";
+
+import { FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, FaLock, FaRegEye, FaRegEyeSlash, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard } from "react-icons/fa";
+import { InputGroup } from 'react-bootstrap';
+import { useEffect } from 'react';
+
+
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useState } from 'react';
 import { Form, Button, Row, Col, Modal, Image } from 'react-bootstrap';
-
-import "../../css/StylesAdmin/homeAdministrador.css";
-//import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
-//import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
-import "../../css/StylesAdmin/homeAdministrador.css";
-import { FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, FaLock, FaRegEye, FaRegEyeSlash, FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, FaTag, FaRegCalendarAlt } from "react-icons/fa";
-import { InputGroup } from 'react-bootstrap';
-import { useEffect } from 'react';
-
 
 const FormularioFuncionario = () => {
   const [dadosFormulario, setDadosFormulario] = useState({
@@ -27,7 +26,6 @@ const FormularioFuncionario = () => {
     dataAdmissao: '2024-11-25',
     cargo: '',
     dataSaida: '',
-    // senha: '',
     dataNascimento: '',
     nomeExibicao: '',
     telefoneFixo: '',
@@ -36,7 +34,14 @@ const FormularioFuncionario = () => {
     cidade: '',
     endereco: '',
     imagem: null,
+    bilheteIdentidade: '',
+    nomeBanco: '',
+    iban: ""
   });
+
+  const [errors, setErrors] = useState({}); // Estado para armazenar os erros de validação
+  const [showPassword, setShowPassword] = useState(false); // Inicializando o estado com 'false'
+
 
   const handleAlteracao = (e) => {
     const { name, value } = e.target;
@@ -49,44 +54,105 @@ const FormularioFuncionario = () => {
 
   const handleEnvio = (e) => {
     e.preventDefault();
-    console.log(dadosFormulario);
+    if (validateForm()) {
+      // Se a validação passar, então pode continuar o envio
+      console.log(dadosFormulario);
+    }
   };
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [novoCargo, setNovoCargo] = useState('');
-  const [cargos, setCargos] = useState([
-    'Gerente',
-    'Assistente',
-    'Analista',
+   // Estado para armazenar a lista de cargos disponíveis
+   const [cargos, setCargos] = useState([
     'Desenvolvedor',
-    'Coordenador',
+    'Designer',
+    'Gerente',
+    'Analista',
   ]);
 
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  // Estado para armazenar o valor do novo cargo a ser adicionado
+  const [novoCargo, setNovoCargo] = useState('');
+
+  // Estado para controlar a exibição do modal
+  // Função para tratar a mudança do campo "novoCargo" (adicionar novo cargo)
   const handleAlteracaoNovoCargo = (e) => {
     setNovoCargo(e.target.value);
   };
 
+  // Função para adicionar o novo cargo à lista de cargos
   const handleAdicionarCargo = () => {
-    if (novoCargo) {
-      setCargos([...cargos, novoCargo]);
-      setNovoCargo('');
-      setMostrarModal(false);
+    if (novoCargo && !cargos.includes(novoCargo)) {
+      setCargos((prevCargos) => [...prevCargos, novoCargo]);
+      setNovoCargo(''); // Limpar o campo de novo cargo
+      setMostrarModal(false); // Fechar o modal após adicionar
     } else {
-      alert("Por favor, insira um nome para o cargo.");
+      alert('Cargo inválido ou já existe!');
     }
   };
+  const validateForm = () => {
+    const newErrors = {};
+    const hoje = new Date().toISOString().split("T")[0]; // Dados atuais no formato aaaa-mm-dd
 
-  const handleMudanca = (e) => {
-    const { name, value } = e.target;
-    setDadosFormulario((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    const nomeRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/;
+    if (!dadosFormulario.nome) {
+      newErrors.nome = "Nome é obrigatório.";
+    } else if (!nomeRegex.test(dadosFormulario.nome)) {
+      newErrors.nome = "O nome não pode conter números ou caracteres especiais.";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!dadosFormulario.email) {
+      newErrors.email = "E-mail é obrigatório.";
+    } else if (!emailRegex.test(dadosFormulario.email)) {
+      newErrors.email = "E-mail inválido.";
+    }
+
+    if (!dadosFormulario.telefoneFixo) {
+      newErrors.telefoneFixo = "Telefone é obrigatório.";
+    } else if (!/^\d{9,}$/.test(dadosFormulario.telefoneFixo)) {
+      newErrors.telefoneFixo = "Telefone deve conter pelo menos 9 dígitos.";
+    }
+
+    if (!dadosFormulario.senha) {
+      newErrors.senha = "Senha é obrigatória.";
+    } else if (dadosFormulario.senha.length < 6) {
+      newErrors.senha = "Senha deve ter pelo menos 6 caracteres.";
+    }
+
+    if (dadosFormulario.dataNascimento && dadosFormulario.dataNascimento > hoje) {
+      newErrors.dataNascimento = "A data de nascimento não pode ser maior que a data atual.";
+    }
+
+    if (!dadosFormulario.nivelAcesso) {
+      newErrors.nivelAcesso = "Nível de acesso é obrigatório.";
+    }
+
+    if (!dadosFormulario.genero) {
+      newErrors.genero = "Gênero é obrigatório.";
+    }
+
+    if (!dadosFormulario.endereco) {
+      newErrors.endereco = "Endereço é obrigatório.";
+    }
+
+    // Validação para o campo "Bilhete de Identidade"
+    if (dadosFormulario.bilheteIdentidade && !/^(?=(.*[A-Za-z]){2})[A-Za-z0-9]{14}$/.test(dadosFormulario.bilheteIdentidade)) {
+      newErrors.bilheteIdentidade = "Bilhete de identidade inválido. Deve ter 14 caracteres, pelo menos 2 letras (maiúsculas ou minúsculas), sem espaços ou caracteres especiais.";
+    }
+
+    // Validação para o campo "IBAN"
+    if (dadosFormulario.iban && !/^AO\d{2}[0-9]{21}$/.test(dadosFormulario.iban)) {
+      newErrors.iban = "IBAN inválido. O formato correto é AOXX seguido de 21 números.";
+    }
+
+    // Validação para o campo "Data de Admissão"
+    if (dadosFormulario.dataAdmissao && dadosFormulario.dataAdmissao > hoje) {
+      newErrors.dataAdmissao = "A data de admissão não pode ser maior que a data atual.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
-
-
-  const [showPassword, setShowPassword] = useState(false); // Para alternar a visibilidade da senha
-  //const [errors, setErrors] = useState({}); // Para lidar com erros de validação
 
   // Função para gerar uma senha aleatória
   const generateRandomPassword = () => {
@@ -94,7 +160,6 @@ const FormularioFuncionario = () => {
     return password.length < 8 ? password + Math.random().toString(36).slice(-2) : password;  // Garantir que a senha tenha no mínimo 8 caracteres
   };
 
-  // Gera a senha ao carregar o componente
   useEffect(() => {
     const senhaGerada = generateRandomPassword();
     setDadosFormulario((prevValues) => ({
@@ -104,14 +169,10 @@ const FormularioFuncionario = () => {
     console.log('Senha gerada:', senhaGerada); // Exibe a senha gerada no console
   }, []); // Executa apenas uma vez, quando o componente for montado
 
-
-
   return (
     <Form
       id="formulario_adicionar_funcionario"
       method="post"
-      action="https://biturbomotors.com/garage/employee/store"
-      encType="multipart/form-data"
       className="form-horizontal upperform employeeAddForm"
       onSubmit={handleEnvio}
     >
@@ -137,6 +198,7 @@ const FormularioFuncionario = () => {
                 onChange={handleAlteracao}
               />
             </div>
+            {errors.nome && <div className="text-danger">{errors.nome}</div>}
           </Form.Group>
         </Col>
         <Col md={6}>
@@ -154,9 +216,11 @@ const FormularioFuncionario = () => {
                 onChange={handleAlteracao}
               />
             </div>
+            {errors.sobrenome && <div className="text-danger">{errors.sobrenome}</div>}
           </Form.Group>
         </Col>
       </Row>
+
 
       <Row className="mb-3">
         <Col md={6}>
@@ -193,6 +257,89 @@ const FormularioFuncionario = () => {
         </Col>
       </Row>
 
+      {/* Novo Campo - Bilhete de Identidade */}
+      <Row className="mb-3">
+        <Col md={6}>
+          <Form.Group controlId="bilheteIdentidade">
+            <Form.Label>Bilhete de Identidade <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaIdCard fontSize={20} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="bilheteIdentidade"
+                value={dadosFormulario.bilheteIdentidade}
+                placeholder="Digite o Bilhete de Identidade"
+                maxLength="20"
+                onChange={handleAlteracao}
+              />
+            </div>
+          </Form.Group>
+        </Col>
+        <Col md={6}>
+          <Form.Group controlId="nomeBanco">
+            <Form.Label>Nome do Banco </Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaUniversity fontSize={20} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="nomeBanco"
+                value={dadosFormulario.nomeBanco}
+                placeholder="Digite o nome do seu banco"
+                maxLength="100"
+                onChange={handleAlteracao}
+              />
+            </div>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Novo Campo - Nome do Banco */}
+
+
+      <Row>
+
+        <Col md={6}>
+          <Form.Group controlId="iban">
+            <Form.Label>IBAN </Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaCreditCard fontSize={20} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="iban"
+                value={dadosFormulario.iban}
+                placeholder="Digite o número do IBAN"
+                maxLength="34"
+                onChange={handleAlteracao}
+              />
+            </div>
+          </Form.Group>
+        </Col>
+
+
+
+        <Col md={6}>
+          <Form.Group controlId="senha">
+            <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaLock fontSize={20} color="#0070fa" /></span>
+              <Form.Control
+                type={showPassword ? "text" : "password"}
+                placeholder="Senha gerada automaticamente"
+                name="senha"
+                value={dadosFormulario.senha}
+                onChange={handleAlteracao }
+                disabled
+              />
+
+              <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
+                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              </Button>
+            </div>
+          </Form.Group>
+        </Col>
+
+      </Row>
+
       <Row>
         <Col>
           <Form.Group controlId="uploadArquivo">
@@ -203,11 +350,13 @@ const FormularioFuncionario = () => {
                 type="file"
                 name="uploadArquivo"
                 onChange={handleMudancaArquivo}
+                disabled
               />
             </div>
             <Image src={dadosFormulario.uploadArquivo ? URL.createObjectURL(dadosFormulario.uploadArquivo[0]) : ''} thumbnail />
           </Form.Group>
         </Col>
+
         <Col md={6}>
           <Form.Group controlId="genero">
             <Form.Label>Gênero</Form.Label>
@@ -233,29 +382,6 @@ const FormularioFuncionario = () => {
                   onChange={handleAlteracao}
                 />
               </div>
-            </div>
-          </Form.Group>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={6}>
-          <Form.Group controlId="senha">
-            <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
-            <div className="input-group">
-              <span className="input-group-text"><FaLock fontSize={20} color="#0070fa" /></span>
-              <Form.Control
-                type={showPassword ? "text" : "password"}
-                placeholder="Senha gerada automaticamente"
-                name="senha"
-                value={dadosFormulario.senha}
-                onChange={handleMudanca}
-                disabled
-              />
-
-              <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
-                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-              </Button>
             </div>
           </Form.Group>
         </Col>
@@ -715,7 +841,8 @@ const FormularioFuncionario = () => {
       </Row>
 
       {/* Modal para Adicionar Cargo */}
-      <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} centered>
+       {/* Modal de adicionar novo cargo */}
+       <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Adicionar Novo Cargo</Modal.Title>
         </Modal.Header>
@@ -739,7 +866,6 @@ const FormularioFuncionario = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
       {/* Botão Enviar */}
       <Button type="submit" variant="success" className="botaoSubmitFuncionario mt-5 links-acessos w-25 px-5 mx-auto d-block">
         Cadastrar
@@ -750,9 +876,6 @@ const FormularioFuncionario = () => {
 
 
 
-
-
-
 const AddFuncionarios = () => {
   return (
     <>
@@ -760,7 +883,7 @@ const AddFuncionarios = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Adicionar Funcionarios" leftSeta={<FaArrowLeftLong />} leftR="/funcionariosList" />
+            <TopoAdmin entrada="  Adicionar Funcionarios" leftSeta={<FaArrowLeftLong />} leftR="/funcionariosList" />
             <div className="vh-100 alturaPereita">
               <FormularioFuncionario />
             </div>
