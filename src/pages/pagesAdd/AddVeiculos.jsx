@@ -6,72 +6,84 @@ import { IoDocumentTextSharp, IoPersonAdd } from "react-icons/io5";
 import { useState } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
-import { MdArrowDropDown, MdDateRange, MdDeleteForever, MdFileCopy, MdSpeed } from "react-icons/md";
+import { MdArrowDropDown, MdDateRange, MdDeleteForever, MdFileCopy, MdPalette, MdSpeed } from "react-icons/md";
 import { FaCar, FaCarSide, FaDollarSign, FaHashtag, FaImages, FaKey, FaPalette, FaRegIdCard, FaTag } from "react-icons/fa";
 import { GiGearStick } from "react-icons/gi";
 import { PiEngineBold } from "react-icons/pi";
 import { AiOutlineEdit, AiOutlineFileText } from "react-icons/ai";
 import { RiAddLargeFill } from "react-icons/ri";
+import axios from "axios";
 
 
 
 export function FormularioVeiculo() {
 
 
-   // Estado para armazenar os dados do formulário
-   const [dadosFormulario, setDadosFormulario] = useState({
-    tipoVeiculo: "",
-    numeroPlaca: "",
-    marcaVeiculo: "",
-    preco: "",
-    nomeModelo: "",
-    cliente: "",
-    nomeCombustivel: "",
-    numeroEquipamento: "",
-    anoModelo: "",
-    leituraOdometro: "",
-    dataFabricacao: "",
-    caixaVelocidade: "",
-    numeroCaixa: "",
-    numeroMotor: "",
-    tamanhoMotor: "",
-    numeroChave: "",
-    motor: "",
-    numeroChassi: "",
-    imagens: [],
-    descricao: "",
-    cor: "#000000",
-    notasInternas: false,
-    compartilhado: false
+  // Estado para armazenar os dados do formulário
+  const [formData, setFormData] = useState({
+    tipo_veiculo: "",
+    numero_placa: '',
+    marca_veiculo: '',
+    modelo_veiculo: '',
+    preco: '',
+    cliente_id: '',
+    combustivel: '',
+    numero_equipamento: '',
+    ano_modelo: '',
+    leitura_odometro: '',
+    data_fabricacao: '',
+    caixa_velocidade: '',
+    numero_caixa: '',
+    numero_motor: '',
+    tamanho_motor: '',
+    numero_chave: '',
+    motor: '',
+    numero_chassi: '',
+    descricao: '',
+    cor: ''
+    //imagens: ''
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDadosFormulario({ ...dadosFormulario, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: value
+    });
   };
 
-  // Função para lidar com o upload de arquivos
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    setDadosFormulario({ ...dadosFormulario, [name]: files });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      // Enviar os dados via POST para a API
+      const response = await axios.post('http://127.0.0.1:8000/api/veiculos/', formData);
+      console.log('Veículo cadastrado:', response.data);
+      alert('Veículo cadastrado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao cadastrar veículo:', error);
+      alert('Erro ao cadastrar veículo.');
+    }
   };
 
 
- 
+
+
+
+
 
 
 
 
   const [showModal, setShowModal] = useState(false);
-  const [tipoVeiculo] = useState("");
+  //const [tipoVeiculo] = useState("");
   const [novoTipo, setNovoTipo] = useState(""); // Estado para o novo tipo de veículo
   const [tiposVeiculos, setTiposVeiculos] = useState([
-    { id: "1", nome: "Turismo" },
-    { id: "2", nome: "SUV" },
-    { id: "3", nome: "Jeep 4x4" },
-    { id: "4", nome: "Carrinhas" },
-  ]); // Lista de tipos de veículos (pode vir de uma API ou banco de dados)
-
+    { id: 1, nome: 'Turismo' },
+    { id: 2, nome: 'SUV' },
+    { id: 3, nome: 'Jeep 4x4' },
+    { id: 4, nome: 'Carrinhas' }
+  ])
 
 
   const handleNovoTipoChange = (e) => {
@@ -81,18 +93,7 @@ export function FormularioVeiculo() {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (novoTipo) {
-      // Adiciona um novo tipo de veículo
-      setTiposVeiculos([
-        ...tiposVeiculos,
-        { id: (tiposVeiculos.length + 1).toString(), nome: novoTipo },
-      ]);
-      setNovoTipo(""); // Limpa o campo de novo tipo
-    }
-    handleCloseModal(); // Fecha a modal após a ação
-  };
+
 
   const handleRemoveTipo = (id) => {
     setTiposVeiculos(tiposVeiculos.filter((tipo) => tipo.id !== id));
@@ -215,6 +216,7 @@ export function FormularioVeiculo() {
 
 
 
+
   return (
     <>
       <Form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -227,26 +229,26 @@ export function FormularioVeiculo() {
         <Row>
 
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="tipoVeiculo">
               <Form.Label>Tipo de Veículo <span className="text-danger">*</span></Form.Label>
-
               <div className="d-flex">
                 <div className="input-group">
                   <span className="input-group-text"><FaCar fontSize={20} color="#0070fa" /></span>
 
                   <Form.Control
                     as="select"
-                    name="tipoVeiculo"
-                    value={tipoVeiculo}
+                    name="tipo_veiculo"
+                    value={formData.tipo_veiculo || ""}
                     required
                     onChange={handleChange}
                   >
                     <option value="">Selecione o tipo</option>
-                    <option value="1">Turismo</option>
-                    <option value="2">SUV</option>
-                    <option value="3">Jeep 4x4</option>
-                    <option value="4">Carrinhas</option>
+                    {tiposVeiculos.map((tipo) => (
+                      <option key={tipo.id} value={tipo.id}>
+                        {tipo.nome}
+                      </option>
+                    ))}
                   </Form.Control>
                 </div>
                 <Button
@@ -259,7 +261,8 @@ export function FormularioVeiculo() {
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroPlaca">
               <Form.Label>Número da placa <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
@@ -267,30 +270,28 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroPlaca"
-                  placeholder="Inserir placa de número"
-                  value={dadosFormulario.numeroPlaca}
+                  name="numero_placa"
+                  value={formData.numero_placa}
                   onChange={handleChange}
                   required
+                  placeholder="Inserir placa de número"
                 />
               </div>
 
             </Form.Group>
           </Col>
-
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="marcaVeiculo">
               <Form.Label>Marca do veículo <span className="text-danger">*</span></Form.Label>
               <div className="d-flex justify-content-between">
-                <div className="input-group">
-                  <span className="input-group-text"><FaTag fontSize={20} color="#0070fa" /></span>
-                  <Form.Control as="select" name="marcaVeiculo" required>
-                    <option value="">Selecione a marca</option>
-                    <option value="4">FORD</option>
-                    <option value="5">TOYOTA</option>
-                    <option value="6">HYUNDAI</option>
-                  </Form.Control>
-                </div>
+                <Form.Control
+                  type="text" // Change to text input
+                  name="marca_veiculo" // Change name attribute
+                  value={formData.marca_veiculo} // Set value from state
+                  onChange={handleChange} // Bind onChange event handler
+                  required // Add required attribute
+                  placeholder="Digite a marca do veículo" // Add placeholder text
+                />
                 <Button
                   className="links-acessos px-2 border-radius-zero"
                   onClick={handleShowModalMarca}
@@ -302,7 +303,7 @@ export function FormularioVeiculo() {
           </Col>
 
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="preco">
               <Form.Label>Preço (KZ) <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
@@ -312,7 +313,7 @@ export function FormularioVeiculo() {
                   type="text"
                   name="preco"
                   placeholder="Entre preço"
-                  value={dadosFormulario.preco}
+                  value={formData.preco}
                   onChange={handleChange}
                   required
                 />
@@ -321,14 +322,20 @@ export function FormularioVeiculo() {
           </Col>
 
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="nomeModelo">
               <Form.Label>Nome do Modelo <span className="text-danger">*</span></Form.Label>
               <div className="d-flex justify-content-between">
                 <div className="input-group">
                   <span className="input-group-text"><FaCarSide fontSize={20} color="#0070fa" /></span>
 
-                  <Form.Control as="select" name="nomeModelo" required onChange={handleNovoModeloChange}>
+                  <Form.Control
+                    as="select"
+                    name="modelo_veiculo"
+                    value={formData.modelo_veiculo}
+                    onChange={handleChange}
+                    required
+                  >
                     <option value="">Selecione o modelo</option>
                     <option value="9">Explorer</option>
                     <option value="11">Fiesta</option>
@@ -349,30 +356,44 @@ export function FormularioVeiculo() {
 
 
 
-          <Col lg={6}>
+
+          <Col md={6} lg={6}>
             <Form.Group controlId="cliente">
               <Form.Label>Selecione o Cliente <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><MdArrowDropDown fontSize={20} color="#0070fa" /></span>
 
-                <Form.Control as="select" name="cliente" required onChange={handleChange}>
+                <Form.Control
+                  as="select"
+                  name="cliente_id"
+                  value={formData.cliente_id}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="">Selecione o Cliente</option>
-                  <option value="6">Abraão Odair Kanepa</option>
-                  <option value="7">Alex Ofoka</option>
-                  <option value="47">Waridu Lda</option>
-                  <option value="48">Wilson Jacinto F Morais</option>
+                  <option value="1">Abraão Odair Kanepa</option>
+                  <option value="3">Alex Ofoka</option>
+                  <option value="4">Waridu Lda</option>
+                  <option value="5">Wilson Jacinto F Morais</option>
                 </Form.Control>
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="nomeCombustivel">
               <Form.Label>Tipo de combustível <span className="text-danger">*</span></Form.Label>
               <div className="d-flex justify-content-between">
                 <div className="input-group">
                   <span className="input-group-text"><MdArrowDropDown fontSize={20} color="#0070fa" /></span>
-                  <Form.Control as="select" name="nomeCombustivel" required onChange={(e) => console.log(e.target.value)}>
+
+                  <Form.Control
+                    as="select"
+                    name="combustivel"
+                    value={formData.combustivel}
+                    onChange={handleChange}
+                    required
+                  >
                     <option value="">Selecione o combustível</option>
                     <option value="1">Diesel</option>
                     <option value="2">Gasolina</option>
@@ -389,6 +410,7 @@ export function FormularioVeiculo() {
             </Form.Group>
           </Col>
 
+
           <Col lg={12}>
             <div className="mt-4">
               <h6 className="text-uppercase">Detalhes do Veículo</h6>
@@ -397,7 +419,7 @@ export function FormularioVeiculo() {
           </Col>
 
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroEquipamento">
               <Form.Label>Número de equipamento</Form.Label>
               <div className="input-group">
@@ -405,10 +427,10 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroEquipamento"
-                  placeholder="Insira o número do equipamento"
-                  value={dadosFormulario.numeroEquipamento}
+                  name="numero_equipamento"
+                  value={formData.numero_equipamento}
                   onChange={handleChange}
+                  placeholder="Insira o número do equipamento"
                 />
               </div>
             </Form.Group>
@@ -416,7 +438,7 @@ export function FormularioVeiculo() {
 
 
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="anoModelo">
               <Form.Label>Ano do Modelo</Form.Label>
               <div className="input-group">
@@ -424,16 +446,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="anoModelo"
-                  placeholder="Insira o ano do modelo"
-                  value={dadosFormulario.anoModelo}
+                  name="ano_modelo"
+                  value={formData.ano_modelo}
                   onChange={handleChange}
+                  placeholder="Insira o ano do modelo"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="leituraOdometro">
               <Form.Label>Leitura de odômetro</Form.Label>
               <div className="input-group">
@@ -441,16 +463,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="leituraOdometro"
-                  placeholder="Digite a leitura do odômetro"
-                  value={dadosFormulario.leituraOdometro}
+                  name="leitura_odometro"
+                  value={formData.leitura_odometro}
                   onChange={handleChange}
+                  placeholder="Digite a leitura do odômetro"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="dataFabricacao">
               <Form.Label>Data de Fabricação</Form.Label>
               <div className="input-group">
@@ -458,16 +480,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="date"
-                  name="dataFabricacao"
-                  placeholder="dd-mm-yyyy"
-                  value={dadosFormulario.dataFabricacao}
+                  name="data_fabricacao"
+                  value={formData.data_fabricacao}
                   onChange={handleChange}
+                  placeholder="dd-mm-yyyy"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="caixaVelocidade">
               <Form.Label>Caixa de velocidade</Form.Label>
               <div className="input-group">
@@ -475,16 +497,17 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="caixaVelocidade"
-                  placeholder="Digite a caixa de velocidades"
-                  value={dadosFormulario.caixaVelocidade}
+                  name="caixa_velocidade"
+                  value={formData.caixa_velocidade}
                   onChange={handleChange}
+                  placeholder="Digite a caixa de velocidades"
+
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroCaixa">
               <Form.Label>Número da caixa de câmbio</Form.Label>
               <div className="input-group">
@@ -492,16 +515,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroCaixa"
-                  placeholder="Digite o número da caixa de câmbio"
-                  value={dadosFormulario.numeroCaixa}
+                  name="numero_caixa"
+                  value={formData.numero_caixa}
                   onChange={handleChange}
+                  placeholder="Digite o número da caixa de câmbio"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroMotor">
               <Form.Label>Número do Motor</Form.Label>
               <div className="input-group">
@@ -509,16 +532,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroMotor"
-                  placeholder="Digite o número do motor"
-                  value={dadosFormulario.numeroMotor}
+                  name="numero_motor"
+                  value={formData.numero_motor}
                   onChange={handleChange}
+                  placeholder="Digite o número do motor"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="tamanhoMotor">
               <Form.Label>Tamanho do Motor</Form.Label>
               <div className="input-group">
@@ -526,16 +549,16 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="tamanhoMotor"
-                  placeholder="Digite o tamanho do motor"
-                  value={dadosFormulario.tamanhoMotor}
+                  name="tamanho_motor"
+                  value={formData.tamanho_motor}
                   onChange={handleChange}
+                  placeholder="Digite o tamanho do motor"
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroChave">
               <Form.Label>Número da Chave</Form.Label>
               <div className="input-group">
@@ -543,16 +566,17 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroChave"
-                  placeholder="Digite o número da chave"
-                  value={dadosFormulario.numeroChave}
+                  name="numero_chave"
+                  value={formData.numero_chave}
                   onChange={handleChange}
+                  placeholder="Digite o número da chave"
+
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="motor">
               <Form.Label>Motor</Form.Label>
               <div className="input-group">
@@ -561,15 +585,16 @@ export function FormularioVeiculo() {
                 <Form.Control
                   type="text"
                   name="motor"
-                  placeholder="Digite o motor"
-                  value={dadosFormulario.motor}
+                  value={formData.motor}
                   onChange={handleChange}
+                  placeholder="Digite o motor"
+
                 />
               </div>
             </Form.Group>
           </Col>
 
-          <Col lg={6}>
+          <Col md={6} lg={6}>
             <Form.Group controlId="numeroChassi">
               <Form.Label>Número do Chassi</Form.Label>
               <div className="input-group">
@@ -577,10 +602,11 @@ export function FormularioVeiculo() {
 
                 <Form.Control
                   type="text"
-                  name="numeroChassi"
-                  placeholder="Digite o número do chassi"
-                  value={dadosFormulario.numeroChassi}
+                  name="numero_chassi"
+                  value={formData.numero_chassi}
                   onChange={handleChange}
+                  placeholder="Digite o número do chassi"
+
                 />
               </div>
             </Form.Group>
@@ -592,7 +618,7 @@ export function FormularioVeiculo() {
             </div>
           </Col>
 
-          <Col lg={6}>
+          {/**  <Col md={6} lg={6}>
             <Form.Group controlId="imagens">
               <Form.Label>Imagens</Form.Label>
               <div className="input-group">
@@ -603,10 +629,11 @@ export function FormularioVeiculo() {
                   name="imagens"
                   multiple
                   onChange={handleFileChange}
+                  disabled
                 />
               </div>
             </Form.Group>
-          </Col>
+          </Col>*/}
 
 
 
@@ -646,8 +673,9 @@ export function FormularioVeiculo() {
                             <textarea
                               className="form-control"// Array para várias descrições
 
-                              value={dadosFormulario.descricao}
-
+                              name="descricao"
+                              value={formData.descricao}
+                              onChange={handleChange}
                             />
                           </div>
                         </td>
@@ -681,21 +709,19 @@ export function FormularioVeiculo() {
 
                       <tr >
                         <td>
-                          <div className="input-group">
-                            <span className="input-group-text"><FaPalette fontSize={20} color="#0070fa" /></span>
-
-                            {/* Input para seleção de cor */}
-                            <input
-                              type="color"
-                              className="form-control"
-                              value={dadosFormulario.cor}
-                              onChange={(e) => {
-                                // Atualiza o estado com a nova cor selecionada
-                                setDadosFormulario({ ...dadosFormulario, cor: e.target.value });
-                              }}
-                              aria-label="Escolha a cor"
-                            />
-                          </div>
+                          <Form.Group controlId="cor">
+                            <Form.Label>Cor <span className="text-danger">*</span></Form.Label>
+                            <div className="input-group">
+                              <span className="input-group-text"><MdPalette fontSize={20} color="#0070fa" /></span>
+                              <Form.Control
+                                type="text"
+                                name="cor"
+                                value={formData.cor}
+                                onChange={handleChange}
+                                required
+                              />
+                            </div>
+                          </Form.Group>
                         </td>
 
 
@@ -710,7 +736,7 @@ export function FormularioVeiculo() {
 
 
           </Col>
-          <Col lg={12}>{/* Notas */}
+          {/* Notas   <Col lg={12}>
             <div>
 
               <div className="d-flex justify-content-between">
@@ -770,7 +796,7 @@ export function FormularioVeiculo() {
 
               </div>
             </div>
-          </Col>
+          </Col>*/}
 
           <Col lg={12} className="mt-3">
             <Button type="submit" className="mx-auto mt-3 d-block links-acessos w-25 px-5">Cadastrar</Button>
@@ -1000,6 +1026,11 @@ export function FormularioVeiculo() {
 
 
 
+
+
+
+
+
 const AddClientes = () => {
   return (
     <>
@@ -1008,7 +1039,7 @@ const AddClientes = () => {
           <SideBar />
 
           <div className="flexAuto w-100 ">
-            <TopoAdmin entrada="  Adicionar Veículos" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/clienteList" />
+            <TopoAdmin entrada="  Adicionar Veículos" icone={<IoPersonAdd />} leftSeta={<FaArrowLeftLong />} leftR="/veiculosPageItens" />
 
             <div className="vh-100 alturaPereita">
               <FormularioVeiculo />
