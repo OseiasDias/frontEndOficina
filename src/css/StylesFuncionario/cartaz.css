@@ -1,135 +1,194 @@
-
-
-.seccao-cartaz{
-
-    background-color: #000000;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    color: #fff;
+.seccao-cartaz {
+  background-color: #000000;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  color: #fff;
 }
 
-
-.sizeTitulo{
-    font-size: 3.5em;
+.sizeTitulo {
+  font-size: 3.5em;
 }
-@media (max-width:768px){
-    .sizeTitulo{
-        font-size: 3em;
-        margin-bottom:17px;
-    }
-    .sizeSubTitulo{
-        font-size: 2em !important
-        ;
-        margin-bottom: 17px;
-    }
-}
-
-.sizeSubTitulo{
+@media (max-width: 768px) {
+  .sizeTitulo {
     font-size: 3em;
+    margin-bottom: 17px;
+  }
+  .sizeSubTitulo {
+    font-size: 2em !important
+        ;
+    margin-bottom: 17px;
+  }
 }
 
-.btnAcessoFuncionario{
-    background-color: #00000000;
-    border: 2px solid #fff;
-    padding: 11px 140px;
-    color:#fff;
-    font-size: 1.3em;
-    border-radius: 20px !important;
-    font-weight: 700;
-    transition: var(trasicao);
+.sizeSubTitulo {
+  font-size: 3em;
 }
 
-.btnAcessoFuncionario:hover{
-    background-color: #fff;
-    color:  #000;
-    transition: var(--trasicao);
-    border: 2px solid var(--corSecundaria);
+.btnAcessoFuncionario {
+  background-color: #00000000;
+  border: 2px solid #fff;
+  padding: 11px 140px;
+  color: #fff;
+  font-size: 1.3em;
+  border-radius: 20px !important;
+  font-weight: 700;
+  transition: var(trasicao);
 }
 
-
-.sizeSubTitulo
-
-.imagemLogo{
-
+.btnAcessoFuncionario:hover {
+  background-color: #fff;
+  color: #000;
+  transition: var(--trasicao);
+  border: 2px solid var(--corSecundaria);
 }
 
-.imagemLogo{
-    width: 340px;
-    margin-bottom: 50px;
+.imagemLogo {
+  width: 340px;
+  margin-bottom: 50px;
 }
 
-.imagemLog{
-    float: left !important;
-    position: relative !important;
+.imagemLog {
+  float: left !important;
+  position: relative !important;
+  display: block !important;
+}
+
+.btnAcessoPass {
+  background-color: #0070fa;
+  padding: 10px 50px !important;
+  border: 2px solid #0070fa;
+  font-size: 1.3em;
+  border-radius: 25px;
+  transition: var(--trasicao);
+}
+
+.btnAcessoPass:hover {
+  background-color: #000000;
+  border: 2px solid #fff;
+}
+.sizeTitu {
+  font-size: 3em !important;
+}
+
+.fundoIcone {
+  background-color: #0070fa !important;
+}
+
+.paddingEspecial {
+  padding: 5px 15px !important;
+  height: 48px;
+  border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+.fundoIcone {
+  border-top-left-radius: 20px !important;
+  border-bottom-left-radius: 20px !important;
+}
+
+.menu-lateral {
+  padding-top: 40px;
+  width: 350px;
+}
+
+.linhasMenu {
+  margin-bottom: 25px;
+  list-style: none;
+  font-size: 1.2em;
+}
+
+.icone-menu {
+  font-size: 1.6em;
+  margin-right: 15px;
+}
+
+.paddingCimaBar {
+  padding-top: 40px;
+}
+
+.borderKing {
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+}
+
+.btnPublicar {
+  background-color: #00000000;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 12px 35px;
+  font-size: 1.1em;
+  border-radius: 30px;
+  display: block;
+  float: right;
+  margin: 10px 0;
+  transition: var(--trasicao);
+  font-weight: 700;
+}
+
+.btnPublicar:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.editIcone {
+  cursor: pointer;
+  transition: var(--trasicao);
+}
+
+.editIcone:hover {
+  transform: scale(1.2);
+}
+
+.formularioLaudo {
+  background-color: #000 !important;
+  border: none;
+  outline: none;
+  border: 40px;
+}
+
+.div-avalicao {
+  border-radius: 20px;
+  text-align: justify;
+}
+
+.borderB {
+  border-bottom: 1px solid #fff;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.logoBig {
+  display: none !important;
+}
+.logoSmall {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  .spanTitle {
+    border: 1px solid #fff;
+    display: none;
+  }
+  .logoSmall {
     display: block !important;
+  }
+
+  .menu-lateral {
+    width: 120px;
+  }
+}
+
+@media (min-width: 992px) {
+
+  .logoBig {
+    display: block !important;
+  }
+
+
 }
 
 
-.btnAcessoPass{
-    background-color: #0070fa ;
-    padding: 10px 50px !important;
-    border :2px solid #0070fa;
-    font-size: 1.3em;
-    border-radius: 25px;
-    transition: var(--trasicao);
-}
-
-.btnAcessoPass:hover{ 
+.btnReset{
     background-color: #000000;
-    border :2px solid #fff;
-    
-    ;
-
-    
-}
-.sizeTitu{
-    font-size: 3em !important;  
-}
-
-
-.fundoIcone{
-    background-color: #0070fa !important;
-   
-}
-
-.paddingEspecial{
-    padding: 5px 15px  !important;
-    height: 48px;
-    border-top-right-radius: 20px !important;
-    border-bottom-right-radius: 20px !important;
-
-}
-
-
-.fundoIcone{
-    border-top-left-radius: 20px !important;
-    border-bottom-left-radius: 20px !important;
-}
-
-
-
-.menu-lateral{
-    padding-top: 40px;
-    width: 350px;
-}
-
-.linhasMenu{
-    margin-bottom: 25px;
-    list-style:none;
-    font-size: 1.2em;
-}
-
-.icone-menu{
-    font-size: 1.8em;
-    margin-right: 15px;
-}
-
-
-.menuLateral{
-    border-right: 1px solid #808080;
-}
-
-.paddingCimaBar{
-    padding-top: 40px;
+    border: none;
 }
