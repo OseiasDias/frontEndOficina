@@ -2,18 +2,19 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { IoDocumentTextSharp, IoPersonAdd } from "react-icons/io5";
-import { useState } from 'react';
+import { IoPersonAdd } from "react-icons/io5";
+import { useEffect, useState } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { Modal } from "react-bootstrap";
-import { MdArrowDropDown, MdDateRange, MdDeleteForever, MdFileCopy, MdPalette, MdSpeed } from "react-icons/md";
-import { FaCar, FaCarSide, FaDollarSign, FaHashtag, FaImages, FaKey, FaPalette, FaRegIdCard, FaTag } from "react-icons/fa";
+import { MdArrowDropDown, MdDateRange, MdDeleteForever, MdPalette, MdSpeed } from "react-icons/md";
+import { FaCar, FaCarSide, FaDollarSign, FaHashtag, FaKey, FaRegIdCard, FaUser } from "react-icons/fa";
 import { GiGearStick } from "react-icons/gi";
 import { PiEngineBold } from "react-icons/pi";
 import { AiOutlineEdit, AiOutlineFileText } from "react-icons/ai";
 import { RiAddLargeFill } from "react-icons/ri";
 import axios from "axios";
 
+//import { useNavigate } from 'react-router-dom';
 
 
 export function FormularioVeiculo() {
@@ -78,12 +79,7 @@ export function FormularioVeiculo() {
   const [showModal, setShowModal] = useState(false);
   //const [tipoVeiculo] = useState("");
   const [novoTipo, setNovoTipo] = useState(""); // Estado para o novo tipo de veículo
-  const [tiposVeiculos, setTiposVeiculos] = useState([
-    { id: 1, nome: 'Turismo' },
-    { id: 2, nome: 'SUV' },
-    { id: 3, nome: 'Jeep 4x4' },
-    { id: 4, nome: 'Carrinhas' }
-  ])
+
 
 
   const handleNovoTipoChange = (e) => {
@@ -217,6 +213,120 @@ export function FormularioVeiculo() {
 
 
 
+  /**=======================|ESPACO PARA LISTAGEM VINDO DOS INPUT|=========================== */
+  /**Tipos de veiculos */
+  const [tiposVeiculos, setTiposVeiculos] = useState([]);
+
+  useEffect(() => {
+    // Fazendo a requisição para a API
+    fetch("http://127.0.0.1:8000/api/tipos-veiculos")
+      .then((response) => response.json())
+      .then((data) => {
+        setTiposVeiculos(data); // Atualiza o estado com os dados da API
+      })
+      .catch((error) => console.error("Erro ao carregar os tipos de veículos:", error));
+  }, []);
+
+
+  /**Listar  Marca de veiculos */
+  const [marcas, setMarcas] = useState([]);
+
+  useEffect(() => {
+    // Fazendo a requisição para a API
+    fetch("http://127.0.0.1:8000/api/marcas")
+      .then((response) => response.json())
+      .then((data) => {
+        setMarcas(data); // Atualiza o estado com as marcas retornadas
+      })
+      .catch((error) => console.error("Erro ao carregar as marcas:", error));
+  }, []);
+
+
+
+
+
+
+  /**Listar Modelos */
+  const [modelos, setModelos] = useState([]);
+
+  useEffect(() => {
+    // Fazendo a requisição para a API
+    fetch("http://127.0.0.1:8000/api/modelos-veiculos/")
+      .then((response) => response.json())
+      .then((data) => {
+        setModelos(data); // Atualiza o estado com os modelos retornados
+      })
+      .catch((error) => console.error("Erro ao carregar os modelos:", error));
+  }, []);
+
+
+
+
+
+  /**LISTAr Clientes */
+  const [clientes, setClientes] = useState([]);
+  const [filteredClientes, setFilteredClientes] = useState([]);
+  const [formDataCLI, setFormDataClI] = useState({
+    clienteNome: '',
+    id_cliente: null,
+    data: ''
+  });
+
+  // Função para selecionar um cliente da lista
+  const handleClienteSelect = (cliente) => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+    setFormDataClI(prevState => ({
+      ...prevState,
+      clienteNome: `${cliente.primeiro_nome} ${cliente.sobrenome}`, // Preenche o campo de pesquisa com o nome do cliente
+      id_cliente: cliente.id,
+      data: formattedDate
+    }));
+
+    // Não é necessário fazer nova requisição aqui, pois os clientes já foram carregados
+  };
+
+  // Função para pesquisa de cliente
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+
+    // Se o campo for apagado, resetamos a lista de clientes
+    if (searchTerm === "") {
+      setFilteredClientes(clientes);
+    } else {
+      const filtered = clientes.filter(cliente => {
+        const clienteInfo = `${cliente.primeiro_nome} ${cliente.sobrenome} ${cliente.celular}`;
+        return clienteInfo.toLowerCase().includes(searchTerm);
+      });
+      setFilteredClientes(filtered);
+    }
+
+    // Atualiza o nome do cliente no estado
+    setFormDataClI({
+      ...formData,
+      clienteNome: e.target.value
+    });
+  };
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+    setFormDataClI(prevState => ({
+      ...prevState,
+      data: formattedDate
+    }));
+
+    // Fazendo a requisição para a API
+    fetch('http://127.0.0.1:8000/api/clientes')
+      .then((response) => response.json())
+      .then((data) => {
+        setClientes(data);
+        setFilteredClientes(data); // Exibe todos os clientes inicialmente
+      }).catch((error) => console.error("Erro ao carregar os clientes:", error));
+  }, []);
+
+
+
   return (
     <>
       <Form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -235,7 +345,6 @@ export function FormularioVeiculo() {
               <div className="d-flex">
                 <div className="input-group">
                   <span className="input-group-text"><FaCar fontSize={20} color="#0070fa" /></span>
-
                   <Form.Control
                     as="select"
                     name="tipo_veiculo"
@@ -246,7 +355,7 @@ export function FormularioVeiculo() {
                     <option value="">Selecione o tipo</option>
                     {tiposVeiculos.map((tipo) => (
                       <option key={tipo.id} value={tipo.id}>
-                        {tipo.nome}
+                        {tipo.tipo} {/* Exibindo o nome do tipo de veículo */}
                       </option>
                     ))}
                   </Form.Control>
@@ -260,6 +369,7 @@ export function FormularioVeiculo() {
               </div>
             </Form.Group>
           </Col>
+
 
 
           <Col md={6} lg={6}>
@@ -284,14 +394,25 @@ export function FormularioVeiculo() {
             <Form.Group controlId="marcaVeiculo">
               <Form.Label>Marca do veículo <span className="text-danger">*</span></Form.Label>
               <div className="d-flex justify-content-between">
-                <Form.Control
-                  type="text" // Change to text input
-                  name="marca_veiculo" // Change name attribute
-                  value={formData.marca_veiculo} // Set value from state
-                  onChange={handleChange} // Bind onChange event handler
-                  required // Add required attribute
-                  placeholder="Digite a marca do veículo" // Add placeholder text
-                />
+                <div className="input-group">
+                  <span className="input-group-text"><FaCar fontSize={20} color="#0070fa" /></span>
+
+                  <Form.Control
+                    as="select" // Definido como select
+                    name="marca_veiculo" // Nome do campo
+                    value={formData.marca_veiculo} // Vinculado ao estado
+                    onChange={handleChange} // Função de mudança para atualização do estado
+                    required // Campo obrigatório
+                  >
+                    <option value="">Selecione a marca do veículo</option>
+                    {/* Mapeando as marcas da API */}
+                    {marcas.map((marca) => (
+                      <option key={marca.id} value={marca.id}>
+                        {marca.nome} {/* Exibindo o nome da marca */}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </div>
                 <Button
                   className="links-acessos px-2 border-radius-zero"
                   onClick={handleShowModalMarca}
@@ -301,6 +422,8 @@ export function FormularioVeiculo() {
               </div>
             </Form.Group>
           </Col>
+
+
 
 
           <Col md={6} lg={6}>
@@ -321,7 +444,6 @@ export function FormularioVeiculo() {
             </Form.Group>
           </Col>
 
-
           <Col md={6} lg={6}>
             <Form.Group controlId="nomeModelo">
               <Form.Label>Nome do Modelo <span className="text-danger">*</span></Form.Label>
@@ -337,11 +459,12 @@ export function FormularioVeiculo() {
                     required
                   >
                     <option value="">Selecione o modelo</option>
-                    <option value="9">Explorer</option>
-                    <option value="11">Fiesta</option>
-                    <option value="14">Edge</option>
-                    <option value="36">EcoSport</option>
-                    <option value="37">Hilux</option>
+                    {/* Mapeando os modelos da API */}
+                    {modelos.map((modelo) => (
+                      <option key={modelo.id} value={modelo.id}>
+                        {modelo.nome} {/* Exibindo o nome do modelo */}
+                      </option>
+                    ))}
                   </Form.Control>
                 </div>
                 <Button
@@ -355,30 +478,40 @@ export function FormularioVeiculo() {
           </Col>
 
 
+          <Col md={6}>
+            <Form.Label>Cliente <span className="text-danger">*</span></Form.Label>
+            <div className="input-group">
+              <span className="input-group-text"><FaUser fontSize={22} color="#0070fa" /></span>
+              <Form.Control
+                type="text"
+                name="clienteSearch"
+                placeholder="Pesquisar Cliente"
+                value={formDataCLI.clienteNome} // Exibe o nome do cliente selecionado
+                onChange={handleSearch} // Permite a pesquisa
+              />
+            </div>
 
-
-          <Col md={6} lg={6}>
-            <Form.Group controlId="cliente">
-              <Form.Label>Selecione o Cliente <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><MdArrowDropDown fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  as="select"
-                  name="cliente_id"
-                  value={formData.cliente_id}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Selecione o Cliente</option>
-                  <option value="1">Abraão Odair Kanepa</option>
-                  <option value="3">Alex Ofoka</option>
-                  <option value="4">Waridu Lda</option>
-                  <option value="5">Wilson Jacinto F Morais</option>
-                </Form.Control>
+            {/* Exibição da lista de resultados */}
+            {filteredClientes.length > 0 ? (
+              <div className="list-group mt-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                {filteredClientes.map(cliente => (
+                  <div
+                    key={cliente.id}
+                    className={`list-group-item text-justify list-group-item-action ${formDataCLI.id_cliente === cliente.id ? 'list-group-item-primary' : ''}`}
+                    onClick={() => handleClienteSelect(cliente)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {`${cliente.primeiro_nome} ${cliente.sobrenome} - ${cliente.celular}`}
+                  </div>
+                ))}
               </div>
-            </Form.Group>
+            ) : (
+              <div className="s">Nenhum cliente encontrado</div>
+            )}
           </Col>
+
+
+
 
           <Col md={6} lg={6}>
             <Form.Group controlId="nomeCombustivel">

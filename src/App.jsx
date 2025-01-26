@@ -84,6 +84,10 @@ import VerVeiculosAll from "./pages/pageVer/VerVeiculoAll.jsx";
 import VerOR from "./pages/pageVer/VerOR.jsx";
 import ViewAgendamento from "./pages/pageVer/ViewAgendamentos.jsx";
 import AddAgendamentoAdmin  from "./pages/pagesAdd/AddAgendamentoAdmin.jsx";
+import Cartaz from "./components/componentesFuncionario/Cartaz.jsx";
+import AcessoEmail from "./components/componentesFuncionario/AcessoEmail.jsx";
+import HomeFuncionario from "./components/componentesFuncionario/HomeFuncionario.jsx";
+
 
 
 
@@ -94,6 +98,14 @@ const ProtectedRouteAdmin = ({ children }) => {
   const isAuthenticated = !!localStorage.getItem('authToken'); // Exemplo de verificação de autenticação
 
   return isAuthenticated ? children : <Navigate to="/acessoAdministrador" />;
+};
+
+
+// eslint-disable-next-line react/prop-types
+const ProtectedRouteFuncionario = ({ children }) => {
+  const isAuthenticated = !!localStorage.getItem('authToken'); // Exemplo de verificação de autenticação
+
+  return isAuthenticated ? children : <Navigate to="/emailFuncionario" />;
 };
 
 
@@ -763,42 +775,29 @@ const App = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
               {/**Routas para o Super Administrador */}
 
               <Route path="/acessoSuperAdministrador" element={<PaginaLoginSuperAdmin />} />
               <Route path="/paginaCliente" element={<Clientes />} />
               <Route path="/paginaAdministrador" element={<Agendamento />} />
               <Route path="/paginaEstoque" element={<Estoque />} />
+
+
+
+                {/**TODAS ROUTES DO MODULO DO FUNCIONARIO */}
+
+
+                <Route path="/cartazFuncionario" element={<Cartaz />} />
+                <Route path="/emailFuncionario" element={<AcessoEmail />} />
+
+                     {/**Routes de Add de Entidades */}
+              <Route path="/homeFuncionario" element={
+                <ProtectedRouteFuncionario>
+                  <HomeFuncionario />
+                </ProtectedRouteFuncionario>
+              } />
+
+             
 
 
 
