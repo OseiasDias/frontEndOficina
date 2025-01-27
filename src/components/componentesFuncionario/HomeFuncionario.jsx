@@ -105,6 +105,8 @@ const Cronometro = () => {
 
   return (
     <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }} className="p-3">
+      <h5 className="text-rigth">Estado : <b className="text-success">Reparando</b></h5>
+      <hr />
       <h3>Cronômetro <FaRegClock size={35} className="fw-bolder" /> </h3>
       {tempoEsgotado ? (
         <p style={{ fontSize: '40px', color: 'red' }}>Tempo Esgotado!</p>
