@@ -70,13 +70,16 @@ export function FormularioVeiculo() {
 
 
 
-
-
-
-
-
-
   const [showModal, setShowModal] = useState(false);
+
+  // Função para abrir o modal
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+
+
+
+
   //const [tipoVeiculo] = useState("");
   const [novoTipo, setNovoTipo] = useState(""); // Estado para o novo tipo de veículo
 
@@ -86,8 +89,6 @@ export function FormularioVeiculo() {
     setNovoTipo(e.target.value);
   };
 
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
 
 
 
@@ -338,8 +339,7 @@ export function FormularioVeiculo() {
 
         <Row>
 
-
-          <Col md={6} lg={6}>
+        <Col md={6} lg={6}>
             <Form.Group controlId="tipoVeiculo">
               <Form.Label>Tipo de Veículo <span className="text-danger">*</span></Form.Label>
               <div className="d-flex">
@@ -355,14 +355,14 @@ export function FormularioVeiculo() {
                     <option value="">Selecione o tipo</option>
                     {tiposVeiculos.map((tipo) => (
                       <option key={tipo.id} value={tipo.id}>
-                        {tipo.tipo} {/* Exibindo o nome do tipo de veículo */}
+                        {tipo.tipo}
                       </option>
                     ))}
                   </Form.Control>
                 </div>
                 <Button
                   className="links-acessos px-2 border-radius-zero"
-                  onClick={handleShowModal}
+                  onClick={handleShowModal} // Uso correto da função
                 >
                   <RiAddLargeFill />
                 </Button>
@@ -869,67 +869,7 @@ export function FormularioVeiculo() {
 
 
           </Col>
-          {/* Notas   <Col lg={12}>
-            <div>
-
-              <div className="d-flex justify-content-between">
-                <h6 className="fw-700 text-uppercase mt-4">Adicionar notas</h6>
-
-
-              </div>
-              <hr />
-              <div className="mt-3">
-                <h6>Texto da Nota</h6>
-                <div className="row">
-
-
-                  <Col lg={4}>
-                    <div className="input-group">
-                      <span className="input-group-text"><IoDocumentTextSharp fontSize={20} color="#0070fa" /></span>
-
-                      <textarea
-                        className="form-control"
-                        value=""
-                        onChange=""
-                      />
-                    </div>
-                  </Col>
-
-                  <Col lg={4}>
-                    <h6>Arquivo</h6>
-                    <div className="input-group">
-
-                      <span className="input-group-text"><MdFileCopy fontSize={20} color="#0070fa" /></span>
-
-                      <input
-                        type="file"
-                        className="form-control"
-                        onChange=""
-                        multiple
-                      />
-                    </div>
-                  </Col>
-                  <Col lg={4}>
-                    <input
-                      type="checkbox"
-                      checked=""
-                      onChange=""
-                    />
-                    <label className="ms-2">Notas internas</label><br />
-                    <input
-                      type="checkbox"
-                      checked=""
-                      onChange=""
-                    />
-                    <label className="ms-2">Compartilhado com o cliente</label>
-                  </Col>
-                </div>
-
-
-
-              </div>
-            </div>
-          </Col>*/}
+         
 
           <Col lg={12} className="mt-3">
             <Button type="submit" className="mx-auto mt-3 d-block links-acessos w-25 px-5">Cadastrar</Button>
@@ -940,56 +880,33 @@ export function FormularioVeiculo() {
 
       <div className="modalis">
         {/* Modal */}
-        <Modal show={showModal} onHide={handleCloseModal} centered>
-          <Modal.Header closeButton>
-            <Modal.Title><h5>Adicionar ou Remover Tipo de Veículo</h5></Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleSubmit}>
-              {/* Campo para adicionar um novo tipo */}
-              <Form.Group controlId="novoTipo">
-
-                <div className="d-flex justify-content-between">
-                  <Form.Control
-                    type="text"
-                    placeholder="Digite o novo tipo"
-                    value={novoTipo}
-                    onChange={handleNovoTipoChange}
-                  /> <Button
-                    type="submit"
-                    variant="primary"
-                    className="ml-2 links-acessos border-radius-zero"
-                  >
-                    Enviar
-                  </Button>
-                </div>
-              </Form.Group>
-
-              {/* Lista de tipos de veículos existentes com botão para remover */}
-              <Form.Group controlId="removerTipo">
-                <Form.Label className="mt-2">Tipos de veículos existentes</Form.Label>
-                <ul className="list-unstyled">
-                  {tiposVeiculos.map((tipo) => (
-                    <li key={tipo.id} className="d-flex border p-2 my-2 justify-content-between align-items-center">
-                      <span>{tipo.nome}</span>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => handleRemoveTipo(tipo.id)}
-                        className="border-radius-zero"
-                      >
-                        <MdDeleteForever fontSize={22} />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </Form.Group>
-
-              <hr />
-            </Form>
-          </Modal.Body>
-        </Modal>
-
+        {/* Modal */}
+      <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title><h5>Adicionar ou Remover Tipo de Veículo</h5></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="novoTipo">
+              <div className="d-flex justify-content-between">
+                <Form.Control
+                  type="text"
+                  placeholder="Digite o novo tipo"
+                  value={novoTipo}
+                  onChange={handleNovoTipoChange}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="ml-2 links-acessos border-radius-zero"
+                >
+                  Enviar
+                </Button>
+              </div>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+      </Modal>
         {/* Modal para adicionar ou remover marcas */}
         <Modal show={showModalMarca} onHide={handleCloseModalMarca} centered>
           <Modal.Header closeButton>

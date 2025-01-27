@@ -1,15 +1,14 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { 
-  FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, FaLock, FaRegEye, FaRegEyeSlash, 
+  FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, 
   FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, 
   FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard 
 } from "react-icons/fa";
 import { InputGroup, Form, Button, Row, Col, Modal, Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify'; // Certifique-se de importar o ToastContainer
-import 'react-toastify/dist/ReactToastify.css';  // Importando
-import { useNavigate } from 'react-router-dom';  // Certifique-se de importar o hook 'useNavigate'
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
@@ -40,8 +39,8 @@ const FormularioFuncionario = () => {
     bloqueado: false,
   });
 
-  const [isLoading, setIsLoading] = useState(false);  // Estado para o loading
-  const navigate = useNavigate();  // Hook para navegação
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [novoCargo, setNovoCargo] = useState('');
   const [cargos, setCargos] = useState([
@@ -55,18 +54,14 @@ const FormularioFuncionario = () => {
     setNovoCargo(event.target.value);
   };
 
-  // Função para adicionar o novo cargo à lista de cargos
   const handleAdicionarCargo = () => {
     if (novoCargo) {
-      // Adicione o novo cargo na lista de cargos
       setCargos([...cargos, novoCargo]);
-      // Feche o modal
       setMostrarModal(false);
     }
   };
 
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
 
   const handleChange = (e) => {
@@ -76,7 +71,6 @@ const FormularioFuncionario = () => {
       [name]: value
     }));
   };
-
 
   const validateForm = () => {
     const newErrors = {};
@@ -111,25 +105,23 @@ const FormularioFuncionario = () => {
       return;
     }
 
-    setIsLoading(true);  // Ativa o estado de loading
+    setIsLoading(true);
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
       console.log('Funcionario cadastrado:', response.data);
       toast.success('Funcionário cadastrado com sucesso!');
       
-      // Após 4 segundos, redireciona para a página de lista de clientes
       setTimeout(() => {
         setIsLoading(false);
-        navigate('/funcionariosList'); // Redireciona para /funcionariosList
-      }, 4000); // Atraso de 4 segundos
+        navigate('/funcionariosList');
+      }, 4000);
     } catch (error) {
       console.error('Erro ao cadastrar funcionário:', error);
       toast.error('Erro ao cadastrar funcionário.');
-      setIsLoading(false);  // Desativa o estado de loading em caso de erro
+      setIsLoading(false);
     }
   };
-
 
   useEffect(() => {
     const senhaGerada = generateRandomPassword();
@@ -139,7 +131,7 @@ const FormularioFuncionario = () => {
 
   return (
     <>
-<ToastContainer 
+      <ToastContainer 
         position="top-center" 
         autoClose={5000} 
         hideProgressBar={false} 
@@ -151,7 +143,7 @@ const FormularioFuncionario = () => {
         pauseOnHover 
       />    
       
-        <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
+      <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
         {/* Dados Pessoais */}
         <div className="col-md-12 mt-5">
           <h6>INFORMAÇÕES PESSOAIS</h6>
@@ -197,32 +189,7 @@ const FormularioFuncionario = () => {
           </Col>
         </Row>
 
-        <Row>
-          <Col md={6}>
-            <Form.Group controlId="senha">
-              <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><FaLock fontSize={20} color="#0070fa" /></span>
-                <Form.Control
-                  name="senha"
-                  value={formData.senha}
-                  onChange={handleChange}
-                  required
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Senha gerada automaticamente"
-                  isInvalid={!!errors.senha}
-                  disabled
-                />
-                <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
-                  {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                </Button>
-                <Form.Control.Feedback type="invalid">{errors.senha}</Form.Control.Feedback>
-              </div>
-            </Form.Group>
-          </Col>
-
-          {/* Outros campos continuam aqui */}
-        </Row>
+      
 
 
 
@@ -327,7 +294,7 @@ const FormularioFuncionario = () => {
 
 
 
-          <Col md={6}>
+          {/** <Col md={6}>
             <Form.Group controlId="senha">
               <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
@@ -346,12 +313,9 @@ const FormularioFuncionario = () => {
                 </Button>
               </div>
             </Form.Group>
-          </Col>
+          </Col> */}
 
-        </Row>
-
-        <Row>
-          <Col>
+<Col>
             <Form.Group controlId="uploadArquivo">
               <Form.Label>Foto</Form.Label>
               <div className="input-group">
@@ -368,6 +332,11 @@ const FormularioFuncionario = () => {
               <Image src={formData.uploadArquivo ? URL.createObjectURL(formData.uploadArquivo[0]) : ''} thumbnail />
             </Form.Group>
           </Col>
+
+        </Row>
+
+        <Row>
+         
           <Col md={6}>
             <Form.Group controlId="genero">
               <Form.Label>Gênero</Form.Label>

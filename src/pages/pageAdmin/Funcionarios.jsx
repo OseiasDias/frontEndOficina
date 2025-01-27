@@ -74,7 +74,7 @@ export function TabelaVizualizarFuncionarios() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Nome Exibido", selector: (row) => row.nome || "Sem informação" },
+    { name: "Nome", selector: (row) => row.nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Cargo", selector: (row) => row.cargo || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },

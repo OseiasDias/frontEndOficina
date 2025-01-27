@@ -6,6 +6,8 @@ import { PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
 import { MdContentPasteSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 const Sidebar = () => {
     const [showModal, setShowModal] = useState(false); // Estado para controlar a visibilidade da modal de OR
@@ -71,12 +73,23 @@ const Sidebar = () => {
         } else {
             alert("Limpeza adiada.");
         }
-        fecharLimpezaModal();
+        fecharLimpezaModal(); // Fechar a modal após a ação
     };
 
-    // Funções para cada modal de confirmação
+    // Funções para confirmação em outras modais
     const handleConfirmacao = (acao) => {
-        alert(`Você escolheu ${acao}`);
+        if (acao === "Sim") {
+            alert(`Você escolheu ${acao}`);
+        } else {
+            alert(`Você escolheu ${acao}`);
+        }
+        // Fechar a modal de acordo com a ação
+        fecharAguardarTrabalhoModal(); // Exemplo para a modal de "Aguardar Trabalho"
+        fecharAguardarPecasModal();    // Exemplo para a modal de "Aguardar Peças"
+        fecharAlmocoModal();           // Exemplo para a modal de "Almoço"
+        fecharFormacaoModal();         // Exemplo para a modal de "Formação"
+        fecharPerfilModal();           // Exemplo para a modal de "Perfil"
+        fecharSairModal();             // Exemplo para a modal de "Sair"
     };
 
     return (
@@ -135,7 +148,7 @@ const Sidebar = () => {
             </nav>
 
             {/* Modal de Procurar OR */}
-            <Modal show={showModal} onHide={fecharModal}>
+            <Modal scrollable show={showModal} onHide={fecharModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Procurar Ordem de Reparação</Modal.Title>
                 </Modal.Header>
@@ -162,7 +175,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal de Confirmação para Terminar o Serviço */}
-            <Modal show={showConfirmModal} onHide={fecharConfirmModal}>
+            <Modal scrollable show={showConfirmModal} onHide={fecharConfirmModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmação</Modal.Title>
                 </Modal.Header>
@@ -180,7 +193,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal de Confirmação para Manutenção e Limpeza */}
-            <Modal show={showLimpezaModal} onHide={fecharLimpezaModal}>
+            <Modal scrollable show={showLimpezaModal} onHide={fecharLimpezaModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Manutenção e Limpeza</Modal.Title>
                 </Modal.Header>
@@ -198,7 +211,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Aguardar Trabalho */}
-            <Modal show={showAguardarTrabalhoModal} onHide={fecharAguardarTrabalhoModal}>
+            <Modal scrollable show={showAguardarTrabalhoModal} onHide={fecharAguardarTrabalhoModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Aguardar Trabalho</Modal.Title>
                 </Modal.Header>
@@ -216,7 +229,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Aguardar Peças */}
-            <Modal show={showAguardarPecasModal} onHide={fecharAguardarPecasModal}>
+            <Modal scrollable show={showAguardarPecasModal} onHide={fecharAguardarPecasModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Aguardar Peças</Modal.Title>
                 </Modal.Header>
@@ -234,7 +247,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Almoço */}
-            <Modal show={showAlmocoModal} onHide={fecharAlmocoModal}>
+            <Modal scrollable show={showAlmocoModal} onHide={fecharAlmocoModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Almoço</Modal.Title>
                 </Modal.Header>
@@ -252,7 +265,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Formação */}
-            <Modal show={showFormacaoModal} onHide={fecharFormacaoModal}>
+            <Modal scrollable show={showFormacaoModal} onHide={fecharFormacaoModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Formação</Modal.Title>
                 </Modal.Header>
@@ -270,12 +283,26 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Perfil */}
-            <Modal show={showPerfilModal} onHide={fecharPerfilModal}>
+            <Modal scrollable show={showPerfilModal} onHide={fecharPerfilModal} size='xl'>
                 <Modal.Header closeButton>
                     <Modal.Title>Perfil</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <h5>Você deseja acessar seu perfil?</h5>
+                    <Tabs
+                        defaultActiveKey="profile"
+                        id="uncontrolled-tab-example"
+                        className="mb-3"
+                    >
+                        <Tab eventKey="home" title="Dados">
+                            Tab content for Home
+                        </Tab>
+                        <Tab eventKey="profile" title="Editar">
+                            Tab content for Profile
+                        </Tab>
+                        <Tab eventKey="contact" title="Mudar Senha">
+                            Tab content for Contact
+                        </Tab>
+                    </Tabs>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
@@ -288,7 +315,7 @@ const Sidebar = () => {
             </Modal>
 
             {/* Modal para Sair */}
-            <Modal show={showSairModal} onHide={fecharSairModal}>
+            <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Sair</Modal.Title>
                 </Modal.Header>

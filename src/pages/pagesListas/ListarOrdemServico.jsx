@@ -8,16 +8,12 @@ import { useNavigate } from 'react-router-dom'; // Hook do React Router para nav
 import axios from "axios"; // Para fazer requisições HTTP
 import DataTable from "react-data-table-component";
 import { Dropdown, Modal, Button } from "react-bootstrap";
-import {  IoMdCreate } from "react-icons/io";
+import { IoMdCreate } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify"; // Para notificações
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do Toast
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
-
-
-
-
 
 const customStyles = {
   headCells: {
@@ -47,14 +43,14 @@ export function TabelaVizualizarOrdensServico() {
   const [selectedOrder, setSelectedOrder] = useState(null); // Ordem selecionada para exclusão
   const [clientes, setClientes] = useState({}); // Estado para armazenar os nomes dos clientes
 
-
   const navigate = useNavigate();
-  // Função para buscar os nomes dos clientes (com base no cust_id)
+
+  // Função para buscar os nomes dos clientes (com base no cliente_id)
   const fetchClientes = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/clientes/");  // Suponha que a API retorne todos os clientes
       const clientesMap = response.data.reduce((acc, cliente) => {
-        acc[cliente.id] = cliente.primeiro_nome+"  " + "  "+cliente.sobrenome;
+        acc[cliente.id] = cliente.primeiro_nome + " " + cliente.sobrenome;
         return acc;
       }, {});
       setClientes(clientesMap);  // Armazenar os nomes dos clientes
@@ -67,7 +63,7 @@ export function TabelaVizualizarOrdensServico() {
   // Função para buscar as ordens de serviço da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/ordens-de-servico/");
+      const response = await axios.get("http://127.0.0.1:8000/api/ordens-de-reparo/");
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);
@@ -90,7 +86,7 @@ export function TabelaVizualizarOrdensServico() {
 
   // Função para exibir detalhes da ordem de serviço /verOR/
   const handleView = (order) => {
-     navigate(`/verOR/${order.id}`);
+    navigate(`/verOR/${order.id}`); // Corrigido para usar crase no template string
   };
 
   // Função para excluir a ordem de serviço
@@ -102,29 +98,29 @@ export function TabelaVizualizarOrdensServico() {
   // Função de confirmação de exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/ordens-de-servico/${selectedOrder.id}`);
+      await axios.delete(`http://127.0.0.1:8000/api/ordens-de-reparo/${selectedOrder.id}`);
       setRecords(records.filter((order) => order.id !== selectedOrder.id)); // Remove da lista
       setShowDeleteModal(false);
-      toast.success('Ordem de serviço excluída com sucesso!');
+      toast.success('Ordem de reparo excluída com sucesso!');
     } catch (error) {
-      console.error("Erro ao excluir a ordem de serviço:", error);
-      setError("Erro ao excluir a ordem de serviço.");
-      toast.error('Erro ao excluir a ordem de serviço!');
+      console.error("Erro ao excluir a ordem de reparo:", error);
+      setError("Erro ao excluir a ordem de reparo.");
+      toast.error('Erro ao excluir a ordem de reparo!');
     }
   };
 
   // Colunas da tabela para ordens de serviço
   const columns = [
-    { name: "Nº de OR", selector: (row) => row.jobno || "Sem informação" },
+    { name: "Nº de OR", selector: (row) => row.numero_trabalho || "Sem informação" }, // Alterado para 'numero_trabalho'
     {
       name: "Cliente", 
-      selector: (row) => clientes[row.cust_id] || "Cliente não encontrado"  // Substituindo o cust_id pelo nome
+      selector: (row) => clientes[row.cliente_id] || "Cliente não encontrado"  // Alterado para 'cliente_id'
     },
     { name: "Data/Hora de Entrada", selector: (row) => row.data_inicial_entrada || "Sem informação" },
     // eslint-disable-next-line no-constant-binary-expression
-    { name: "KM de Entrada", selector: (row) => `${row.km_entrada} KM` || "Sem informação" },
+    { name: "KM de Entrada", selector: (row) => `${row.km_entrada} KM` || "Sem informação" }, // Corrigido para interpolação correta
     { name: "Status", selector: (row) => row.status || "Sem informação" },
-    { name: "Detalhes", selector: (row) => row.details || "Sem informação" },
+    { name: "Detalhes", selector: (row) => row.detalhes || "Sem informação" }, // Ajustado para o campo 'detalhes'
     {
       name: "Ações",
       cell: (row) => (
@@ -154,8 +150,10 @@ export function TabelaVizualizarOrdensServico() {
     } else {
       const filteredRecords = originalRecords.filter(
         (item) =>
-          item.jobno.toLowerCase().includes(query) ||
-          item.status.toLowerCase().includes(query)
+          item.numero_trabalho.toLowerCase().includes(query) ||
+          item.status.toLowerCase().includes(query) ||
+          item.categoria_reparo.toLowerCase().includes(query) ||
+          item.detalhes.toLowerCase().includes(query)
       );
       setRecords(filteredRecords);
     }
@@ -170,9 +168,12 @@ export function TabelaVizualizarOrdensServico() {
     );
   }
   if (error) {
-    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
-      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-    </div>);
+    return (
+      <div className='text-center'>
+        <h3 className='text-danger'>{error}</h3>
+        <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
+      </div>
+    );
   };
 
   return (
@@ -206,7 +207,7 @@ export function TabelaVizualizarOrdensServico() {
           <Modal.Title>Confirmar Exclusão</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Tem certeza de que deseja excluir esta ordem de serviço?</p>
+          <p>Tem certeza de que deseja excluir esta ordem de reparo?</p>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancelar</Button>
@@ -218,6 +219,7 @@ export function TabelaVizualizarOrdensServico() {
     </div>
   );
 }
+
 
 
 
