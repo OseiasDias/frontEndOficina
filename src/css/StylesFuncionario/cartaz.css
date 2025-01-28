@@ -74,6 +74,14 @@
 .fundoIcone {
   background-color: #0070fa !important;
 }
+.fundoIconeRigth{
+  background-color: #0070fa !important;
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+    border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+
+}
 
 .paddingEspecial {
   padding: 5px 15px !important;

@@ -751,22 +751,6 @@ export function FormularioVeiculo() {
             </div>
           </Col>
 
-          {/**  <Col md={6} lg={6}>
-            <Form.Group controlId="imagens">
-              <Form.Label>Imagens</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><FaImages fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  type="file"
-                  name="imagens"
-                  multiple
-                  onChange={handleFileChange}
-                  disabled
-                />
-              </div>
-            </Form.Group>
-          </Col>*/}
 
 
 

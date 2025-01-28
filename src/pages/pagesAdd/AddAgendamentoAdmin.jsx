@@ -296,7 +296,7 @@ const FormularioAgendamento = () => {
                 </Col>
 
             </Row>
-
+ 
             <Row className="mt-3">
                 <Col md={6}>
                     <Form.Label>Serviço <span className="text-danger">*</span></Form.Label>

@@ -2,17 +2,21 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
-import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileAlt, FaFileSignature,  FaHome, FaRegFileAlt, FaStickyNote, FaTint, FaTools, FaUpload, FaUser} from "react-icons/fa";
+import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileAlt, FaFileSignature, FaHome, FaRegFileAlt, FaStickyNote, FaTint, FaTools, FaUpload, FaUser } from "react-icons/fa";
 import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import logoMarca from "../../assets/lgo.png";
+import imgN from "../../assets/not-found.png";
+import imgErro from "../../assets/error.webp";
+
+
 
 
 
@@ -47,18 +51,11 @@ const ServiceAddForm = () => {
   const [novaCategoria, setNovaCategoria] = useState({ nome: '' });
   const [categorias, setCategorias] = useState([]);
 
-  // Funções para lidar com o estado do formulário
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues(prevValues => ({
-      ...prevValues,
-      [name]: value
-    }));
-  };
 
- 
 
-  
+
+
+
 
   // Função para abrir a modal
   const handleOpenModal = (content) => {
@@ -90,10 +87,10 @@ const ServiceAddForm = () => {
     setWashBayChecked(e.target.checked);
   };
 
- 
 
 
- 
+
+
 
   // Função para abrir a modal com conteúdo específico
 
@@ -103,15 +100,132 @@ const ServiceAddForm = () => {
 
 
 
-  
+
 
   // Função para adicionar uma nova categoria
- 
+
 
   // Função para remover uma categoria
- 
 
 
+  /**LOGICA IMPORTADA */
+
+  const [clientes, setClientes] = useState([]);
+  const [veiculos, setVeiculos] = useState([]);
+  const [filteredClientes, setFilteredClientes] = useState([]);
+  const [formData, setFormData] = useState({
+    data: '',
+    id_cliente: '',
+    id_veiculo: '',
+
+  });
+
+  // Função de mudança nos campos do formulário
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  // Função para pesquisa de cliente
+  const handleSearch = (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+
+    const filtered = clientes.filter(cliente => {
+      const clienteInfo = `${cliente.primeiro_nome} ${cliente.sobrenome} ${cliente.celular}`;
+      return clienteInfo.toLowerCase().includes(searchTerm);
+    });
+
+    setFilteredClientes(filtered);
+
+    // Atualiza o nome do cliente no estado
+    setFormData({
+      ...formData,
+      clienteNome: e.target.value
+    });
+  };
+
+
+
+
+
+  // Função para selecionar um cliente da lista
+  const handleClienteSelect = (cliente) => {
+    setFormData({
+      ...formData,
+      id_cliente: cliente.id,
+      clienteNome: `${cliente.primeiro_nome} ${cliente.sobrenome}`, // Atualiza o nome do cliente no estado
+    });
+    setFilteredClientes([]); // Limpar a lista de resultados ao selecionar um cliente
+
+    // Requisição para pegar os veículos do cliente selecionado
+    fetch(`http://127.0.0.1:8000/api/veiculos/cliente/${cliente.id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setVeiculos(data);  // Armazena os veículos no estado
+      })
+      .catch((error) => {
+        console.error('Erro ao carregar os veículos:', error);
+        setVeiculos([]); // Limpa os veículos em caso de erro
+      });
+  };
+
+
+
+  // Função de envio do formulário
+  // Função para enviar o formulário (criar o agendamento)
+
+  const [error, setError] = useState(null);
+
+
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+    setFormData(prevState => ({
+      ...prevState,
+      data: formattedDate
+    }));
+
+    fetch('http://127.0.0.1:8000/api/clientes')
+      .then((response) => response.json())
+      .then((data) => {
+        setClientes(data);
+        setFilteredClientes(data); // Exibe todos os clientes inicialmente
+        setLoading(false);
+      })
+      // eslint-disable-next-line no-unused-vars
+      .catch((error) => {
+        setError('Erro ao carregar clientes');
+        setLoading(false);
+      });
+
+
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <h4>Carregando...</h4>
+        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
+
+  //PEGAR DATA DO SISTEMA
 
 
 
@@ -125,7 +239,7 @@ const ServiceAddForm = () => {
             <h6>PASSO - 1: ADICIONAR DETALHES DO SERVIÇO...</h6>
             <hr />
           </div>
-          <Form id="ServiceAdd-Form" method="post"  encType="multipart/form-data">
+          <Form id="ServiceAdd-Form" method="post" encType="multipart/form-data">
             <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="jobno">
@@ -137,65 +251,115 @@ const ServiceAddForm = () => {
                 </Form.Group>
               </Col>
 
-              <Col xs={12} md={6}>
-                <Form.Group controlId="cust_id">
-                  <Form.Label>Nome do cliente <span className="text-danger">*</span></Form.Label>
-                  <div className="d-flex">
-                    <div className="input-group">
-                      <span className="input-group-text"><FaUser fontSize={20} color="#0070fa" /></span>
 
-                      <Form.Control as="select" required>
-                        <option value="">Selecione o Cliente</option>
-                        <option value="Abracoa">Abraão Odair Kanepa</option>
-                      </Form.Control>
-                    </div>
-                    <Button
-                      className="links-acessos px-2 border-radius-zero"
-                      onClick={() => handleOpenModal('cliente')}  // Passa o conteúdo específico para a modal
-                    >
-                      <RiAddLargeFill />
-                    </Button>
-                  </div>
-                </Form.Group>
+
+              <Col md={6}>
+                <Form.Label>
+                  Data e Hora <span className="text-danger">*</span>
+                </Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FaCalendarAlt fontSize={22} color="#0070fa" />
+                  </span>
+                  <Form.Control
+                    type="datetime-local"
+                    name="data"
+                    value={formData.data} // Usando o estado para controlar o valor
+                    onChange={handleChange} // Atualizando o estado quando o valor mudar
+                    required
+                  />
+                </div>
               </Col>
             </Row>
 
-            <Row className="mb-3">
-              <Col xs={12} md={6}>
-                <Form.Group controlId="vhi">
-                  <Form.Label>Nome do veículo <span className="text-danger">*</span></Form.Label>
-                  <div className="d-flex">
-                    <div className="input-group">
-                      <span className="input-group-text"><FaCar fontSize={20} color="#0070fa" /></span>
 
-                      <Form.Control as="select" required>
-                        <option value="">Selecione o nome do veículo</option>
-                      </Form.Control>
-                    </div>
-                    <Button
-                      className="links-acessos px-2 border-radius-zero"
-                      onClick={() => handleOpenModal('veiculo')}  // Passa o conteúdo específico para a modal
-                    >
-                      <RiAddLargeFill />
-                    </Button>
-                  </div>
-                </Form.Group>
-              </Col>
 
-              <Col xs={12} md={6}>
-                <Form.Group controlId="data_inicial_entrada">
-                  <Form.Label>Data Inicial de Entrada <span className="text-danger">*</span></Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
+
+
+
+
+
+            <Row className="mt-3">
+              <Col md={6}>
+                <Form.Label>Cliente <span className="text-danger">*</span></Form.Label>
+                <div className="d-flex">
+                  <div className="input-group d-flex">
+
+                    <span className="input-group-text"><FaUser fontSize={22} color="#0070fa" /></span>
                     <Form.Control
-                      type="datetime-local"
-                      name="data_inicial_entrada"
-                      required
+                      type="text"
+                      name="clienteSearch"
+                      placeholder="Pesquisar Cliente"
+                      value={formData.clienteNome} // Exibe o nome do cliente selecionado
+                      onChange={handleSearch} // Permite a pesquisa
                     />
                   </div>
-                </Form.Group>
+                  <Button
+                    className="links-acessos px-2 border-radius-zero"
+                    onClick={() => handleOpenModal('cliente')}  // Passa o conteúdo específico para a modal
+                  >
+                    <RiAddLargeFill />
+                  </Button>
+                </div>
+
+
+
+
+                {/* Exibição da lista de resultados */}
+                {filteredClientes.length > 0 ? (
+                  <div className="list-group mt-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                    {filteredClientes.map(cliente => (
+                      <div
+                        key={cliente.id}
+                        className={`list-group-item text-justify list-group-item-action ${formData.id_cliente === cliente.id ? 'list-group-item-primary' : ''}`}
+                        onClick={() => handleClienteSelect(cliente)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {`${cliente.primeiro_nome} ${cliente.sobrenome} - ${cliente.celular}`}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="s"></div>
+                )}
               </Col>
+              <Col md={6}>
+                <Form.Label>Veículo <span className="text-danger">*</span></Form.Label>
+                <div className="d-flex"><div className="input-group">
+                  <span className="input-group-text"><FaCar fontSize={22} color="#0070fa" /></span>
+                  <Form.Control
+                    as="select"
+                    name="id_veiculo"
+                    value={formData.id_veiculo}
+                    onChange={handleChange}
+                    required
+                    disabled={!formData.id_cliente} // Desabilita o campo se não houver cliente selecionado
+                  >
+                    <option value="">Selecionar Veículo</option>
+                    {/* Verifica se há veículos associados ao cliente */}
+                    {formData.id_cliente && veiculos.length > 0 ? (
+                      veiculos.map(veiculo => (
+                        <option key={veiculo.id} value={veiculo.id}>
+                          {`${veiculo.marca_veiculo} ${veiculo.modelo_veiculo} - ${veiculo.numero_placa}`}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">Nenhum veículo disponível</option>
+                    )}
+                  </Form.Control>
+                </div>
+                  <Button
+                    className="links-acessos px-2 border-radius-zero"
+                    onClick={() => handleOpenModal('veiculo')}  // Passa o conteúdo específico para a modal
+                  >
+                    <RiAddLargeFill />
+                  </Button></div>
+              </Col>
+
             </Row>
+
+
+
 
 
             <Row className="mb-3">
@@ -291,7 +455,7 @@ const ServiceAddForm = () => {
                   <Form.Label>Garantia de Quantos Dias? <span className="text-danger">*</span></Form.Label>
 
                   <div className="input-group">
-                    <span className="input-group-text"><FaFileSignature  fontSize={20} color="#0070fa" /></span>
+                    <span className="input-group-text"><FaFileSignature fontSize={20} color="#0070fa" /></span>
                     <Form.Control type="number" name="garantia_dias" required placeholder="Digite a garantia em dias" />
 
                   </div></Form.Group>
@@ -323,7 +487,7 @@ const ServiceAddForm = () => {
             <hr />
 
             <Row className="my-5">
-           
+
 
 
               <Col xs={12} md={6}>
@@ -373,9 +537,9 @@ const ServiceAddForm = () => {
               </Col>
             </Row>
 
-            
+
             <Row className="my-5">
-        
+
               <Col xs={12} md={6}>
                 <Form.Group controlId="images">
                   <Form.Label>Selecione várias imagens</Form.Label>
@@ -391,7 +555,7 @@ const ServiceAddForm = () => {
                 </Form.Group>
               </Col>
 
-         
+
             </Row>
 
             <h6>DETALHES ADCIONAS</h6>
@@ -431,78 +595,78 @@ const ServiceAddForm = () => {
               )}
             </Row>
 
-            
+
 
             {/* Teste MOT */}
-          
-         
-          
+
+
+
 
             <div className="note-row">
               <div className="d-flex justify-content-between">
                 <h6 className="baixarTexto text-uppercase">Adicionar Notas</h6>
 
-            
+
               </div>
               <Row className="mb-3">
                 <Col xs={12}>
 
                   <hr />
 
-                  
-                  
-                    <Row className="align-items-center mb-2">
-                      {/* Nota Texto */}
-                      <Col xs={12} md={4}>
-                        <h6>Nota</h6>
-                        <div className="input-group">
-                          <span className="input-group-text">< FaStickyNote fontSize={20} color="#0070fa" /></span>
 
-                          <Form.Control
-                            as="textarea"
-                            value=""
-                            onChange=""
-                            placeholder="Escreva uma nota"
-                          />
-                        </div>
-                      </Col>
 
-                      {/* Arquivos */}
-                      <Col xs={6} md={4}>
-                        <h6>Arquivos</h6>
-                        <div className="input-group">
-                          <span className="input-group-text">< FaFileAlt fontSize={20} color="#0070fa" /></span>
+                  <Row className="align-items-center mb-2">
+                    {/* Nota Texto */}
+                    <Col xs={12} md={4}>
+                      <h6>Nota</h6>
+                      <div className="input-group">
+                        <span className="input-group-text">< FaStickyNote fontSize={20} color="#0070fa" /></span>
 
-                          <Form.Control
-                            type="file"
-                           
-                            multiple
-                          />
-                        </div>
-                      </Col>
-
-                      {/* Checkboxes em coluna única */}
-                      <Col xs={12} md={4}>
-                        <h6>Opções</h6>
-                        <Form.Check
-                          type="checkbox"
-                          checked=""
-                          label="Nota Interna"
-                         
-                          className="d-block mb-2"
+                        <Form.Control
+                          as="textarea"
+                          value=""
+                          onChange=""
+                          placeholder="Escreva uma nota"
                         />
-                        <Form.Check
-                          type="checkbox"
-                          checked=""
-                          label="Compartilhado com fornecedor"
-                          
-                          className="d-block"
-                        />
-                      </Col>
+                      </div>
+                    </Col>
 
-                    
-                    </Row>
-                
+                    {/* Arquivos */}
+                    <Col xs={6} md={4}>
+                      <h6>Arquivos</h6>
+                      <div className="input-group">
+                        <span className="input-group-text">< FaFileAlt fontSize={20} color="#0070fa" /></span>
+
+                        <Form.Control
+                          type="file"
+
+                          multiple
+                        />
+                      </div>
+                    </Col>
+
+                    {/* Checkboxes em coluna única */}
+                    <Col xs={12} md={4}>
+                      <h6>Opções</h6>
+                      <Form.Check
+                        type="checkbox"
+                        checked=""
+                        label="Nota Interna"
+
+                        className="d-block mb-2"
+                      />
+                      <Form.Check
+                        type="checkbox"
+                        checked=""
+                        label="Compartilhado com fornecedor"
+
+                        className="d-block"
+                      />
+                    </Col>
+
+
+                  </Row>
+
 
                 </Col>
               </Row>
@@ -518,88 +682,88 @@ const ServiceAddForm = () => {
           </Form>
 
           {/* Modal */}
-         <div className="modails">
-         <Modal show={showModal} onHide={handleCloseModal} centered size="xl" scrollable >
-            <Modal.Header closeButton>
-              <Modal.Title>Adicionar {modalContent === 'cliente' ? 'Cliente' : 'Veículo'}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {/* Aqui você pode renderizar conteúdo dinâmico dependendo do tipo de modal */}
-              {modalContent === 'cliente' && (
-                <div className="topifincando">
-                  <FormularioCliente />
-                </div>
-              )}
-              {modalContent === 'veiculo' && (
-                <div className="topifincando">
-                  <FormularioVeiculo />
-                </div>
-              )}
-            </Modal.Body>
-            <Modal.Footer className="p-0">
-                          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
-              
+          <div className="modails">
+            <Modal show={showModal} onHide={handleCloseModal} centered size="xl" scrollable >
+              <Modal.Header closeButton>
+                <Modal.Title>Adicionar {modalContent === 'cliente' ? 'Cliente' : 'Veículo'}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {/* Aqui você pode renderizar conteúdo dinâmico dependendo do tipo de modal */}
+                {modalContent === 'cliente' && (
+                  <div className="topifincando">
+                    <FormularioCliente />
+                  </div>
+                )}
+                {modalContent === 'veiculo' && (
+                  <div className="topifincando">
+                    <FormularioVeiculo />
+                  </div>
+                )}
+              </Modal.Body>
+              <Modal.Footer className="p-0">
+                <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
 
-            </Modal.Footer>
-          </Modal>
-          <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Adicionar Categoria de Reparo</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                {/* Nome da categoria */}
-                <div className="d-flex mb-3">
-                  <Form.Group controlId="novaCategoriaNome" className="w-100">
-                    <Form.Label>Nome da Categoria</Form.Label>
-                    <div className="d-flex">
-                      <Form.Control
-                        type="text"
-                        name="nome"
-                        value={novaCategoria.nome}
-                        onChange={handleChange}
-                        placeholder="Digite o nome da categoria"
+
+              </Modal.Footer>
+            </Modal>
+            <Modal show={showCorModal} onHide={handleCloseCorModal} scrollable centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Adicionar Categoria de Reparo</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  {/* Nome da categoria */}
+                  <div className="d-flex mb-3">
+                    <Form.Group controlId="novaCategoriaNome" className="w-100">
+                      <Form.Label>Nome da Categoria</Form.Label>
+                      <div className="d-flex">
+                        <Form.Control
+                          type="text"
+                          name="nome"
+                          value={novaCategoria.nome}
+                          onChange={handleChange}
+                          placeholder="Digite o nome da categoria"
+                        />
+                        <Button variant="primary" onClick={handleAddCategoria} className="btnAddCor links-acessos">
+                          Adicionar
+                        </Button>
+                      </div>
+                    </Form.Group>
+                  </div>
+
+
+
+                </Form>
+
+                {/* Lista de categorias atuais */}
+                <hr />
+                <h6>Categorias Atuais</h6>
+                <ul className="list-group">
+                  {categorias.map((categoria) => (
+                    <li
+                      key={categoria.codigo}
+                      className="p-3 border linhaRem d-flex justify-content-between align-items-center"
+                    >
+                      {/* Nome e código da categoria */}
+                      <span>{categoria.nome} - {categoria.codigo}</span>
+
+                      {/* Ícone para remover a categoria */}
+                      <MdDeleteForever
+                        className="text-danger"
+                        fontSize={20}
+                        onClick={() => handleRemoveCategoria(categoria.codigo)}
+                        style={{ cursor: 'pointer' }}
                       />
-                      <Button variant="primary" onClick={handleAddCategoria} className="btnAddCor links-acessos">
-                        Adicionar
-                      </Button>
-                    </div>
-                  </Form.Group>
-                </div>
+                    </li>
+                  ))}
+                </ul>
+              </Modal.Body>
+              <Modal.Footer className="p-0">
+                <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
 
-
-
-              </Form>
-
-              {/* Lista de categorias atuais */}
-              <hr />
-              <h6>Categorias Atuais</h6>
-              <ul className="list-group">
-                {categorias.map((categoria) => (
-                  <li
-                    key={categoria.codigo}
-                    className="p-3 border linhaRem d-flex justify-content-between align-items-center"
-                  >
-                    {/* Nome e código da categoria */}
-                    <span>{categoria.nome} - {categoria.codigo}</span>
-
-                    {/* Ícone para remover a categoria */}
-                    <MdDeleteForever
-                      className="text-danger"
-                      fontSize={20}
-                      onClick={() => handleRemoveCategoria(categoria.codigo)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </Modal.Body>
-            <Modal.Footer className="p-0">
-              <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
-
-            </Modal.Footer>
-          </Modal>
-         </div>
+              </Modal.Footer>
+            </Modal>
+          </div>
         </div>
       </div>
     </div >
