@@ -24,26 +24,93 @@ const ServiceAddForm = () => {
 
 
   // eslint-disable-next-line no-unused-vars
-  const [formValues, setFormValues] = useState({
-    jobno: 'J000005', // Ordem de Reparação
-    cust_id: '', // Nome do cliente
-    vhi: '', // Nome do veículo
-    data_inicial_entrada: '',
-    repair_cat: '',
+  const [formData, setFormData] = useState({
+    numero_trabalho: 'TRAB0011',
+    data: '',
+    cliente_id: '',
+    veiculo_id: '',
+    categoria_reparo: '',
     km_entrada: '',
-    charge: '',
-    branch: '1', // Galho
-    status: '',
+    cobrar_reparo: '',
+    filial: 'Filial A',
+    status: 'pendente',
     garantia_dias: '',
     data_final_saida: '',
-    details: '',
+    detalhes: '',
     defeito_ou_servico: '',
     observacoes: '',
     laudo_tecnico: '',
-    images: [],
-    washBay: false,
-    washBayCharge: '',
+    imagens: [],
+    lavagem: false,
+    cobrar_lavagem: '',
+    status_test_mot: false,
+    cobrar_test_mot: '',
   });
+  
+  const [clientes, setClientes] = useState([]);  // Para carregar clientes via API
+  const [veiculos, setVeiculos] = useState([]);  // Para carregar veículos via API
+  const [filteredClientes, setFilteredClientes] = useState([]);  // Filtragem do cliente
+  const [washBayChecked, setWashBayChecked] = useState(false);
+
+  useEffect(() => {
+    // Carregar a data atual do sistema
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+    setFormData(prevState => ({ ...prevState, data: formattedDate }));
+
+    // Carregar dados de clientes e veículos via API
+    fetchClientes();
+    fetchVeiculos();
+  }, []);
+
+  const fetchClientes = async () => {
+    const response = await fetch('http://127.0.0.1:8000/api/clientes');
+    const data = await response.json();
+    setClientes(data);
+  };
+
+  const fetchVeiculos = async () => {
+    const response = await fetch('http://127.0.0.1:8000/api/veiculos');
+    const data = await response.json();
+    setVeiculos(data);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formDataToSend = new FormData();
+    // Adicionando todos os campos do estado ao FormData
+    for (const key in formData) {
+      if (formData[key]) {
+        formDataToSend.append(key, formData[key]);
+      }
+    }
+
+    // Enviar os dados para a API
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/ordens-de-reparo', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Ordem de reparação criada com sucesso', result);
+      } else {
+        console.error('Erro ao criar ordem de reparação', result);
+      }
+    } catch (error) {
+      console.error('Erro de conexão com a API', error);
+    }
+  };
 
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
@@ -80,7 +147,6 @@ const ServiceAddForm = () => {
     setCategorias(categorias.filter((categoria) => categoria.nome !== nome));
   };
   // Estado para controlar a visibilidade das taxas
-  const [washBayChecked, setWashBayChecked] = useState(false);
 
   // Funções para lidar com as mudanças nas checkboxes
   const handleWashBayChange = (e) => {
@@ -97,38 +163,29 @@ const ServiceAddForm = () => {
 
   // Função para fechar a modal
 
+  /**LOGICA IMPORTADA */
+
+
+  // Função de mudança nos campos do formulário
+
+
+  // Função para pesquisa de cliente
+ 
 
 
 
 
+  // Função para selecionar um cliente da lista
 
-  // Função para adicionar uma nova categoria
 
-
-  // Função para remover uma categoria
 
 
   /**LOGICA IMPORTADA */
 
-  const [clientes, setClientes] = useState([]);
-  const [veiculos, setVeiculos] = useState([]);
-  const [filteredClientes, setFilteredClientes] = useState([]);
-  const [formData, setFormData] = useState({
-    data: '',
-    id_cliente: '',
-    id_veiculo: '',
-
-  });
+ 
 
   // Função de mudança nos campos do formulário
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
+ 
   // Função para pesquisa de cliente
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
@@ -239,45 +296,32 @@ const ServiceAddForm = () => {
             <h6>PASSO - 1: ADICIONAR DETALHES DO SERVIÇO...</h6>
             <hr />
           </div>
-          <Form id="ServiceAdd-Form" method="post" encType="multipart/form-data">
+          <Form id="ServiceAdd-Form" onSubmit={handleSubmit} encType="multipart/form-data">
             <Row className="mb-3">
               <Col xs={12} md={6}>
                 <Form.Group controlId="jobno">
                   <Form.Label>Nº Ordem de Reparação <span className="text-danger">*</span></Form.Label>
                   <div className="input-group">
                     <span className="input-group-text"><AiOutlineFieldNumber fontSize={20} color="#0070fa" /></span>
-                    <Form.Control type="text" value="OR000005" readOnly />
+                    <Form.Control type="text" value={formData.numero_trabalho} readOnly />
                   </div>
                 </Form.Group>
               </Col>
 
-
-
               <Col md={6}>
-                <Form.Label>
-                  Data e Hora <span className="text-danger">*</span>
-                </Form.Label>
+                <Form.Label>Data e Hora <span className="text-danger">*</span></Form.Label>
                 <div className="input-group">
-                  <span className="input-group-text">
-                    <FaCalendarAlt fontSize={22} color="#0070fa" />
-                  </span>
+                  <span className="input-group-text"><FaCalendarAlt fontSize={22} color="#0070fa" /></span>
                   <Form.Control
                     type="datetime-local"
                     name="data"
-                    value={formData.data} // Usando o estado para controlar o valor
-                    onChange={handleChange} // Atualizando o estado quando o valor mudar
+                    value={formData.data}
+                    onChange={handleChange}
                     required
                   />
                 </div>
               </Col>
             </Row>
-
-
-
-
-
-
-
 
             <Row className="mt-3">
               <Col md={6}>
@@ -357,7 +401,6 @@ const ServiceAddForm = () => {
               </Col>
 
             </Row>
-
 
 
 

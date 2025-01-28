@@ -6,6 +6,14 @@
   color: #fff;
 }
 
+.minha {
+  position: absolute;          /* Posiciona a div de forma absoluta em relação ao seu elemento pai */
+  top: 50%;                    /* Coloca a div no meio da altura */
+  left: 50%;                   /* Coloca a div no meio da largura */
+  transform: translate(-50%, -50%);  /* Move a div para que seu centro seja alinhado ao centro da tela */
+}
+
+
 .sizeTitulo {
   font-size: 3.5em;
 }
@@ -206,3 +214,7 @@
     
 }
 
+
+.padingCimaBar{
+  height: 100% !important;
+}

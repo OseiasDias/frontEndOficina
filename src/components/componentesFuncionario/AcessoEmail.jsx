@@ -7,35 +7,59 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Usando useNavigate para navegação
 import { Button, Form, Alert } from "react-bootstrap"; // Para estilos mais rápidos
 import { MdLogin, MdPassword, MdVisibility, MdVisibilityOff } from "react-icons/md"; // Ícones para senha
+import { toast, ToastContainer } from "react-toastify"; // Importando Toastify para notificações
+import "react-toastify/dist/ReactToastify.css"; // Importando o estilo do Toastify
 
 export default function Cartaz() {
   const navigate = useNavigate();
 
-  // Estado para armazenar o email, senha e erros
+  // Estado para armazenar a senha e erros
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // Controle do estado de visualização da senha
   const [errorMessage, setErrorMessage] = useState("");
 
   // Função para lidar com o envio do formulário
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+  
     // Validação simples
     if (!password) {
       setErrorMessage("Por favor, preencha o campo senha.");
       return;
     }
-
-    // Exemplo de redirecionamento após login bem-sucedido
-    // Aqui você pode adicionar lógica de autenticação
-    console.log("Login realizado com:", password);
-    navigate("/dashboard"); // Redireciona para a página do dashboard ou onde você quiser
+  
+    try {
+      // Exibe a senha antes de enviar, para confirmar que está correta
+      console.log("Senha a ser enviada: ", password); // Para verificar no console
+  
+      // Enviar a senha para a API para verificação
+      const response = await fetch("http://127.0.0.1:8000/api/senhas/1/verificar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ senha: password }), // Envia a senha no corpo da requisição
+      });
+  
+      const data = await response.json(); // Para capturar a resposta JSON
+  
+      // Exibe a resposta da API para debugging
+      console.log("Resposta da API: ", data);
+  
+      if (response.ok) {
+        // Caso a senha seja válida, redireciona para a página desejada
+        toast.success("Senha correta! Acessando...");
+        navigate("/homeFuncionario");
+      } else {
+        // Caso a senha esteja errada
+        toast.error(data.message || "Erro ao autenticar.");
+      }
+    } catch (error) {
+      toast.error("Erro de conexão. Tente novamente.");
+      console.error(error); // Exibe o erro para debugging
+    }
   };
-
-  // Função para lidar com o clique no botão "Esqueceu sua senha"
-  const handleLogin = () => {
-    // Aqui você pode adicionar a lógica de autenticação se necessário
-    navigate('/homeFuncionario'); // Redireciona para a rota desejada
-  };
+  
 
   // Função para alternar a visibilidade da senha
   const togglePasswordVisibility = () => {
@@ -43,7 +67,7 @@ export default function Cartaz() {
   };
 
   return (
-    <div className="seccao-cartaz ">
+    <div className="seccao-cartaz">
       <div className="container">
         <img src={LogoMarca} alt="Logo branco da biturbo" className="d-block mx-auto imagemLogo" />
 
@@ -90,7 +114,6 @@ export default function Cartaz() {
                 <Button
                   type="submit"
                   className="w-75 btnAcessoPass d-block mt-3 mx-auto"
-                  onClick={handleLogin}
                 >
                   Acessar <MdLogin />
                 </Button>
@@ -99,6 +122,9 @@ export default function Cartaz() {
           </div>
         </div>
       </div>
+
+      {/* Toastify container for displaying notifications */}
+      <ToastContainer />
     </div>
   );
 }
