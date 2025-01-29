@@ -124,7 +124,7 @@ const OrdemDeReparo = () => {
                                 </div>
 
                                 {/* Informações da Ordem de Reparação */}
-                                <div className="visual-order row">
+                                <div className="visual-order mt-3 row">
                                     <h6 className="h5 fw-900">DADOS DA ORDEM DE REPARAÇÃO</h6>
                                     <hr />
                                     <div className="row pb-3">

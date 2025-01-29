@@ -7,18 +7,40 @@ import { FaRegClock} from 'react-icons/fa';  // Ícones de Font Awesome
 import { BiReset } from "react-icons/bi";
 
 // eslint-disable-next-line react/prop-types
-const ProgressoBar = ({ progresso }) => {
+
+
+const ProgressoBar = ({ numeroOrdem, defeito, numeroTecnico, progresso }) => {
   let variante = 'success'; // Cor verde
-  if (progresso >= 80 ) {
+
+  if (progresso >= 80) {
     variante = 'warning'; // Cor laranja
   } else if (progresso >= 100) {
     variante = 'danger'; // Cor vermelha
   }
 
+  // Concatenando as informações que queremos exibir dentro da barra
+  const label = `
+    Ordem: ${numeroOrdem} | 
+    Defeito: ${defeito} | 
+    Técnico: ${numeroTecnico} | 
+    ${Math.round(progresso)}%
+  `;
+
   return (
-    <ProgressBar now={progresso} variant={variante} label={`${Math.round(progresso)}%`} />
+    <ProgressBar
+      now={progresso}
+      variant={variante}
+      label={label}
+      style={{
+        whiteSpace: 'pre-line', 
+        fontSize: '0.9rem', 
+        textAlign: 'center', 
+        color: 'black' // Cor do texto sempre preta, independentemente da cor da barra
+      }}   
+    />
   );
 };
+
 
 const Cronometro = ({nomeMecanico,numeroOrdem,estado}) => {
   const tempoLimite = 6000; // 100 minutos = 6000 segundos
@@ -126,7 +148,7 @@ const Cronometro = ({nomeMecanico,numeroOrdem,estado}) => {
      </div>
      
       {/* Barra de progresso */}
-      <ProgressoBar progresso={progresso} />
+      <ProgressoBar progresso={progresso}  numeroOrdem="OR009"/>
 
       <div>
         <button onClick={iniciarPausar} style={{ padding: '10px 20px', margin: '5px' }} disabled={tempoEsgotado}>
