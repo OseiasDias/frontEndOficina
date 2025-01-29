@@ -171,6 +171,13 @@ const OrdemDeReparo = () => {
                                                     <td className="sizelinha">{ordem.categoria_reparo}</td>
                                                 </tr>
                                             )}
+
+                                            {ordem.categoria_reparo && (
+                                                <tr>
+                                                    <td className="fw-bold sizelinha">Horas de Reparação</td>
+                                                    <td className="sizelinha">{ordem.horas_reparacao}H</td>
+                                                </tr>
+                                            )}
                                             {ordem.km_entrada && (
                                                 <tr>
                                                     <td className="fw-bold sizelinha">KM Entrada</td>
@@ -299,12 +306,12 @@ const OrdemDeReparo = () => {
                                                     <p><strong>Equipamento:</strong> {veiculo.numero_equipamento}</p>
                                                     <p><strong>Data de Fabricação:</strong> {new Date(veiculo.data_fabricacao).toLocaleDateString()}</p>
                                                     <p><strong>Caixa de Velocidade:</strong> {veiculo.caixa_velocidade}</p>
-                                                 
+
 
                                                 </div>
                                                 <div className="col-md-6">
 
-                                                     <p><strong>Número da Caixa:</strong> {veiculo.numero_caixa}</p>
+                                                    <p><strong>Número da Caixa:</strong> {veiculo.numero_caixa}</p>
                                                     <p><strong>Número do Motor:</strong> {veiculo.numero_motor}</p>
                                                     <p><strong>Tamanho do Motor:</strong> {veiculo.tamanho_motor}</p>
                                                     <p><strong>Número da Chave:</strong> {veiculo.numero_chave}</p>

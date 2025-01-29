@@ -7,15 +7,18 @@ import { Modal, Button } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
-import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaCogs, FaDollarSign, FaExclamationCircle, FaFileSignature, FaHome, FaRegFileAlt, FaTint, FaTools, FaUpload, FaUser } from "react-icons/fa";
+import { FaCalendarAlt, FaCar, FaCircle, FaClipboard, FaClock, FaCogs, FaDollarSign, FaExclamationCircle, FaFileSignature, FaHome, FaRegFileAlt, FaTint, FaTools, FaUpload, FaUser } from "react-icons/fa";
 import { FormularioCliente } from "./AddClientes.jsx";
 import { FormularioVeiculo } from "./AddVeiculos.jsx";
 import { MdDeleteForever } from "react-icons/md";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import logoMarca from "../../assets/lgo.png";
 import imgN from "../../assets/not-found.png";
+import { useNavigate } from 'react-router-dom'; // Importando o useNavigate
+
 import imgErro from "../../assets/error.webp";
 import axios from 'axios';
+import { toast, ToastContainer } from "react-toastify";
 
 
 
@@ -42,7 +45,8 @@ const OrdemDeReparacaoForm = () => {
     lavagem: false,
     cobrar_lavagem: '',
     status_test_mot: false,
-    cobrar_test_mot: ''
+    cobrar_test_mot: '',
+    horas_reparacao: '' // Adiciona o campo horas_reparacao aqui
   });
 
 
@@ -220,6 +224,7 @@ const OrdemDeReparacaoForm = () => {
      setVeiculos(data);
    };*/
 
+   const navigate = useNavigate();  // Usando o useNavigate para redirecionamento após o sucesso
 
 
 
@@ -234,15 +239,35 @@ const OrdemDeReparacaoForm = () => {
         'http://127.0.0.1:8000/api/ordens-de-reparo/',
         formData
       );
+      
       console.log('Ordem de Reparação criada com sucesso:', response.data);
+      
+      // Notificação de sucesso
+      toast.success('Ordem de Reparação criada com sucesso!', {
+        // Especificando a duração de 5 segundos (5000ms)
+        autoClose: 5000
+      });
+
+      // Usando o setTimeout para esperar 5 segundos antes de redirecionar
+      setTimeout(() => {
+        // Redireciona para a página de listagem de ordens de serviço
+        navigate('/listarOrdemServico');
+      }, 4500); // 5 segundos de espera
+
     } catch (error) {
       console.error('Erro ao criar a ordem de reparação:', error);
+      
+      // Notificação de erro
+      toast.error('Erro ao criar a ordem de reparação!', {
+        autoClose: 5000 // Definindo tempo do erro também
+      });
     }
   };
 
-
   if (loading) {
     return (
+
+
       <div className="text-center">
         <h4>Carregando...</h4>
         <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
@@ -262,6 +287,7 @@ const OrdemDeReparacaoForm = () => {
 
   return (
     <>
+    <ToastContainer position="top-center" />
       <Form id="ServiceAdd-Form" onSubmit={handleSubmit} encType="multipart/form-data">
         <Row className="mb-3">
           <Col xs={12} md={6}>
@@ -455,15 +481,23 @@ const OrdemDeReparacaoForm = () => {
               <div className="input-group">
                 <span className="input-group-text"><FaHome fontSize={20} color="#0070fa" /></span>
                 <Form.Control
-                  type="text"
+                  as="select" // Muda o tipo para select
                   name="filial"
                   value={formData.filial}
                   onChange={handleChange}
                   required
-                />
+                >
+                  <option value="">Selecione a Filial</option>
+                  {/* Adicione suas opções aqui */}
+                  <option value="filial1">Filial 1</option>
+                  <option value="filial2">Filial 2</option>
+                  <option value="filial3">Filial 3</option>
+                  {/* Adicione mais opções conforme necessário */}
+                </Form.Control>
               </div>
             </Form.Group>
           </Col>
+
         </Row>
 
         <Row className="mb-3">
@@ -507,6 +541,24 @@ const OrdemDeReparacaoForm = () => {
         </Row>
 
         <Row className="mb-3">
+        <Row className="mb-3">
+  <Col xs={12} md={6}>
+    <Form.Group controlId="horas_reparacao">
+      <Form.Label>Horas de Reparação</Form.Label>
+      <div className="input-group">
+        <span className="input-group-text"><FaClock fontSize={20} color="#0070fa" /></span>
+        <Form.Control
+          type="number"
+          name="horas_reparacao"
+          value={formData.horas_reparacao}
+          onChange={handleChange}
+          placeholder="Digite o número de horas de reparação"
+        />
+      </div>
+    </Form.Group>
+  </Col>
+</Row>
+
           <Col xs={12} md={6}>
             <Form.Group controlId="data_final_saida">
               <Form.Label>Data Final de Saída <span className="text-danger">*</span></Form.Label>
