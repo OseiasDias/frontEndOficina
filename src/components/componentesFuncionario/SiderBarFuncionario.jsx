@@ -8,6 +8,8 @@ import { MdContentPasteSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import axios from 'axios';
+import VerORSeg from '../../pages/pageVer/VerORSeg';
 
 const Sidebar = () => {
     const [showModal, setShowModal] = useState(false); // Estado para controlar a visibilidade da modal de OR
@@ -23,7 +25,7 @@ const Sidebar = () => {
 
     // Funções para abrir e fechar as modais
     const abrirModal = () => setShowModal(true);
-    const fecharModal = () => setShowModal(false);
+    //const fecharModal = () => setShowModal(false);
 
     const abrirConfirmModal = () => setShowConfirmModal(true);
     const fecharConfirmModal = () => setShowConfirmModal(false);
@@ -52,13 +54,7 @@ const Sidebar = () => {
     // Função para lidar com a mudança no campo de número de OR
     const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
 
-    // Função para lidar com o envio do formulário da OR
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        alert(`Número da OR: ${numeroOR}`);
-        setNumeroOR('');
-        fecharModal();
-    };
+ 
 
     // Função para confirmar o término do serviço
     const handleConfirmarTerminarServico = () => {
@@ -92,7 +88,51 @@ const Sidebar = () => {
         fecharSairModal();             // Exemplo para a modal de "Sair"
     };
 
+
+
+    //===============================|CONFIGIURAR AS MODAIS |==============================
+
+    const [ordem, setOrdem] = useState(null);  // Dados da ordem encontrada
+    const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
+    const [loading, setLoading] = useState(false);  // Indicador de carregamento
+
+    // Função para fechar o modal
+    const fecharModalOR = () => {
+        setShowModal(false);
+        setNumeroOR("");  // Limpar campo de pesquisa
+        setError("");  // Limpar erro
+        setOrdem(null);  // Limpar resultado
+    };
+
+    // Função para manipular o campo de número da OR
+    //const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
+
+    // Função para enviar a busca e procurar pela OR
+    const handleSubmitORSend  = async (e) => {
+        e.preventDefault();
+        setLoading(true);  // Iniciar carregamento
+
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/numero-trabalho/${numeroOR}`);
+            if (response.data) {
+                setOrdem(response.data);  // Atualiza os dados da ordem
+                setError("");  // Limpar erro se a OR for encontrada
+            }
+        // eslint-disable-next-line no-unused-vars
+        } catch (err) {
+            setError("Ordem de reparação não encontrada.");  // Exibe mensagem de erro
+            setOrdem(null);  // Limpar dados da ordem caso erro
+        } finally {
+            setLoading(false);  // Finalizar carregamento
+        }
+    };
+
+
+    //==============================================================
+
     return (
+        <>
+        
         <div className="menu-barra">
             <nav className='menuLateral vh-100'>
                 <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="280px" height="100px" />
@@ -147,17 +187,24 @@ const Sidebar = () => {
                 </ul>
             </nav>
 
-            {/* Modal de Procurar OR */}
-            <Modal scrollable show={showModal} onHide={fecharModal}>
+
+        </div>
+
+        <div className="modais">
+            
+            {/* Modal de Busca da Ordem de Reparação */}
+            <Modal size={ordem ? "xl" : "md"} scrollable show={showModal} onHide={fecharModalOR}>
                 <Modal.Header closeButton>
                     <Modal.Title>Procurar Ordem de Reparação</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmitORSend}>
                         <Form.Group className="mb-3" controlId="formNumeroOR">
                             <Form.Label>Número da OR</Form.Label>
                             <div className="input-group">
-                                <span className="input-group-text"><FaClipboard fontSize={22} color="#0070fa" /></span>
+                                <span className="input-group-text">
+                                    <FaClipboard fontSize={22} color="#0070fa" />
+                                </span>
                                 <Form.Control
                                     type="text"
                                     placeholder="Digite o número da OR"
@@ -167,10 +214,17 @@ const Sidebar = () => {
                                 />
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit" className='d-block mx-auto'>
-                            Pesquisar
+                        <Button variant="primary" type="submit" className="d-block mx-auto">
+                            {loading ? "Pesquisando..." : "Pesquisar"}
                         </Button>
                     </Form>
+
+                    {error && <p className="text-danger mt-3">{error}</p>}
+                  
+                    {ordem && (
+                        <VerORSeg idUnico={ordem.id}/>
+                       
+                    )}
                 </Modal.Body>
             </Modal>
 
@@ -332,6 +386,7 @@ const Sidebar = () => {
                 </Modal.Footer>
             </Modal>
         </div>
+        </>
     );
 };
 

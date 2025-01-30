@@ -26,7 +26,7 @@ const OrdemDeReparacaoForm = () => {
 
   //LOGICA DE CADASTRAR ORDEM DE REPARACAO
   const [formData, setFormData] = useState({
-    numero_trabalho: 'OR0032',
+    numero_trabalho: '',
     cliente_id: '',
     veiculo_id: '',
     data_inicial_entrada: '',
@@ -50,7 +50,41 @@ const OrdemDeReparacaoForm = () => {
   });
 
 
+  //LOGICA PARA GERAR O NUMERO DA ORDEM DE REPARACAO
 
+
+  // eslint-disable-next-line no-unused-vars
+  const [ultimoId, setUltimoId] = useState(null);
+
+  // Função para pegar o último ID da ordem
+  const fetchUltimoId = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/ordens/ultimo-id');
+      const id = response.data.ultimo_id;
+      setUltimoId(id);
+      gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
+    } catch (error) {
+      console.error('Erro ao buscar último ID:', error);
+    }
+  };
+
+  // Gerar o número da ordem no formato "OR0{ultimoId}"
+  const gerarNumeroOrdem = (id) => {
+    if (id !== null) {
+      const numeroOrdem = `OR0${id}`;
+      setFormData(prevState => ({
+        ...prevState,
+        numero_trabalho: numeroOrdem
+      }));
+    }
+  };
+
+  // UseEffect para buscar o último ID assim que o componente for montado
+  useEffect(() => {
+    fetchUltimoId();
+  }, []);
+
+  //FIM DA LOGICA
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -106,17 +140,8 @@ const OrdemDeReparacaoForm = () => {
   };
   // Estado para controlar a visibilidade das taxas
 
-  // Funções para lidar com as mudanças nas checkboxes
-  /*const handleWashBayChange = (e) => {
-    setWashBayChecked(e.target.checked);
-  };*/
 
   //========================(FIM DA LOGICA DE MOdails)===========================
-
-
-
-
-
 
 
 
@@ -125,23 +150,12 @@ const OrdemDeReparacaoForm = () => {
   const [clientes, setClientes] = useState([]);  // Para carregar clientes via API
   const [veiculos, setVeiculos] = useState([]);  // Para carregar veículos via API
   const [filteredClientes, setFilteredClientes] = useState([]);  // Filtragem do cliente
-  //const [washBayChecked, setWashBayChecked] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
 
 
-  /* useEffect(() => {
-     // Carregar a data atual do sistema
-     const currentDate = new Date();
-     const formattedDate = currentDate.toISOString().slice(0, 16);
-     setFormData(prevState => ({ ...prevState, data: formattedDate }));
  
-     // Carregar dados de clientes e veículos via API
-     fetchClientes();
-     fetchVeiculos();
-   }, []);*/
-
   useEffect(() => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 16); // Formato YYYY-MM-DDTHH:mm
@@ -166,11 +180,7 @@ const OrdemDeReparacaoForm = () => {
   }, []);
 
 
-  /*const fetchClientes = async () => {
-    const response = await fetch('http://127.0.0.1:8000/api/clientes');
-    const data = await response.json();
-    setClientes(data);
-  };*/
+ 
 
   // Função para pesquisa de cliente
   const handleSearch = (e) => {
@@ -217,14 +227,9 @@ const OrdemDeReparacaoForm = () => {
 
   //LOGICA PARA OPERACOES DO VEICULOS
 
-  /*
-   const fetchVeiculos = async () => {
-     const response = await fetch('http://127.0.0.1:8000/api/veiculos');
-     const data = await response.json();
-     setVeiculos(data);
-   };*/
+ 
 
-   const navigate = useNavigate();  // Usando o useNavigate para redirecionamento após o sucesso
+  const navigate = useNavigate();  // Usando o useNavigate para redirecionamento após o sucesso
 
 
 
@@ -239,9 +244,9 @@ const OrdemDeReparacaoForm = () => {
         'http://127.0.0.1:8000/api/ordens-de-reparo/',
         formData
       );
-      
+
       console.log('Ordem de Reparação criada com sucesso:', response.data);
-      
+
       // Notificação de sucesso
       toast.success('Ordem de Reparação criada com sucesso!', {
         // Especificando a duração de 5 segundos (5000ms)
@@ -256,7 +261,7 @@ const OrdemDeReparacaoForm = () => {
 
     } catch (error) {
       console.error('Erro ao criar a ordem de reparação:', error);
-      
+
       // Notificação de erro
       toast.error('Erro ao criar a ordem de reparação!', {
         autoClose: 5000 // Definindo tempo do erro também
@@ -287,7 +292,7 @@ const OrdemDeReparacaoForm = () => {
 
   return (
     <>
-    <ToastContainer position="top-center" />
+      <ToastContainer position="top-center" />
       <Form id="ServiceAdd-Form" onSubmit={handleSubmit} encType="multipart/form-data">
         <Row className="mb-3">
           <Col xs={12} md={6}>
@@ -301,6 +306,7 @@ const OrdemDeReparacaoForm = () => {
                   value={formData.numero_trabalho}
                   onChange={handleChange}
                   required
+                  disabled // Desabilitado para não permitir edição direta
                 />
               </div>
             </Form.Group>
@@ -541,25 +547,24 @@ const OrdemDeReparacaoForm = () => {
         </Row>
 
         <Row className="mb-3">
-        <Row className="mb-3">
-  <Col xs={12} md={6}>
-    <Form.Group controlId="horas_reparacao">
-      <Form.Label>Horas de Reparação</Form.Label>
-      <div className="input-group">
-        <span className="input-group-text"><FaClock fontSize={20} color="#0070fa" /></span>
-        <Form.Control
-          type="number"
-          name="horas_reparacao"
-          value={formData.horas_reparacao}
-          onChange={handleChange}
-          placeholder="Digite o número de horas de reparação"
-        />
-      </div>
-    </Form.Group>
-  </Col>
-</Row>
-
-          <Col xs={12} md={6}>
+          
+            <Col xs={12} md={6}>
+              <Form.Group controlId="horas_reparacao">
+                <Form.Label>Horas de Reparação</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text"><FaClock fontSize={20} color="#0070fa" /></span>
+                  <Form.Control
+                    type="number"
+                    name="horas_reparacao"
+                    value={formData.horas_reparacao}
+                    onChange={handleChange}
+                    placeholder="Digite o número de horas de reparação"
+                    min={1}
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={6}>
             <Form.Group controlId="data_final_saida">
               <Form.Label>Data Final de Saída <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
@@ -574,6 +579,9 @@ const OrdemDeReparacaoForm = () => {
               </div>
             </Form.Group>
           </Col>
+      
+
+         
         </Row>
 
         <h6 className="mt-5">DETALHES ADICIONAIS</h6>

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'; // Hook do React Router para nav
 import axios from "axios"; // Para fazer requisições HTTP
 import DataTable from "react-data-table-component";
 import { Dropdown, Modal, Button } from "react-bootstrap";
-import { IoMdCreate } from "react-icons/io";
+//import { IoMdCreate } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify"; // Para notificações
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do Toast
@@ -61,23 +61,34 @@ export function TabelaVizualizarOrdensServico() {
   };
 
   // Função para buscar as ordens de serviço da API
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://127.0.0.1:8000/api/ordens-de-reparo/");
-      if (Array.isArray(response.data)) {
-        setRecords(response.data);
-        setOriginalRecords(response.data);
-      } else {
-        console.error("Os dados retornados não contêm um array de ordens de serviço:", response.data);
-        throw new Error("Os dados retornados não contêm um array de ordens de serviço.");
-      }
-    } catch (error) {
-      console.error("Erro ao buscar os dados:", error);
-      setError("Erro ao carregar os dados.");
-    } finally {
-      setLoading(false);
+ // Função para buscar as ordens de serviço da API
+const fetchData = async () => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/api/ordens-de-reparo/");
+    if (Array.isArray(response.data)) {
+      // Ordenando as ordens de serviço pela data ou id em ordem decrescente
+      const sortedOrders = response.data.sort((a, b) => {
+        // Primeiro ordenando pelo id (se estiver usando id incremental)
+        // Se quiser usar a data, pode trocar para a comparação com a data_inicial_entrada
+        return b.id - a.id; // Para ordem decrescente
+        // Para ordenar pela data, faça o seguinte:
+        // return new Date(b.data_inicial_entrada) - new Date(a.data_inicial_entrada);
+      });
+
+      setRecords(sortedOrders); // Atualizando os registros com a ordem correta
+      setOriginalRecords(sortedOrders); // Também atualizando os registros originais para o filtro
+    } else {
+      console.error("Os dados retornados não contêm um array de ordens de serviço:", response.data);
+      throw new Error("Os dados retornados não contêm um array de ordens de serviço.");
     }
-  };
+  } catch (error) {
+    console.error("Erro ao buscar os dados:", error);
+    setError("Erro ao carregar os dados.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchClientes();  // Carregar os clientes
@@ -120,7 +131,6 @@ export function TabelaVizualizarOrdensServico() {
     // eslint-disable-next-line no-constant-binary-expression
     { name: "KM de Entrada", selector: (row) => `${row.km_entrada} KM` || "Sem informação" }, // Corrigido para interpolação correta
     { name: "Status", selector: (row) => row.status || "Sem informação" },
-    { name: "Detalhes", selector: (row) => row.detalhes || "Sem informação" }, // Ajustado para o campo 'detalhes'
     {
       name: "Ações",
       cell: (row) => (
@@ -130,9 +140,10 @@ export function TabelaVizualizarOrdensServico() {
             <Dropdown.Item onClick={() => handleView(row)}>
               <IoMdEye fontSize={20} /> Visualizar
             </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleDelete(row)}>
+            {/*<Dropdown.Item onClick={() => handleDelete(row)}>
               <IoMdCreate fontSize={23} /> Editar
             </Dropdown.Item>
+            */}
             <Dropdown.Item onClick={() => handleDelete(row)}>
               <MdDelete fontSize={23} /> Excluir
             </Dropdown.Item>

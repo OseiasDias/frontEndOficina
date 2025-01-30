@@ -1,39 +1,37 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { FaCar, FaFilePdf, FaPrint, FaRegEdit } from 'react-icons/fa';
-import { MdEditNote } from 'react-icons/md';
-import { ImWhatsapp } from 'react-icons/im';
-import { Button } from 'react-bootstrap';
-import jsPDF from 'jspdf';
+
 import logotipo from "../../assets/lgo.png"; // Ajuste para logo correto
 import imgErro from "../../assets/error.webp"; // Imagem de erro
 import imgN from "../../assets/not-found.png"; // Imagem para "não encontrado"
-import { FaArrowLeftLong } from 'react-icons/fa6';
-import { IoIosAdd } from 'react-icons/io';
-import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
-import SideBar from '../../components/compenentesAdmin/SideBar';
 import axios from 'axios';
 
-const OrdemDeReparo = () => {
-    const { id } = useParams(); // Obtém o ID diretamente da URL
+// eslint-disable-next-line react/prop-types
+export default function VerORSeg ({idUnico}) {
+    const id  = idUnico; // Obtém o ID diretamente da URL
     const [ordem, setOrdem] = useState(null);
     const [cliente, setCliente] = useState(null);
+    //const [ordemAux, setOrdemAux] = useState(null);
     const [veiculo, setVeiculo] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
     const [empresaData, setEmpresaData] = useState(null);
 
     useEffect(() => {
         const fetchDados = async () => {
             try {
+               /* const ordemAuxResponse = await fetch(`http://127.0.0.1:8000/api/ordens-de-reparo/${id}`);
+                const ordemAuxData = await ordemAuxResponse.json();
+                setOrdemAux(ordemAuxData);*/
+
+
                 const ordemResponse = await fetch(`http://127.0.0.1:8000/api/ordens-de-reparo/${id}`);
                 const ordemData = await ordemResponse.json();
                 setOrdem(ordemData);
 
+              
                 const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${ordemData.cliente_id}`);
                 const clienteData = await clienteResponse.json();
                 setCliente(clienteData);
-           
+
                 const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${ordemData.veiculo_id}`);
                 const veiculoData = await veiculoResponse.json();
                 setVeiculo(veiculoData);
@@ -67,22 +65,7 @@ const OrdemDeReparo = () => {
         );
     }
 
-    const generatePDF = () => {
-        const doc = new jsPDF();
-        doc.html(document.querySelector("#productDetailsTable"), {
-            callback: function (doc) {
-                doc.save(`${ordem.numero_trabalho}.pdf`);
-            },
-            x: 10,
-            y: 10,
-        });
-    };
-
-    const shareOnWhatsApp = () => {
-        const message = `Confira a ordem de reparação: ${ordem.numero_trabalho}\nDetalhes: ${ordem.detalhes}`;
-        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    };
+  
 
     return (
         <div className="container-fl">
@@ -94,34 +77,7 @@ const OrdemDeReparo = () => {
 
                         {ordem && (
                             <div className="container-fluid">
-                                <div className="row">
-                                    <div className="topBarraVer w-100 d-flex">
-                                        <div className="divFoto">
-                                            <FaCar className="d-block mt-4 mx-auto" fontSize={80} color="#fff" />
-                                        </div>
-
-                                        <div className="divInfo mt-4 ms-3 text-white">
-                                            <p className="fs-5 especuraTexto">
-                                                Ordem de Reparação: {ordem.numero_trabalho}
-                                                <span>
-                                                    <FaRegEdit
-                                                        fontSize={38}
-                                                        className="links-acessos bg-CorNone p-2"
-                                                        onClick={() => navigate(`/editarOrdemReparacao/${id}`)}
-                                                    />
-                                                </span>
-                                            </p>
-                                            <p className="ajusteParagrafo">
-                                                <span className="me-2">
-                                                    <strong>Status:</strong> {ordem.status}
-                                                </span>
-                                                <span className="ms-2">
-                                                    <strong>Data de Entrada:</strong> {new Date(ordem.data_inicial_entrada).toLocaleString()}
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                
 
                                 {/* Informações da Ordem de Reparação */}
                                 <div className="visual-order mt-3 row">
@@ -132,10 +88,10 @@ const OrdemDeReparo = () => {
                                             <img src={logotipo} alt="Logotipo" className="w-100" />
                                         </div>
                                         <div className="col-12 col-md-4 col-lg-6">
-                                            <h5 className="fw-bold">{empresaData.nome_empresa}</h5>
+                                            <h5 className="fw-bold">{empresaData.nome_empresa }</h5>
                                             <span className="d-block">{empresaData.nif_empresa}</span>
                                             <span className="d-block">{empresaData.rua}, {empresaData.bairro}, {empresaData.municipio}</span>
-                                            <span className="d-block">Email: {empresaData.email} - Fone: {empresaData.telefone}</span>
+                                            <span className="d-block">Email: {ordem.id} {empresaData.email} - Fone: {empresaData.telefone}</span>
                                             <span className="d-block">
                                                 <b>Site:</b>
                                                 <a href={empresaData.site_empresa} className="text-black" target="_blank" rel="noopener noreferrer">
@@ -325,32 +281,7 @@ const OrdemDeReparo = () => {
                                     </div>
 
 
-                                    {/* Ações */}
-                                    <div className="d-flex justify-content-end mt-4">
-                                        <div className="ms-2">
-                                            <Button variant="outline-secondary" onClick={() => window.print()}>
-                                                <FaPrint className="me-2" fontSize={20} />
-                                                Imprimir
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="outline-danger" onClick={generatePDF}>
-                                                <FaFilePdf className="me-2" fontSize={20} />
-                                                Gerar PDF
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="primary" className="links-acessos" onClick={() => navigate(`/editarOrdemReparacao/${id}`)}>
-                                                <MdEditNote fontSize={24} />
-                                                Editar Ordem
-                                            </Button>
-                                        </div>
-                                        <div className="ms-2">
-                                            <Button variant="success" onClick={shareOnWhatsApp}>
-                                                <ImWhatsapp /> Compartilhar no WhatsApp
-                                            </Button>
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         )}
@@ -361,37 +292,3 @@ const OrdemDeReparo = () => {
     );
 };
 
-
-
-const OrdemReparacao = () => {
-    return (
-        <>
-            <div className="container-fluid">
-                <div className="d-flex">
-                    <SideBar />
-                    <div className="flexAuto w-100">
-                        <TopoAdmin
-                            entrada="  Dados da Ordem de Reparação"
-                            leftSeta={<FaArrowLeftLong />}
-                            icone={<IoIosAdd />}
-                            leftR="/listarOrdemServico"
-                        />
-                        <div className="vh-100 alturaPereita">
-                            <OrdemDeReparo />
-                        </div>
-                        <div className="div text-center np pt-2 mt-2 ppAr">
-                            <hr />
-                            <p className="text-center">
-                                Copyright © 2024 <b>Bi-tubo Moters</b>, Ltd. Todos os direitos reservados.
-                                <br />
-                                Desenvolvido por: <b>Oseias Dias</b>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
-};
-
-export default OrdemReparacao;
