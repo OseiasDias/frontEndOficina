@@ -28,7 +28,7 @@ export default function CadastrarFuncionario() {
   });
 
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
+ // const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Função para gerar senha aleatória com no mínimo 8 caracteres
@@ -164,7 +164,7 @@ export default function CadastrarFuncionario() {
         return;
       }
 
-      const data = await response.json();
+     // const data = await response.json();
       toast.success(`Cadastro realizado com sucesso!`);
 
       setTimeout(() => {
@@ -208,7 +208,7 @@ export default function CadastrarFuncionario() {
             <span className="input-group-text"><MdAlternateEmail fontSize={20} color="#0070fa" /></span>
 
             <Form.Control
-              type="email"
+              type="email" 
               placeholder="Digite seu email"
               name="email"
               value={formValues.email}

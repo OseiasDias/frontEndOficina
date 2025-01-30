@@ -54,7 +54,7 @@ const Sidebar = () => {
     // Função para lidar com a mudança no campo de número de OR
     const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
 
- 
+
 
     // Função para confirmar o término do serviço
     const handleConfirmarTerminarServico = () => {
@@ -108,7 +108,7 @@ const Sidebar = () => {
     //const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
 
     // Função para enviar a busca e procurar pela OR
-    const handleSubmitORSend  = async (e) => {
+    const handleSubmitORSend = async (e) => {
         e.preventDefault();
         setLoading(true);  // Iniciar carregamento
 
@@ -118,7 +118,7 @@ const Sidebar = () => {
                 setOrdem(response.data);  // Atualiza os dados da ordem
                 setError("");  // Limpar erro se a OR for encontrada
             }
-        // eslint-disable-next-line no-unused-vars
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {
             setError("Ordem de reparação não encontrada.");  // Exibe mensagem de erro
             setOrdem(null);  // Limpar dados da ordem caso erro
@@ -129,263 +129,325 @@ const Sidebar = () => {
 
 
     //==============================================================
+    // Função para lidar com o envio do número do técnico
+
+    const [showModalTecnico, setShowModalTecnico] = useState(false);
+    const [numeroTecnico, setNumeroTecnico] = useState(''); // Estado para armazenar o número do técnico
+
+    // Função para abrir a modal
+    const abrirModalTecnico = () => setShowModalTecnico(true);
+
+    // Função para fechar a modal
+    const fecharModalTecnico = () => setShowModalTecnico(false);
+
+    // Função para lidar com o envio do número do técnico
+    const handleSubmitTecnico = (e) => {
+        e.preventDefault();
+        alert(`Número do técnico: ${numeroTecnico}`);
+        fecharModalTecnico(); // Fechar a modal após o envio
+    };
+
+    // Função para manipular a mudança do número do técnico
+    const handleNumeroTecnicoChange = (e) => setNumeroTecnico(e.target.value);
 
     return (
         <>
-        
-        <div className="menu-barra">
-            <nav className='menuLateral vh-100'>
-                <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="280px" height="100px" />
-                <img src={LogoSmall} alt="logotipo small" className='my-3 ms-4 logoSmall' width="45px" height="37px" />
 
-                <ul className="menu-lateral ">
-                    <li className='linhasMenu'>
-                        <a href="#" title='Iniciar' onClick={abrirModal}>
-                            <MdContentPasteSearch className='icone-menu' /> <span className='spanTitle'>Procurar OR</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Terminar o serviço' onClick={abrirConfirmModal}>
-                            <FaHammer className='icone-menu' /> <span className='spanTitle'>Terminar o serviço</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Manutenção e limpeza' onClick={abrirLimpezaModal}>
-                            <FaCogs className='icone-menu' /> <span className='spanTitle'>Manutenção e limpeza</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Aguardar Trabalho' onClick={abrirAguardarTrabalhoModal}>
-                            <FaToolbox className='icone-menu' /> <span className='spanTitle'>Aguardar Trabalho</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Aguardar Peças' onClick={abrirAguardarPecasModal}>
-                            <FaRegClock className='icone-menu' /> <span className='spanTitle'>Aguardar Peças</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Almoço' onClick={abrirAlmocoModal}>
-                            <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Formação' onClick={abrirFormacaoModal}>
-                            <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Perfil' onClick={abrirPerfilModal}>
-                            <FaUserAlt className='icone-menu' /> <span className='spanTitle'>Perfil</span>
-                        </a>
-                    </li>
-                    <li className='linhasMenu'>
-                        <a href="#" title='Sair' onClick={abrirSairModal}>
-                            <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <div className="menu-barra">
+                <nav className='menuLateral vh-100'>
+                    <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="280px" height="100px" />
+                    <img src={LogoSmall} alt="logotipo small" className='my-3 ms-4 logoSmall' width="45px" height="37px" />
+
+                    <ul className="menu-lateral ">
+                        <li className='linhasMenu'>
+                            <a href="#" title='Iniciar' onClick={abrirModal}>
+                                <MdContentPasteSearch className='icone-menu' /> <span className='spanTitle'>Procurar OR</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Terminar o serviço' onClick={abrirConfirmModal}>
+                                <FaHammer className='icone-menu' /> <span className='spanTitle'>Terminar o serviço</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Manutenção e limpeza' onClick={abrirLimpezaModal}>
+                                <FaCogs className='icone-menu' /> <span className='spanTitle'>Manutenção e limpeza</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Aguardar Trabalho' onClick={abrirAguardarTrabalhoModal}>
+                                <FaToolbox className='icone-menu' /> <span className='spanTitle'>Aguardar Trabalho</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Aguardar Peças' onClick={abrirAguardarPecasModal}>
+                                <FaRegClock className='icone-menu' /> <span className='spanTitle'>Aguardar Peças</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Almoço' onClick={abrirAlmocoModal}>
+                                <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Formação' onClick={abrirFormacaoModal}>
+                                <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Perfil' onClick={abrirPerfilModal}>
+                                <FaUserAlt className='icone-menu' /> <span className='spanTitle'>Perfil</span>
+                            </a>
+                        </li>
+                        <li className='linhasMenu'>
+                            <a href="#" title='Sair' onClick={abrirSairModal}>
+                                <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
 
 
-        </div>
+            </div>
 
-        <div className="modais">
-            
-            {/* Modal de Busca da Ordem de Reparação */}
-            <Modal size={ordem ? "xl" : "md"} scrollable show={showModal} onHide={fecharModalOR}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Procurar Ordem de Reparação</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleSubmitORSend}>
-                        <Form.Group className="mb-3" controlId="formNumeroOR">
-                            <Form.Label>Número da OR</Form.Label>
-                            <div className="input-group">
+            <div className="modais">
+
+                {/* Modal de Busca da Ordem de Reparação */}
+                <Modal size={ordem ? "xl" : "md"} scrollable show={showModal} onHide={fecharModalOR}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Procurar Ordem de Reparação</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleSubmitORSend}>
+                            <Form.Group className="mb-3" controlId="formNumeroOR">
+                                <Form.Label>Número da OR</Form.Label>
+
+                                <div className="input-group col-lg-6 ">
+                                    <span className="input-group-text">
+                                        <FaClipboard fontSize={22} color="#0070fa" />
+                                    </span>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Digite o número da OR"
+                                        value={numeroOR}
+                                        onChange={handleNumeroORChange}
+                                        required
+                                    />
+                                    <Button variant="primary" type="submit" className="btn d-block mx-auto">
+                                        {loading ? "Pesquisando..." : "Pesquisar"}
+                                    </Button>
+                                </div>
+
+
+
+                            </Form.Group>
+                        </Form>
+
+                        {error && <p className="text-danger mt-3">{error}</p>}
+
+                        {ordem && (
+                            <VerORSeg idUnico={ordem.id} />
+
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+
+                        {ordem && (
+                            <button className="links-acessos btn px-5" onClick={abrirModalTecnico}>
+                                Começar
+                            </button>
+                        )}
+                    </Modal.Footer>
+                </Modal>
+
+                {/* Modal para solicitar o número identificador do técnico */}
+                <Modal show={showModalTecnico} centered onHide={fecharModalTecnico}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Número do Técnico</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleSubmitTecnico}>
+                            <Form.Group className="mb-3" controlId="formNumeroTecnico">
+                                <Form.Label>Número do Técnico</Form.Label>
+                                <div className="input-group col-lg-6 ">
+
                                 <span className="input-group-text">
-                                    <FaClipboard fontSize={22} color="#0070fa" />
+                                        <FaClipboard fontSize={22} color="#0070fa" />
                                 </span>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Digite o número da OR"
-                                    value={numeroOR}
-                                    onChange={handleNumeroORChange}
+                                    placeholder="Digite o número do técnico"
+                                    value={numeroTecnico}
+                                    onChange={handleNumeroTecnicoChange}
                                     required
                                 />
-                            </div>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" className="d-block mx-auto">
-                            {loading ? "Pesquisando..." : "Pesquisar"}
+                                </div>
+                            </Form.Group>
+                            <Button variant="primary" type="submit" className="d-block mx-auto links-acessos">
+                                Confirmar
+                            </Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Modal de Confirmação para Terminar o Serviço */}
+                <Modal scrollable show={showConfirmModal} onHide={fecharConfirmModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmação</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Tem certeza que deseja terminar a reparação?</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={fecharConfirmModal}>
+                            Cancelar
                         </Button>
-                    </Form>
+                        <Button variant="danger" onClick={handleConfirmarTerminarServico}>
+                            Terminar Reparação
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-                    {error && <p className="text-danger mt-3">{error}</p>}
-                  
-                    {ordem && (
-                        <VerORSeg idUnico={ordem.id}/>
-                       
-                    )}
-                </Modal.Body>
-            </Modal>
+                {/* Modal de Confirmação para Manutenção e Limpeza */}
+                <Modal scrollable show={showLimpezaModal} onHide={fecharLimpezaModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Manutenção e Limpeza</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Está na hora da limpeza?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmarLimpeza("não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmarLimpeza("sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal de Confirmação para Terminar o Serviço */}
-            <Modal scrollable show={showConfirmModal} onHide={fecharConfirmModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmação</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Tem certeza que deseja terminar a reparação?</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={fecharConfirmModal}>
-                        Cancelar
-                    </Button>
-                    <Button variant="danger" onClick={handleConfirmarTerminarServico}>
-                        Terminar Reparação
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                {/* Modal para Aguardar Trabalho */}
+                <Modal scrollable show={showAguardarTrabalhoModal} onHide={fecharAguardarTrabalhoModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Aguardar Trabalho</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Está aguardando trabalho?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal de Confirmação para Manutenção e Limpeza */}
-            <Modal scrollable show={showLimpezaModal} onHide={fecharLimpezaModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Manutenção e Limpeza</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Está na hora da limpeza?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmarLimpeza("não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmarLimpeza("sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                {/* Modal para Aguardar Peças */}
+                <Modal scrollable show={showAguardarPecasModal} onHide={fecharAguardarPecasModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Aguardar Peças</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Está aguardando peças?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal para Aguardar Trabalho */}
-            <Modal scrollable show={showAguardarTrabalhoModal} onHide={fecharAguardarTrabalhoModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Aguardar Trabalho</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Está aguardando trabalho?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                {/* Modal para Almoço */}
+                <Modal scrollable show={showAlmocoModal} onHide={fecharAlmocoModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Almoço</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Hora do almoço?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal para Aguardar Peças */}
-            <Modal scrollable show={showAguardarPecasModal} onHide={fecharAguardarPecasModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Aguardar Peças</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Está aguardando peças?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                {/* Modal para Formação */}
+                <Modal scrollable show={showFormacaoModal} onHide={fecharFormacaoModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Formação</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Está em formação?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal para Almoço */}
-            <Modal scrollable show={showAlmocoModal} onHide={fecharAlmocoModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Almoço</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Hora do almoço?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                {/* Modal para Perfil */}
+                <Modal scrollable show={showPerfilModal} onHide={fecharPerfilModal} size='xl'>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Perfil</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Tabs
+                            defaultActiveKey="profile"
+                            id="uncontrolled-tab-example"
+                            className="mb-3"
+                        >
+                            <Tab eventKey="home" title="Dados">
+                                Tab content for Home
+                            </Tab>
+                            <Tab eventKey="profile" title="Editar">
+                                Tab content for Profile
+                            </Tab>
+                            <Tab eventKey="contact" title="Mudar Senha">
+                                Tab content for Contact
+                            </Tab>
+                        </Tabs>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
-            {/* Modal para Formação */}
-            <Modal scrollable show={showFormacaoModal} onHide={fecharFormacaoModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Formação</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Está em formação?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            {/* Modal para Perfil */}
-            <Modal scrollable show={showPerfilModal} onHide={fecharPerfilModal} size='xl'>
-                <Modal.Header closeButton>
-                    <Modal.Title>Perfil</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Tabs
-                        defaultActiveKey="profile"
-                        id="uncontrolled-tab-example"
-                        className="mb-3"
-                    >
-                        <Tab eventKey="home" title="Dados">
-                            Tab content for Home
-                        </Tab>
-                        <Tab eventKey="profile" title="Editar">
-                            Tab content for Profile
-                        </Tab>
-                        <Tab eventKey="contact" title="Mudar Senha">
-                            Tab content for Contact
-                        </Tab>
-                    </Tabs>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            {/* Modal para Sair */}
-            <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Sair</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <h5>Você deseja sair?</h5>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                        Não
-                    </Button>
-                    <Button variant="danger" onClick={() => handleConfirmacao("Sim")}>
-                        Sim
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
+                {/* Modal para Sair */}
+                <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Sair</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <h5>Você deseja sair?</h5>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
+                            Não
+                        </Button>
+                        <Button variant="danger" onClick={() => handleConfirmacao("Sim")}>
+                            Sim
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         </>
     );
 };
