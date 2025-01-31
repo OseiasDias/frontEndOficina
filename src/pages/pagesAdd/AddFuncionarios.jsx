@@ -2,7 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import {
   FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera,
   FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase,
-  FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard
+  FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard
 } from "react-icons/fa";
 import { InputGroup, Form, Button, Row, Col, Modal, Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
@@ -466,7 +466,7 @@ const FormularioFuncionario = () => {
               <div className="input-group">
                 <span className="input-group-text"><FaBuilding fontSize={20} color="#0070fa" /></span>
 
-                <Form.Control
+                <Form.Select
                   as="select"
                   name="filial"
                   value={formData.filial}
@@ -477,7 +477,7 @@ const FormularioFuncionario = () => {
                   <option value="1">Filial Central</option>
 
 
-                </Form.Control>
+                </Form.Select>
               </div>
             </Form.Group>
           </Col>
@@ -489,7 +489,7 @@ const FormularioFuncionario = () => {
                 <div className="input-group">
                   <span className="input-group-text"><FaSuitcase fontSize={20} color="#0070fa" /></span>
 
-                  <Form.Control
+                  <Form.Select
                     as="select"
                     name="cargo"
                     value={formData.cargo}
@@ -502,7 +502,7 @@ const FormularioFuncionario = () => {
                         {cargo}
                       </option>
                     ))}
-                  </Form.Control>
+                  </Form.Select>
 
                   <Button variant="outline-secondary" onClick={() => setMostrarModal(true)}>
                     Adicionar
@@ -545,7 +545,7 @@ const FormularioFuncionario = () => {
               <Form.Label className="fw-900">País <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
-                <Form.Control
+                <Form.Select
                   as="select"
                   name="pais"
                   value={formData.pais}
@@ -796,7 +796,7 @@ const FormularioFuncionario = () => {
                   <option value="Iugoslávia">Iugoslávia</option>
                   <option value="Zâmbia">Zâmbia</option>
                   <option value="Zimbábue">Zimbábue</option>
-                </Form.Control>
+                </Form.Select>
 
               </div>
             </Form.Group>

@@ -305,7 +305,7 @@ export function AddFornecedor  () {
                   <span className="input-group-text">
                     <FaGlobe fontSize={20} color="#0070fa" />
                   </span>
-                  <Form.Control
+                  <Form.Select
                     as="select"
                     name="pais"
                     value={formData.pais}
@@ -313,7 +313,7 @@ export function AddFornecedor  () {
                   >
                     <option value="">Selecione o país</option>
                     <option value="Brasil">Brasil</option>
-                  </Form.Control>
+                  </Form.Select>
                 </div>
               </Form.Group>
             </Col>

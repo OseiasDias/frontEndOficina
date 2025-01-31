@@ -247,7 +247,7 @@ export function FormularioCliente() {
 
           <Col md={6}>
             <Form.Group c controlId="formBilheteIdentidade">
-              <Form.Label className="fw-bold">Bilhete de Identidade</Form.Label>
+              <Form.Label>Bilhete de Identidade</Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><FaRegAddressCard fontSize={20} color="#0070fa" /></span>
 
@@ -257,7 +257,7 @@ export function FormularioCliente() {
                   name="bilhete_identidade"
                   value={formData.bilhete_identidade}
                   onChange={handleChange}
-
+                  placeholder="Digite o número do Bilhete de Identidade"
 
 
                   isInvalid={!!errors.bilhete_identidade}
@@ -297,7 +297,7 @@ export function FormularioCliente() {
               <div className="input-group">
                 <span className="input-group-text me-3"><FaTransgender fontSize={20} color="#0070fa" /></span>
 
-                <Form.Control
+                <Form.Select
 
                   name="genero"
                   value={formData.genero}
@@ -308,7 +308,7 @@ export function FormularioCliente() {
                 >
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
-                </Form.Control>
+                </Form.Select>
               </div>
             </Form.Group>
           </Col>
@@ -402,7 +402,7 @@ export function FormularioCliente() {
         <Form.Label>País <span className="text-danger">*</span></Form.Label>
         <div className="input-group">
           <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
-          <Form.Control
+          <Form.Select
             as="select"
             name="pais"  // Adicionei o nome "pais" aqui para garantir que seja tratado corretamente
             value={formData.pais}
@@ -651,7 +651,7 @@ export function FormularioCliente() {
                   <option value="Iugoslávia">Iugoslávia</option>
                   <option value="Zâmbia">Zâmbia</option>
                   <option value="Zimbábue">Zimbábue</option>            {/* Adicione mais opções conforme necessário */}
-          </Form.Control>
+          </Form.Select>
         </div>
         {errors.pais && <Form.Text className="text-danger">{errors.pais}</Form.Text>}
       </Form.Group>

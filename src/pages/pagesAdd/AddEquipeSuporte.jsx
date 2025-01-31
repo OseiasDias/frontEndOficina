@@ -407,7 +407,7 @@ const FormularioEquipeSuporte = () => {
                 <div className="input-group">
                   <span className="input-group-text"><FaSuitcase fontSize={20} color="#0070fa" /></span>
 
-                  <Form.Control
+                  <Form.Select
                     as="select"
                     name="cargo"
                     value={dadosFormulario.cargo}
@@ -420,7 +420,7 @@ const FormularioEquipeSuporte = () => {
                         {cargo}
                       </option>
                     ))}
-                  </Form.Control>
+                  </Form.Select>
 
                   <Button variant="outline-secondary" onClick={() => setMostrarModal(true)}>
                     Adicionar
