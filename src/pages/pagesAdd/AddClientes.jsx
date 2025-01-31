@@ -12,6 +12,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { AiOutlineFieldNumber } from "react-icons/ai";
 
 export function FormularioCliente() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,13 +35,47 @@ export function FormularioCliente() {
     nota: '',
     arquivo_nota: '',
     interna: false,
-    compartilhado: false
+    compartilhado: false,
+    numero_cliente: ''
   });
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  //LOGICA PARA GERAR O NUMERO DA ORDEM DE REPARACAO
+
+
+  // eslint-disable-next-line no-unused-vars
+  const [ultimoId, setUltimoId] = useState(null);
+
+  // Função para pegar o último ID da ordem
+  const fetchUltimoId = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/clientesUltimos/last-id');
+      const id = response.data.ultimo_id;
+      setUltimoId(id);
+      gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
+    } catch (error) {
+      console.error('Erro ao buscar último ID:', error);
+    }
+  };
+
+  // Gerar o número da ordem no formato "OR0{ultimoId}"
+  const gerarNumeroOrdem = (id) => {
+    if (id !== null) {
+      const numeroCliente = `CLI00${id}`;
+      setFormData(prevState => ({
+        ...prevState,
+        numero_cliente: numeroCliente
+      }));
+    }
+  };
+
+  // UseEffect para buscar o último ID assim que o componente for montado
+  useEffect(() => {
+    fetchUltimoId();
+  }, []);
 
 
 
@@ -134,6 +169,23 @@ export function FormularioCliente() {
 
         {/* Nome e Sobrenome */}
         <Row>
+          <Col xs={12} md={6}>
+            <Form.Group controlId="numero_trabalho">
+              <Form.Label>Nº do Cliente <span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><AiOutlineFieldNumber fontSize={20} color="#0070fa" /></span>
+                <Form.Control
+                  type="text"
+                  name="numero_trabalho"
+                  value={formData.numero_cliente}
+                  onChange={handleChange}
+                  required
+                  disabled // Desabilitado para não permitir edição direta
+                />
+              </div>
+            </Form.Group>
+          </Col>
+
           <Col md={6}>
             <Form.Group controlId="primeiroNome">
               <Form.Label>Primeiro nome <span className="text-danger">*</span></Form.Label>

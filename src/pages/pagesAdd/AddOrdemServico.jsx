@@ -48,6 +48,7 @@ const OrdemDeReparacaoForm = () => {
     status_test_mot: false,
     cobrar_test_mot: '',
     horas_reparacao: '' // Adiciona o campo horas_reparacao aqui
+   
   });
 
 
