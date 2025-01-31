@@ -3,8 +3,6 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 
-
-import "../../css/StylesAdmin/homeAdministrador.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
@@ -12,14 +10,12 @@ import { Dropdown } from "react-bootstrap";
 import { MdDelete, MdEditNote } from "react-icons/md";
 import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
-import { useNavigate } from 'react-router-dom'; // Hook do React Router para navegação
+import { useNavigate } from 'react-router-dom'; 
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
-// Importar ToastContainer e toast do react-toastify
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Certifique-se de importar os estilos do toast
+import 'react-toastify/dist/ReactToastify.css'; 
 
-// Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
     style: {
@@ -38,49 +34,40 @@ export function TabelaVizualizarFuncionarios() {
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false); // Estado para controlar a modal de exclusão
-  const [selectedFuncionario, setSelectedFuncionario] = useState(null); // Estado para armazenar o funcionário selecionado
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedFuncionario, setSelectedFuncionario] = useState(null);
 
-  const navigate = useNavigate(); // Hook do React Router para navegação
+  const navigate = useNavigate();
 
-  // Função para abrir a modal de visualização e redirecionar para a página de visualização
   const handleView = (funcionario) => {
     navigate(`/verFuncionario/${funcionario.id}`);
   };
 
-  // Função para abrir a modal de confirmação de exclusão
   const handleDelete = (funcionario) => {
-    setSelectedFuncionario(funcionario); // Definir o funcionário selecionado para exclusão
-    setShowDeleteModal(true); // Mostrar a modal de confirmação de exclusão
+    setSelectedFuncionario(funcionario);
+    setShowDeleteModal(true);
   };
 
-  // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/funcionarios/${selectedFuncionario.id}`);
-      // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((funcionario) => funcionario.id !== selectedFuncionario.id));
       setShowDeleteModal(false);
-
-      // Exibir notificação de sucesso usando o toast
       toast.success('Funcionário excluído com sucesso!');
     } catch (error) {
       console.error("Erro ao excluir o funcionário:", error);
       setError("Erro ao excluir o funcionário.");
-      // Exibir notificação de erro usando o toast
       toast.error('Erro ao excluir o funcionário!');
     }
   };
 
-  // Colunas da tabela
   const columns = [
+    { name: "Número de Funcionário", selector: (row) => row.numero_funcionario || "Sem informação" },
     { name: "Nome", selector: (row) => row.nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Cargo", selector: (row) => row.cargo || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
-    /* { name: "Filial", selector: (row) => row.filial || "Sem informação" },*/
-
     { name: "Endereço", selector: (row) => row.endereco || "Sem informação" },
     {
       name: "Ações",
@@ -106,13 +93,14 @@ export function TabelaVizualizarFuncionarios() {
     },
   ];
 
-  // Função para buscar os dados da API
   const fetchData = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/funcionarios/");
       if (Array.isArray(response.data)) {
-        setRecords(response.data);
-        setOriginalRecords(response.data);
+        // Ordenar os funcionários para que os mais recentes apareçam primeiro
+        const sortedRecords = response.data.sort((a, b) => b.id - a.id); // Ordena pela ID (descrescente)
+        setRecords(sortedRecords);
+        setOriginalRecords(sortedRecords);
       } else {
         console.error("Os dados retornados não contêm um array de funcionários:", response.data);
         throw new Error("Os dados retornados não contêm um array de funcionários.");
@@ -129,7 +117,6 @@ export function TabelaVizualizarFuncionarios() {
     fetchData();
   }, []);
 
-
   if (loading) {
     return (
       <div className="text-center">
@@ -139,12 +126,14 @@ export function TabelaVizualizarFuncionarios() {
     );
   }
 
-
   if (error) {
-    return (<div className='text-center'><h3 className='text-danger'>{error}</h3>
-      <img src={imgErro} alt="Carregando" className="w-50 d-block mx-auto" />
-    </div>);
-  };
+    return (
+      <div className="text-center">
+        <h3 className="text-danger">{error}</h3>
+        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+      </div>
+    );
+  }
 
   return (
     <div className="homeDiv">
@@ -183,7 +172,6 @@ export function TabelaVizualizarFuncionarios() {
         footer={<div>Exibindo {records.length} registros no total</div>}
       />
 
-      {/* Modal de Confirmação de Exclusão */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirmar Exclusão</Modal.Title>
@@ -197,11 +185,11 @@ export function TabelaVizualizarFuncionarios() {
         </Modal.Footer>
       </Modal>
 
-      {/* Toast Container para mostrar as notificações */}
       <ToastContainer position="top-center" />
     </div>
   );
 }
+
 
 
 

@@ -15,7 +15,6 @@ import { AiOutlineFieldNumber } from "react-icons/ai";
 import logoMarca from "../../assets/lgo.png";
 import imgN from "../../assets/not-found.png";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate
-
 import imgErro from "../../assets/error.webp";
 import axios from 'axios';
 import { toast, ToastContainer } from "react-toastify";

@@ -1,8 +1,8 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
-import { 
-  FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera, 
-  FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase, 
-  FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard 
+import {
+  FaGlobe, FaMapMarkerAlt, FaMapPin, FaHome, FaCamera,
+  FaEnvelope, FaUser, FaCalendarAlt, FaVenusMars, FaMobileAlt, FaPhone, FaBuilding, FaSuitcase,
+  FaTag, FaRegCalendarAlt, FaUniversity, FaIdCard, FaCreditCard
 } from "react-icons/fa";
 import { InputGroup, Form, Button, Row, Col, Modal, Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
@@ -13,15 +13,16 @@ import axios from "axios";
 import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { AiOutlineFieldNumber } from "react-icons/ai";
 
 const FormularioFuncionario = () => {
   const [formData, setFormData] = useState({
+    numero_funcionario: "",
     nome: '',
     sobrenome: '',
     dataNascimento: '',
     email: '',
     bilheteIdentidade: '',
-    senha: '',
     nomeBanco: '',
     iban: '',
     foto: '',
@@ -30,7 +31,6 @@ const FormularioFuncionario = () => {
     telefoneFixo: '',
     filial: '',
     cargo: '',
-    nomeExibicao: '',
     dataAdmissao: '',
     pais: '',
     estado: '',
@@ -39,15 +39,63 @@ const FormularioFuncionario = () => {
     bloqueado: false,
   });
 
+
+
+  //LOGICA PARA GERAR NUMERO FUNCIONARIO
+
+
+  // eslint-disable-next-line no-unused-vars
+  const [ultimoId, setUltimoId] = useState(null);
+
+  // Função para pegar o último ID da ordem
+  const fetchUltimoId = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/api/funcionariosUltimo/ultimo-id');
+      const id = response.data.ultimo_id;
+      setUltimoId(id);
+      gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
+    } catch (error) {
+      console.error('Erro ao buscar último ID:', error);
+    }
+  };
+
+  // Gerar o número da ordem no formato "OR0{ultimoId}"
+  const gerarNumeroOrdem = (id) => {
+    if (id !== null) {
+      const numeroFuncionario = `FN00${id}`;
+      setFormData(prevState => ({
+        ...prevState,
+        numero_funcionario: numeroFuncionario
+      }));
+    }
+  };
+
+  // UseEffect para buscar o último ID assim que o componente for montado
+  useEffect(() => {
+    fetchUltimoId();
+  }, []);
+
+  // Quando o usuário digita no formulário
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevValues) => ({ ...prevValues, [name]: value }));
+  };
+
+
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const [novoCargo, setNovoCargo] = useState('');
   const [cargos, setCargos] = useState([
-    'Desenvolvedor',
-    'Designer',
-    'Gerente',
-    'Analista',
+    'Mecânico',
+    'Assistente de Mecânica',
+    'Supervisor de Oficina',
+    'Gerente de Oficina',
+    'Atendente',
+    'Técnico de Diagnóstico',
+    'Chefe de Oficina',
+    'Líder de Equipe',
+    'Estagiário de Mecânica'
   ]);
 
   const handleAlteracaoNovoCargo = (event) => {
@@ -82,8 +130,6 @@ const FormularioFuncionario = () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "E-mail inválido.";
     if (!formData.telefoneFixo) newErrors.telefoneFixo = "Telefone é obrigatório.";
     if (!/^\d{9,}$/.test(formData.telefoneFixo)) newErrors.telefoneFixo = "Telefone inválido.";
-    if (!formData.senha) newErrors.senha = "Senha é obrigatória.";
-    if (formData.senha.length < 6) newErrors.senha = "Senha deve ter pelo menos 6 caracteres.";
     if (formData.dataNascimento && formData.dataNascimento > hoje) newErrors.dataNascimento = "Data de nascimento inválida.";
     if (!formData.genero) newErrors.genero = "Gênero é obrigatório.";
     if (!formData.endereco) newErrors.endereco = "Endereço é obrigatório.";
@@ -92,10 +138,7 @@ const FormularioFuncionario = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const generateRandomPassword = () => {
-    let password = Math.random().toString(36).slice(-10);
-    return password.length < 8 ? password + Math.random().toString(36).slice(-2) : password;
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,7 +154,7 @@ const FormularioFuncionario = () => {
       const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
       console.log('Funcionario cadastrado:', response.data);
       toast.success('Funcionário cadastrado com sucesso!');
-      
+
       setTimeout(() => {
         setIsLoading(false);
         navigate('/funcionariosList');
@@ -123,26 +166,32 @@ const FormularioFuncionario = () => {
     }
   };
 
+ 
+
   useEffect(() => {
-    const senhaGerada = generateRandomPassword();
-    setFormData(prevValues => ({ ...prevValues, senha: senhaGerada }));
-    console.log('Senha gerada:', senhaGerada);
+    // Definindo a data do sistema no formato YYYY-MM-DD
+    const currentDate = new Date().toISOString().split('T')[0];
+    setFormData({
+      ...formData,
+      dataAdmissao: currentDate, // define a data de admissão como a data atual
+    });
   }, []);
+
 
   return (
     <>
-      <ToastContainer 
-        position="top-center" 
-        autoClose={5000} 
-        hideProgressBar={false} 
-        newestOnTop={false} 
-        closeOnClick 
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
-      />    
-      
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
       <Form id="formulario_adicionar_funcionario" method="post" className="form-horizontal upperform employeeAddForm" onSubmit={handleSubmit}>
         {/* Dados Pessoais */}
         <div className="col-md-12 mt-5">
@@ -151,6 +200,40 @@ const FormularioFuncionario = () => {
         </div>
 
         <Row className="mb-3">
+          <Col xs={12} md={6}>
+            <Form.Group controlId="numero_funcionario">
+              <Form.Label>Nº Funcionário <span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><AiOutlineFieldNumber fontSize={20} color="#0070fa" /></span>
+                <Form.Control
+                  type="text"
+                  name="numero_funcionario"
+                  value={formData.numero_funcionario} // Ligar ao valor correto
+                  onChange={handleInputChange} // Lidar com a mudança no estado
+                  required
+                  disabled // Desabilitado para não permitir edição direta
+                />
+              </div>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="dataNascimento">
+              <Form.Label>Data de Nascimento</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
+
+                <Form.Control
+                  type="date"
+                  name="dataNascimento"
+                  value={formData.dataNascimento}
+                  onChange={handleChange}
+                />
+              </div>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="mb-3">
+
           <Col md={6}>
             <Form.Group controlId="nome">
               <Form.Label>Primeiro nome <span className="text-danger">*</span></Form.Label>
@@ -189,30 +272,16 @@ const FormularioFuncionario = () => {
           </Col>
         </Row>
 
-      
 
 
 
-          {/* Outros campos omitidos para concisão */}
 
-        
+        {/* Outros campos omitidos para concisão */}
+
+
 
         <Row className="mb-3">
-          <Col md={6}>
-            <Form.Group controlId="dataNascimento">
-              <Form.Label>Data de Nascimento</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><FaCalendarAlt fontSize={20} color="#0070fa" /></span>
 
-                <Form.Control
-                  type="date"
-                  name="dataNascimento"
-                  value={formData.dataNascimento}
-                  onChange={handleChange}
-                />
-              </div>
-            </Form.Group>
-          </Col>
           <Col md={6}>
             <Form.Group controlId="email">
               <Form.Label>E-mail <span className="text-danger">*</span></Form.Label>
@@ -228,6 +297,26 @@ const FormularioFuncionario = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="genero">
+              <Form.Label>Gênero</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <FaVenusMars fontSize={20} color="#0070fa" />
+                </span>
+
+                <Form.Select
+                  name="genero"
+                  value={formData.genero}
+                  onChange={handleChange}
+                  className="ms-3"
+                >
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
+                </Form.Select>
               </div>
             </Form.Group>
           </Col>
@@ -294,28 +383,8 @@ const FormularioFuncionario = () => {
 
 
 
-          {/** <Col md={6}>
-            <Form.Group controlId="senha">
-              <Form.Label>Senha gerada <span className="text-danger">*</span></Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><FaLock fontSize={20} color="#0070fa" /></span>
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Senha gerada automaticamente"
-                  name="senha"
-                  value={formData.senha}
-                  onChange={handleChange}
-                  disabled
-                />
 
-                <Button variant="outline-secondary" onClick={() => setShowPassword(!showPassword)} className="ms-2">
-                  {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                </Button>
-              </div>
-            </Form.Group>
-          </Col> */}
-
-<Col>
+          <Col>
             <Form.Group controlId="uploadArquivo">
               <Form.Label>Foto</Form.Label>
               <div className="input-group">
@@ -336,27 +405,8 @@ const FormularioFuncionario = () => {
         </Row>
 
         <Row>
-         
-          <Col md={6}>
-            <Form.Group controlId="genero">
-              <Form.Label>Gênero</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text">
-                  <FaVenusMars fontSize={20} color="#0070fa" />
-                </span>
 
-                <Form.Select
-                  name="genero"
-                  value={formData.genero}
-                  onChange={handleChange}
-                  className="ms-3"
-                >
-                  <option value="masculino">Masculino</option>
-                  <option value="feminino">Feminino</option>
-                </Form.Select>
-              </div>
-            </Form.Group>
-          </Col>
+
         </Row>
 
         {/* Informações de Contato */}
@@ -464,28 +514,12 @@ const FormularioFuncionario = () => {
         </Row>
 
         <Row className="mb-3">
-          <Col md={6}>
-            <Form.Group controlId="nomeExibicao">
-              <Form.Label>Nome Exibido</Form.Label>
-              <div className="input-group">
-                <span className="input-group-text"><FaTag fontSize={20} color="#0070fa" /></span>
-
-                <Form.Control
-                  type="text"
-                  name="nomeExibicao"
-                  value={formData.nomeExibicao}
-                  placeholder="Nome que será exibido"
-                  maxLength="25"
-                  onChange={handleChange} />
-              </div>
-            </Form.Group>
-          </Col>
+        
           <Col md={6}>
             <Form.Group controlId="dataAdmissao">
               <Form.Label>Data de Admissão <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><FaRegCalendarAlt fontSize={20} color="#0070fa" /></span>
-
                 <Form.Control
                   type="date"
                   name="dataAdmissao"
@@ -848,20 +882,20 @@ const FormularioFuncionario = () => {
         </Modal>
         {/* Botão Enviar */}
         <Button
-            variant="primary"
-            type="submit"
-            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-            ) : (
-              "Cadastrar"
-            )}
-          </Button>
+          variant="primary"
+          type="submit"
+          className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+          ) : (
+            "Cadastrar"
+          )}
+        </Button>
       </Form>
 
-    
+
     </>
   );
 };
