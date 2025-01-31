@@ -72,13 +72,13 @@ export function TabelaVizualizarClient() {
 
   // Colunas da tabela
   const columns = [
+    { name: "Número Cliente", selector: (row) => row.numero_cliente || "Sem informação" },  // Nova coluna para numero_cliente
     { name: "Nome Exibido", selector: (row) => row.primeiro_nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
     { name: "Endereço", selector: (row) => row.endereco || "Sem informação" },
-    { name: "Município", selector: (row) => row.municipio || "Sem informação" },
-    { name: "Províncias", selector: (row) => row.estado === 1 ? "Ativo" : "Bloqueado" },
+    { name: "Estado", selector: (row) => row.estado === 1 ? "Ativo" : "Bloqueado" },
     {
       name: "Ações",
       cell: (row) => (
@@ -103,6 +103,8 @@ export function TabelaVizualizarClient() {
     },
   ];
 
+;
+
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
@@ -120,7 +122,7 @@ export function TabelaVizualizarClient() {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
     fetchData();

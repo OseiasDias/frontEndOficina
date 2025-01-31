@@ -4,7 +4,7 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { FaArrowLeftLong, FaMapLocationDot } from "react-icons/fa6";
 import { IoPersonAdd } from "react-icons/io5";
 import { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Image ,Spinner} from 'react-bootstrap';
+import { Form, Button, Row, Col, Image, Spinner } from 'react-bootstrap';
 import { FaRegEye, FaUser } from 'react-icons/fa';
 import { FaBuilding, FaCamera, FaEnvelope, FaGlobe, FaHome, FaIdCard, FaLock, FaMapMarkerAlt, FaPhone, FaPhoneAlt, FaRegAddressCard, FaRegEyeSlash, FaTransgender } from 'react-icons/fa';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -41,7 +41,7 @@ export function FormularioCliente() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
- 
+
 
 
 
@@ -56,7 +56,7 @@ export function FormularioCliente() {
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
-    
+
   };
 
   // Gerador de senha
@@ -100,7 +100,7 @@ export function FormularioCliente() {
       const response = await axios.post('http://127.0.0.1:8000/api/clientes/', formData);
       console.log('Cliente cadastrado com sucesso:', response.data);
       toast.success("Cliente cadastrado com sucesso!");
-    
+
       setTimeout(() => {
         setIsLoading(false);
         navigate('/clienteList'); // Redireciona para /clienteList
@@ -397,19 +397,19 @@ export function FormularioCliente() {
 
         {/* País, Província e Município */}
         <Row>
-        <Col md={6}>
-      <Form.Group controlId="pais">
-        <Form.Label>País <span className="text-danger">*</span></Form.Label>
-        <div className="input-group">
-          <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
-          <Form.Select
-            as="select"
-            name="pais"  // Adicionei o nome "pais" aqui para garantir que seja tratado corretamente
-            value={formData.pais}
-            onChange={handleChange}
-            required
-          >
-<option value="">Selecione o país</option>
+          <Col md={6}>
+            <Form.Group controlId="pais">
+              <Form.Label>País <span className="text-danger">*</span></Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><FaGlobe fontSize={20} color="#0070fa" /></span>
+                <Form.Select
+                  as="select"
+                  name="pais"  // Adicionei o nome "pais" aqui para garantir que seja tratado corretamente
+                  value={formData.pais}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Selecione o país</option>
                   <option value="Andorra">Andorra</option>
                   <option value="Angola">Angola</option>
                   <option value="Antártica">Antártica</option>
@@ -651,11 +651,11 @@ export function FormularioCliente() {
                   <option value="Iugoslávia">Iugoslávia</option>
                   <option value="Zâmbia">Zâmbia</option>
                   <option value="Zimbábue">Zimbábue</option>            {/* Adicione mais opções conforme necessário */}
-          </Form.Select>
-        </div>
-        {errors.pais && <Form.Text className="text-danger">{errors.pais}</Form.Text>}
-      </Form.Group>
-    </Col>
+                </Form.Select>
+              </div>
+              {errors.pais && <Form.Text className="text-danger">{errors.pais}</Form.Text>}
+            </Form.Group>
+          </Col>
 
           <Col md={6}>
             <Form.Group controlId="idProvincia">
@@ -777,21 +777,21 @@ export function FormularioCliente() {
               />
             </Col>
 
-          
-        </Row>
-      </div>
-      <Button
-            variant="primary"
-            type="submit"
-            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-            ) : (
-              "Cadastrar"
-            )}
-          </Button>
+
+          </Row>
+        </div>
+        <Button
+          variant="primary"
+          type="submit"
+          className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+          ) : (
+            "Cadastrar"
+          )}
+        </Button>
 
       </Form>
     </>

@@ -3,7 +3,7 @@ import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useEffect, useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Spinner } from 'react-bootstrap';
 import { RiAddLargeFill } from 'react-icons/ri';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { Form, Row, Col } from "react-bootstrap";
@@ -24,6 +24,8 @@ import { toast, ToastContainer } from "react-toastify";
 const OrdemDeReparacaoForm = () => {
 
   //LOGICA DE CADASTRAR ORDEM DE REPARACAO
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     numero_trabalho: '',
     cliente_id: '',
@@ -70,7 +72,7 @@ const OrdemDeReparacaoForm = () => {
   // Gerar o número da ordem no formato "OR0{ultimoId}"
   const gerarNumeroOrdem = (id) => {
     if (id !== null) {
-      const numeroOrdem = `OR0${id}`;
+      const numeroOrdem = `OR00${id}`;
       setFormData(prevState => ({
         ...prevState,
         numero_trabalho: numeroOrdem
@@ -237,6 +239,7 @@ const OrdemDeReparacaoForm = () => {
   // Função de envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await axios.post(
@@ -249,6 +252,7 @@ const OrdemDeReparacaoForm = () => {
       // Notificação de sucesso
       toast.success('Ordem de Reparação criada com sucesso!', {
         // Especificando a duração de 5 segundos (5000ms)
+       
         autoClose: 5000
       });
 
@@ -256,6 +260,7 @@ const OrdemDeReparacaoForm = () => {
       setTimeout(() => {
         // Redireciona para a página de listagem de ordens de serviço
         navigate('/listarOrdemServico');
+        setIsLoading(false);
       }, 4500); // 5 segundos de espera
 
     } catch (error) {
@@ -375,7 +380,7 @@ const OrdemDeReparacaoForm = () => {
             <div className="d-flex">
               <div className="input-group">
                 <span className="input-group-text"><FaCar fontSize={22} color="#0070fa" /></span>
-                <Form.Control
+                <Form.Select
                   as="select"
                   name="veiculo_id"
                   value={formData.veiculo_id}
@@ -393,7 +398,7 @@ const OrdemDeReparacaoForm = () => {
                   ) : (
                     <option value="">Nenhum veículo disponível</option>
                   )}
-                </Form.Control>
+                </Form.Select>
               </div>
               <Button
                 className="links-acessos px-2 border-radius-zero"
@@ -413,7 +418,7 @@ const OrdemDeReparacaoForm = () => {
                   <span className="input-group-text">
                     <FaTools fontSize={20} color="#0070fa" />
                   </span>
-                  <Form.Control
+                  <Form.Select
                     as="select"
                     name="categoria_reparo"
                     value={formData.categoria_reparo}
@@ -430,7 +435,7 @@ const OrdemDeReparacaoForm = () => {
                     <option value="engine overhaul">Reparo de Motor</option>
                     <option value="suspension and steering">Suspensão e Direção</option>
                     <option value="transmission repair">Reparo de Transmissão</option>
-                  </Form.Control>
+                  </Form.Select>
                 </div>
                 <Button
                   className="links-acessos px-2 border-radius-zero"
@@ -485,7 +490,7 @@ const OrdemDeReparacaoForm = () => {
               <Form.Label>Filial <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><FaHome fontSize={20} color="#0070fa" /></span>
-                <Form.Control
+                <Form.Select
                   as="select" // Muda o tipo para select
                   name="filial"
                   value={formData.filial}
@@ -498,7 +503,7 @@ const OrdemDeReparacaoForm = () => {
                   <option value="filial2">Filial 2</option>
                   <option value="filial3">Filial 3</option>
                   {/* Adicione mais opções conforme necessário */}
-                </Form.Control>
+                </Form.Select>
               </div>
             </Form.Group>
           </Col>
@@ -511,7 +516,7 @@ const OrdemDeReparacaoForm = () => {
               <Form.Label>Status <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
                 <span className="input-group-text"><FaCircle fontSize={20} color="#0070fa" /></span>
-                <Form.Control
+                <Form.Select
                   as="select"
                   name="status"
                   value={formData.status}
@@ -521,7 +526,7 @@ const OrdemDeReparacaoForm = () => {
                   <option value="pendente">Pendente</option>
                   <option value="em andamento">Em Andamento</option>
                   <option value="concluido">Concluído</option>
-                </Form.Control>
+                </Form.Select>
               </div>
             </Form.Group>
           </Col>
@@ -750,11 +755,18 @@ const OrdemDeReparacaoForm = () => {
         </Row>
 
         <Row>
-          <Col xs={12} className="text-center">
-            <Button variant="primary" type="submit" size="lg" className="mt-5 links-acessos px-3 w-25 d-block mx-auto">
-              Salvar
-            </Button>
-          </Col>
+        <Button
+          variant="primary"
+          type="submit"
+          className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+          ) : (
+            "Salvar"
+          )}
+        </Button>
         </Row>
       </Form>
 
