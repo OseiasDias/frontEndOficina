@@ -137,8 +137,10 @@ export function FormularioCliente() {
       toast.success("Cliente cadastrado com sucesso!");
 
       setTimeout(() => {
+       
+        navigate('/clienteList');
         setIsLoading(false);
-        navigate('/clienteList'); // Redireciona para /clienteList
+         // Redireciona para /clienteList
       }, 4000); // 4000 milissegundos = 4 segundos
 
     } catch (error) {

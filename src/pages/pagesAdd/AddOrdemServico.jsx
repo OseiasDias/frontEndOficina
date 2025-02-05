@@ -25,6 +25,10 @@ const OrdemDeReparacaoForm = () => {
 
   //LOGICA DE CADASTRAR ORDEM DE REPARACAO
   const [isLoading, setIsLoading] = useState(false);
+  // Estado para armazenar os serviços
+  const [servicosVer, setServicosVer] = useState([]);
+  const [selectedServicosVer, setSelectedServicosVer] = useState([]);
+
 
   const [formData, setFormData] = useState({
     numero_trabalho: '',
@@ -48,7 +52,7 @@ const OrdemDeReparacaoForm = () => {
     status_test_mot: false,
     cobrar_test_mot: '',
     horas_reparacao: '' // Adiciona o campo horas_reparacao aqui
-   
+
   });
 
 
@@ -157,7 +161,7 @@ const OrdemDeReparacaoForm = () => {
 
 
 
- 
+
   useEffect(() => {
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().slice(0, 16); // Formato YYYY-MM-DDTHH:mm
@@ -179,10 +183,23 @@ const OrdemDeReparacaoForm = () => {
         setError('Erro ao carregar clientes');
         setLoading(false);
       });
+
+
+    const fetchServicosVer = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/servicos');
+        const data = await response.json();
+        setServicosVer(data); // Armazenar os serviços no estado
+      } catch (error) {
+        console.error('Erro ao buscar serviços:', error);
+      }
+    };
+
+    fetchServicosVer();
   }, []);
 
 
- 
+
 
   // Função para pesquisa de cliente
   const handleSearch = (e) => {
@@ -229,7 +246,7 @@ const OrdemDeReparacaoForm = () => {
 
   //LOGICA PARA OPERACOES DO VEICULOS
 
- 
+
 
   const navigate = useNavigate();  // Usando o useNavigate para redirecionamento após o sucesso
 
@@ -253,7 +270,7 @@ const OrdemDeReparacaoForm = () => {
       // Notificação de sucesso
       toast.success('Ordem de Reparação criada com sucesso!', {
         // Especificando a duração de 5 segundos (5000ms)
-       
+
         autoClose: 5000
       });
 
@@ -293,6 +310,35 @@ const OrdemDeReparacaoForm = () => {
       </div>
     );
   }
+
+
+
+  //CONFIGURACAO PARA VIZUALIZAR SERVICOS
+
+
+  // Função para lidar com a seleção dos checkboxes
+  const handleCheckboxChangeVer = (e) => {
+    const { value, checked } = e.target;
+
+    // Atualizar o estado dos serviços selecionados
+    setSelectedServicosVer((prevSelectedVer) => {
+      if (checked) {
+        // Adiciona o serviço selecionado
+        return [...prevSelectedVer, value];
+      } else {
+        // Remove o serviço desmarcado
+        return prevSelectedVer.filter((servicoVer) => servicoVer !== value);
+      }
+    });
+  };
+
+  // Função para enviar os dados do formulário
+  /*const handleSubmitVer = (e) => {
+    e.preventDefault();
+    console.log('Serviços selecionados:', selectedServicosVer);
+    // Aqui você pode enviar os dados para um backend, se necessário
+  };*/
+
 
 
   return (
@@ -551,25 +597,27 @@ const OrdemDeReparacaoForm = () => {
           </Col>
         </Row>
 
+      
+
         <Row className="mb-3">
-          
-            <Col xs={12} md={6}>
-              <Form.Group controlId="horas_reparacao">
-                <Form.Label>Horas de Reparação</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text"><FaClock fontSize={20} color="#0070fa" /></span>
-                  <Form.Control
-                    type="number"
-                    name="horas_reparacao"
-                    value={formData.horas_reparacao}
-                    onChange={handleChange}
-                    placeholder="Digite o número de horas de reparação"
-                    min={1}
-                  />
-                </div>
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={6}>
+
+          <Col xs={12} md={6}>
+            <Form.Group controlId="horas_reparacao">
+              <Form.Label>Horas de Reparação</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text"><FaClock fontSize={20} color="#0070fa" /></span>
+                <Form.Control
+                  type="number"
+                  name="horas_reparacao"
+                  value={formData.horas_reparacao}
+                  onChange={handleChange}
+                  placeholder="Digite o número de horas de reparação"
+                  min={1}
+                />
+              </div>
+            </Form.Group>
+          </Col>
+          <Col xs={12} md={6}>
             <Form.Group controlId="data_final_saida">
               <Form.Label>Data Final de Saída <span className="text-danger">*</span></Form.Label>
               <div className="input-group">
@@ -584,10 +632,44 @@ const OrdemDeReparacaoForm = () => {
               </div>
             </Form.Group>
           </Col>
-      
 
-         
+
+
         </Row>
+
+        <div>
+          <h6 className="text-uppercase my-4">Selecione os serviços desejados</h6>
+
+          <Row className="mb-3">
+
+            {servicosVer.length > 0 ? (
+
+              servicosVer.map((servicoVer) => (
+                <>
+                  <Col xs={12} md={6} lg={4}>
+                    <Form.Group controlId={servicoVer.id} key={servicoVer.id}>
+                      <Form.Check
+                        type="checkbox"
+                        id={servicoVer.id}
+                        name="servicos"
+                        value={servicoVer.nome_servico}
+                        onChange={handleCheckboxChangeVer}
+                        label={servicoVer.nome_servico}
+                      />
+                    </Form.Group>
+                  </Col>
+                </>
+              ))
+
+            ) : (
+              <p>Carregando serviços...</p>
+            )}
+
+          </Row>
+
+
+          <button type="submit">Confirmar Pedido</button>
+        </div>
 
         <h6 className="mt-5">DETALHES ADICIONAIS</h6>
         <hr />
@@ -756,18 +838,18 @@ const OrdemDeReparacaoForm = () => {
         </Row>
 
         <Row>
-        <Button
-          variant="primary"
-          type="submit"
-          className="mt-5 w-25 d-block mx-auto links-acessos px-5"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-          ) : (
-            "Salvar"
-          )}
-        </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            className="mt-5 w-25 d-block mx-auto links-acessos px-5"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+            ) : (
+              "Salvar"
+            )}
+          </Button>
         </Row>
       </Form>
 

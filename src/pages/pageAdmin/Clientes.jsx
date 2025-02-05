@@ -72,8 +72,8 @@ export function TabelaVizualizarClient() {
 
   // Colunas da tabela
   const columns = [
-    { name: "Número Cliente", selector: (row) => row.numero_cliente || "Sem informação" },  // Nova coluna para numero_cliente
-    { name: "Nome Exibido", selector: (row) => row.primeiro_nome || "Sem informação" },
+    { name: "Nº Cliente", selector: (row) => row.numero_cliente || "Sem informação" },  // Nova coluna para numero_cliente
+    { name: "Nome", selector: (row) => row.primeiro_nome || "Sem informação" },
     { name: "Sobrenome", selector: (row) => row.sobrenome || "Sem informação" },
     { name: "Email", selector: (row) => row.email || "Sem informação" },
     { name: "Celular", selector: (row) => row.celular || "Sem informação" },
@@ -110,8 +110,10 @@ export function TabelaVizualizarClient() {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/clientes/");
       if (Array.isArray(response.data)) {
-        setRecords(response.data);
-        setOriginalRecords(response.data);
+        // Ordena os registros pela data de criação, do mais recente para o mais antigo
+        const sortedData = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setRecords(sortedData);
+        setOriginalRecords(sortedData);
       } else {
         console.error("Os dados retornados não contêm um array de clientes:", response.data);
         throw new Error("Os dados retornados não contêm um array de clientes.");
@@ -122,7 +124,8 @@ export function TabelaVizualizarClient() {
     } finally {
       setLoading(false);
     }
-  }
+  };
+  
 
   useEffect(() => {
     fetchData();
