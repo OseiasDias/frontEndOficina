@@ -27,7 +27,9 @@ const OrdemDeReparacaoForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   // Estado para armazenar os serviços
   const [servicosVer, setServicosVer] = useState([]);
-  const [selectedServicosVer, setSelectedServicosVer] = useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [selectedServices, setSelectedServices] = useState([]);
+
 
 
   const [formData, setFormData] = useState({
@@ -73,9 +75,10 @@ const OrdemDeReparacaoForm = () => {
       console.error('Erro ao buscar último ID:', error);
     }
   };
-
+  const ordemDeReparacaoId = ultimoId;
   // Gerar o número da ordem no formato "OR0{ultimoId}"
   const gerarNumeroOrdem = (id) => {
+    
     if (id !== null) {
       const numeroOrdem = `OR00${id}`;
       setFormData(prevState => ({
@@ -149,7 +152,7 @@ const OrdemDeReparacaoForm = () => {
 
   //========================(FIM DA LOGICA DE MOdails)===========================
 
-
+ 
 
 
   //LOGICA PARA OPERACOES DO CLIENTES
@@ -289,6 +292,28 @@ const OrdemDeReparacaoForm = () => {
         autoClose: 5000 // Definindo tempo do erro também
       });
     }
+
+
+
+
+    //SErvicos
+
+    event.preventDefault();
+
+    // Enviar cada serviço selecionado para a API
+    for (const servicoId of selectedServices) {
+      const data = {
+        ordem_de_reparacao_id: ordemDeReparacaoId,
+        servico_id: servicoId,
+      };
+
+      try {
+        await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-servico", data);
+        console.log(`Serviço ${servicoId} cadastrado com sucesso.`);
+      } catch (error) {
+        console.error("Erro ao cadastrar serviço", error);
+      }
+    }
   };
 
   if (loading) {
@@ -315,30 +340,21 @@ const OrdemDeReparacaoForm = () => {
 
   //CONFIGURACAO PARA VIZUALIZAR SERVICOS
 
+  // Função para lidar com a mudança dos checkboxes
+  const handleCheckboxChangeVer = (event) => {
+    const { value, checked } = event.target;
+    const serviceId = Number(value);  // O valor é o id do serviço
 
-  // Função para lidar com a seleção dos checkboxes
-  const handleCheckboxChangeVer = (e) => {
-    const { value, checked } = e.target;
-
-    // Atualizar o estado dos serviços selecionados
-    setSelectedServicosVer((prevSelectedVer) => {
-      if (checked) {
-        // Adiciona o serviço selecionado
-        return [...prevSelectedVer, value];
-      } else {
-        // Remove o serviço desmarcado
-        return prevSelectedVer.filter((servicoVer) => servicoVer !== value);
-      }
-    });
+    if (checked) {
+      // Adiciona o id ao array de serviços selecionados
+      setSelectedServices((prev) => [...prev, serviceId]);
+    } else {
+      // Remove o id do array de serviços selecionados
+      setSelectedServices((prev) => prev.filter((id) => id !== serviceId));
+    }
   };
 
-  // Função para enviar os dados do formulário
-  /*const handleSubmitVer = (e) => {
-    e.preventDefault();
-    console.log('Serviços selecionados:', selectedServicosVer);
-    // Aqui você pode enviar os dados para um backend, se necessário
-  };*/
-
+ 
 
 
   return (
@@ -597,7 +613,7 @@ const OrdemDeReparacaoForm = () => {
           </Col>
         </Row>
 
-      
+
 
         <Row className="mb-3">
 
@@ -636,40 +652,32 @@ const OrdemDeReparacaoForm = () => {
 
 
         </Row>
-
         <div>
-          <h6 className="text-uppercase my-4">Selecione os serviços desejados</h6>
+      <h6 className="text-uppercase my-4">Selecione os serviços desejados</h6>
 
-          <Row className="mb-3">
+      <Row className="mb-3">
+        {servicosVer.length > 0 ? (
+          servicosVer.map((servicoVer) => (
+            <Col xs={12} md={6} lg={4} key={servicoVer.id}>
+              <Form.Group controlId={servicoVer.id}>
+                <Form.Check
+                  type="checkbox"
+                  id={servicoVer.id}
+                  name="servicos"
+                  value={servicoVer.id}  // Agora o valor é o id do serviço
+                  onChange={handleCheckboxChangeVer}
+                  label={servicoVer.nome_servico}
+                />
+              </Form.Group>
+            </Col>
+          ))
+        ) : (
+          <p>Carregando serviços...</p>
+        )}
+      </Row>
 
-            {servicosVer.length > 0 ? (
-
-              servicosVer.map((servicoVer) => (
-                <>
-                  <Col xs={12} md={6} lg={4}>
-                    <Form.Group controlId={servicoVer.id} key={servicoVer.id}>
-                      <Form.Check
-                        type="checkbox"
-                        id={servicoVer.id}
-                        name="servicos"
-                        value={servicoVer.nome_servico}
-                        onChange={handleCheckboxChangeVer}
-                        label={servicoVer.nome_servico}
-                      />
-                    </Form.Group>
-                  </Col>
-                </>
-              ))
-
-            ) : (
-              <p>Carregando serviços...</p>
-            )}
-
-          </Row>
-
-
-          <button type="submit">Confirmar Pedido</button>
-        </div>
+      <Button onClick={handleSubmit} className="d-none">Cadastrar Serviços</Button>
+    </div>
 
         <h6 className="mt-5">DETALHES ADICIONAIS</h6>
         <hr />

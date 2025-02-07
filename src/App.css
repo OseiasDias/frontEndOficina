@@ -221,3 +221,15 @@
 }
 
 
+.btnSIZE,.btn-sizer{
+    font-size: .8em;
+
+}
+
+.btn-sizer{
+    margin-bottom: -20px;
+}
+
+.widthEspecial{
+    width: 200px;
+}
