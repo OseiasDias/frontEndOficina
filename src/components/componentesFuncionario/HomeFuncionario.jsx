@@ -1,19 +1,18 @@
 //Imports do Menu
 
 import { useState } from 'react';
-import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaBook, FaUserAlt, FaClipboard } from 'react-icons/fa'; // Ícones de Font Awesome
+import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaBook, FaClipboard } from 'react-icons/fa'; // Ícones de Font Awesome
 import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
+
 import axios from 'axios';
 
 
-
+import LogoType from "../../assets/lgo.png";
 
 /* eslint-disable react/prop-types */
 import "../../css/StylesFuncionario/cartaz.css";
@@ -259,7 +258,6 @@ export default function Funcionario() {
   const [showAguardarPecasModal, setShowAguardarPecasModal] = useState(false); // Modal de "Aguardar Peças"
   const [showAlmocoModal, setShowAlmocoModal] = useState(false); // Modal de "Almoço"
   const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Modal de "Formação"
-  const [showPerfilModal, setShowPerfilModal] = useState(false); // Modal de "Perfil"
   const [showSairModal, setShowSairModal] = useState(false); // Modal de "Sair"
   const [numeroOR, setNumeroOR] = useState(''); // Estado para armazenar o número da OR
 
@@ -285,8 +283,6 @@ export default function Funcionario() {
   const abrirFormacaoModal = () => setShowFormacaoModal(true);
   const fecharFormacaoModal = () => setShowFormacaoModal(false);
 
-  const abrirPerfilModal = () => setShowPerfilModal(true);
-  const fecharPerfilModal = () => setShowPerfilModal(false);
 
   const abrirSairModal = () => setShowSairModal(true);
   const fecharSairModal = () => setShowSairModal(false);
@@ -324,7 +320,6 @@ export default function Funcionario() {
     fecharAguardarPecasModal();    // Exemplo para a modal de "Aguardar Peças"
     fecharAlmocoModal();           // Exemplo para a modal de "Almoço"
     fecharFormacaoModal();         // Exemplo para a modal de "Formação"
-    fecharPerfilModal();           // Exemplo para a modal de "Perfil"
     fecharSairModal();             // Exemplo para a modal de "Sair"
   };
 
@@ -346,12 +341,12 @@ export default function Funcionario() {
 
   // Função para manipular o campo de número da OR
   //const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
-  const [idOrdemDeReparacao,setIdOrdemDeReparacao] = useState(1);
+  const [idOrdemDeReparacao, setIdOrdemDeReparacao] = useState(1);
   // Função para enviar a busca e procurar pela OR
   const handleSubmitORSend = async (e) => {
     e.preventDefault();
     setLoading(true);  // Iniciar carregamento
-   
+
     try {
       const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/numero-trabalho/${numeroOR}`);
       if (response.data) {
@@ -366,8 +361,8 @@ export default function Funcionario() {
     } finally {
       setLoading(false);  // Finalizar carregamento
     }
-  
-    
+
+
   };
 
 
@@ -378,7 +373,7 @@ export default function Funcionario() {
   const [numeroTecnico, setNumeroTecnico] = useState(''); // Estado para armazenar o número do técnico
 
   // Função para abrir a modal
-  const abrirModalTecnico = () => setShowModalTecnico(true);
+  //const abrirModalTecnico = () => setShowModalTecnico(true);
 
   // Função para fechar a modal
   const fecharModalTecnico = () => setShowModalTecnico(false);
@@ -398,7 +393,7 @@ export default function Funcionario() {
 
   //==========================================|CONFIGURACOES PARA VER ORDEM DE REPARCAO|====================================================
 
-  
+
   const [ordemDeReparacao, setOrdemDeReparacao] = useState(null);
   const [clienteOrdemDeReparacao, setClienteOrdemDeReparacao] = useState(null);
   const [veiculoOrdemDeReparacao, setVeiculoOrdemDeReparacao] = useState(null);
@@ -466,7 +461,7 @@ export default function Funcionario() {
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
-      setErroOrdemDeReparacao("Erro ao procurar funcionário"); // Exibe erro de requisição
+      setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro de requisição
     }
   };
 
@@ -487,6 +482,13 @@ export default function Funcionario() {
       </div>
     );
   }
+
+  // Função para limpar os dados
+  const limparDadosModalTecnico = () => {
+    setNumeroTecnicoOrdemDeReparacao("");  // Limpa o valor do input
+    setFuncionarioOrdemDeReparacao(null);  // Limpa os dados do funcionário (caso existam)
+    setErroOrdemDeReparacao(null);  // Limpa qualquer erro (caso exista)
+  };
 
   //========================================================================================
 
@@ -529,7 +531,7 @@ export default function Funcionario() {
                   </li>
                   <li className='linhasMenu'>
                     <a href="#" title='Almoço' onClick={abrirAlmocoModal}>
-                      <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço {idOrdemDeReparacao}</span>
+                      <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço </span>
                     </a>
                   </li>
                   <li className='linhasMenu'>
@@ -537,11 +539,7 @@ export default function Funcionario() {
                       <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
-                    <a href="#" title='Perfil' onClick={abrirPerfilModal}>
-                      <FaUserAlt className='icone-menu' /> <span className='spanTitle'>Perfil</span>
-                    </a>
-                  </li>
+                
                   <li className='linhasMenu'>
                     <a href="#" title='Sair' onClick={abrirSairModal}>
                       <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
@@ -639,8 +637,73 @@ export default function Funcionario() {
                                         <td className="sizelinha">{ordemDeReparacao.numero_trabalho}</td>
                                       </tr>
                                     )}
+                                    {ordemDeReparacao?.categoria_reparo && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Categoria de Reparo</td>
+                                        <td className="sizelinha">{ordemDeReparacao.categoria_reparo}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.km_entrada && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">KM de Entrada</td>
+                                        <td className="sizelinha">{ordemDeReparacao.km_entrada}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.cobrar_reparo && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Valor Cobrado pelo Reparo</td>
+                                        <td className="sizelinha">{ordemDeReparacao.cobrar_reparo} kz</td>
+                                      </tr>
+                                    )}
+
+                                    {ordemDeReparacao?.status && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Status</td>
+                                        <td className="sizelinha">{ordemDeReparacao.status}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.garantia_dias && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Garantia (dias)</td>
+                                        <td className="sizelinha">{ordemDeReparacao.garantia_dias} dias</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.data_final_saida && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Data Final de Saída</td>
+                                        <td className="sizelinha">{new Date(ordemDeReparacao.data_final_saida).toLocaleDateString()}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.detalhes && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Detalhes</td>
+                                        <td className="sizelinha">{ordemDeReparacao.detalhes}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.defeito_ou_servico && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Defeito ou Serviço</td>
+                                        <td className="sizelinha">{ordemDeReparacao.defeito_ou_servico}</td>
+                                      </tr>
+                                    )}
+                                    {ordemDeReparacao?.observacoes && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Observações</td>
+                                        <td className="sizelinha">{ordemDeReparacao.observacoes}</td>
+                                      </tr>
+                                    )}
+
+
+
+                                    {ordemDeReparacao?.horas_reparacao && (
+                                      <tr>
+                                        <td className="fw-bold sizelinha">Horas de Reparação</td>
+                                        <td className="sizelinha">{ordemDeReparacao.horas_reparacao} horas</td>
+                                      </tr>
+                                    )}
                                   </tbody>
                                 </table>
+
 
                                 {/* Dados do Cliente */}
                                 <h6 className="h5emGe text-uppercase fw-bold">Informações do Cliente</h6>
@@ -652,55 +715,95 @@ export default function Funcionario() {
                                 </div>
 
                                 {/* Dados do Veículo */}
-                                <h6 className="h5emG text-uppercase fw-bold">Informações do Veículo</h6>
-                                <div className="border p-2 col-lg-12">
+                                <h6 className="h5emG text-uppercase fw-bold my-3">Informações do Veículo</h6>
+                                <div className="p-0 col-lg-12">
+                                  {/* Seção 1: Informações Básicas */}
                                   <div className="row">
                                     <div className="col-md-6">
-                                      <p><strong>Marca e Modelo:</strong> {veiculoOrdemDeReparacao?.marca_veiculo} {veiculoOrdemDeReparacao?.modelo_veiculo}</p>
-                                      <p><strong>Ano Modelo:</strong> {veiculoOrdemDeReparacao?.ano_modelo}</p>
+                                      <div className="border p-2">
+                                        <h5 className='mb-3'>Informações Básicas</h5>
+                                        <p><strong>Marca e Modelo:</strong> {veiculoOrdemDeReparacao?.marca_veiculo ?? "Sem Informação"} {veiculoOrdemDeReparacao?.modelo_veiculo ?? "Sem Informação"}</p>
+                                        <p><strong>Ano Modelo:</strong> {veiculoOrdemDeReparacao?.ano_modelo ?? "Sem Informação"}</p>
+                                        <p><strong>Tipo de Combustível:</strong> {veiculoOrdemDeReparacao?.combustivel ?? "Sem Informação"}</p>
+                                        <p><strong>Leitura do Odômetro:</strong> {veiculoOrdemDeReparacao?.leitura_odometro ? `${veiculoOrdemDeReparacao.leitura_odometro} km` : "Sem Informação"}</p>
+                                        <p><strong>Preço:</strong> {veiculoOrdemDeReparacao?.preco ? `${veiculoOrdemDeReparacao.preco} kz` : "Sem Informação"}</p>
+                                      </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                      <div className="border p-2">
+                                        <h5 className='mb-3'>Identificação do Veículo</h5>
+                                        <p><strong>Número do Chassi:</strong> {veiculoOrdemDeReparacao?.numero_chassi ?? "Sem Informação"}</p>
+                                        <p><strong>Número da Placa:</strong> {veiculoOrdemDeReparacao?.numero_placa ?? "Sem Informação"}</p>
+                                        <p><strong>Equipamento:</strong> {veiculoOrdemDeReparacao?.numero_equipamento ?? "Sem Informação"}</p>
+                                        <p><strong>Número do Motor:</strong> {veiculoOrdemDeReparacao?.numero_motor ?? "Sem Informação"}</p>
+                                        <p><strong>Número da Caixa:</strong> {veiculoOrdemDeReparacao?.numero_caixa ?? "Sem Informação"}</p>
+
+                                      </div>
                                     </div>
                                   </div>
+
+                                  {/* Seção 2: Detalhes Técnicos */}
+                                  <div className="row mt-3">
+                                    <div className="col-md-6">
+                                      <div className="border p-2">
+                                        <h5 className='mb-3'>Detalhes Técnicos</h5>
+                                        <p><strong>Data de Fabricação:</strong> {veiculoOrdemDeReparacao?.data_fabricacao ? new Date(veiculoOrdemDeReparacao.data_fabricacao).toLocaleDateString() : "Sem Informação"}</p>
+                                        <p><strong>Caixa de Velocidade:</strong> {veiculoOrdemDeReparacao?.caixa_velocidade ?? "Sem Informação"}</p>
+                                        <p><strong>Cor:</strong> {veiculoOrdemDeReparacao?.cor ?? "Sem Informação"}</p>
+                                        <p><strong>Motor:</strong> {veiculoOrdemDeReparacao?.motor ?? "Sem Informação"} ({veiculoOrdemDeReparacao?.tamanho_motor ?? "Sem Informação"})</p>
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  {/* Exibir Serviços */}
+                                  <div className="">
+                                    <h6 className="text-uppercase fw-bold my-4">Serviços da Ordem de Reparação</h6>
+                                    {loadingServicosOrdemDeReparacao ? (
+                                      <p>Carregando serviços...</p>
+                                    ) : (
+                                      <div className="row">
+                                        {servicosOrdemDeReparacao.length > 0 ? (
+                                          servicosOrdemDeReparacao.map((servicoOrdemDeReparacao) => (
+                                            <div className="col-12 col-md-6 my-2 col-lg-4" key={servicoOrdemDeReparacao.id}>
+                                              <div className="card mb-3 h-100">
+                                                <div className="card-body h-100 justify-content-between">
+                                                  <h6 className="card-title">{servicoOrdemDeReparacao.servico.nome_servico}</h6>
+                                                  <Button
+                                                    variant="primary"
+                                                    onClick={handleModalOrdemDeReparacaoOpen}
+                                                    className="d-block ms-auto links-acessos  float-right btn-sizer"
+                                                  >
+                                                    <HiArrowNarrowRight />
+                                                  </Button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))
+                                        ) : (
+                                          <p>Nenhum serviço encontrado para esta ordem de reparação.</p>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
+
+
+
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Exibir Serviços */}
-                        <div className="">
-                          <h6 className="text-uppercase my-4">Serviços da Ordem de Reparação</h6>
-                          {loadingServicosOrdemDeReparacao ? (
-                            <p>Carregando serviços...</p>
-                          ) : (
-                            <div className="row">
-                              {servicosOrdemDeReparacao.length > 0 ? (
-                                servicosOrdemDeReparacao.map((servicoOrdemDeReparacao) => (
-                                  <div className="col-12 col-md-6 my-2 col-lg-4" key={servicoOrdemDeReparacao.id}>
-                                    <div className="card mb-3 h-100">
-                                      <div className="card-body h-100 justify-content-between">
-                                        <h6 className="card-title">{servicoOrdemDeReparacao.servico.nome_servico}</h6>
-                                        <Button
-                                          variant="primary"
-                                          onClick={handleModalOrdemDeReparacaoOpen}
-                                          className="d-block ms-auto links-acessos  float-right btn-sizer"
-                                        >
-                                          <HiArrowNarrowRight />
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <p>Nenhum serviço encontrado para esta ordem de reparação.</p>
-                              )}
-                            </div>
-                          )}
-                        </div>
 
-                        {/* Modal para Número do Técnico */}
+
                         <Modal
                           show={isModalOrdemDeReparacaoOpen}
-                          onHide={handleModalOrdemDeReparacaoClose}
+                          onHide={() => {
+                            handleModalOrdemDeReparacaoClose(); // Fechar a modal
+                            limparDadosModalTecnico(); // Limpar os dados
+                          }}
                           backdrop="static"
                           keyboard={false}
                           scrollable
@@ -721,6 +824,10 @@ export default function Funcionario() {
                                     value={numeroTecnicoOrdemDeReparacao}
                                     onChange={handleNumeroTecnicoOrdemDeReparacaoChange}
                                   />
+                                  <Button variant="primary" onClick={handleSubmitTecnicoOrdemDeReparacao} className="links-ass">
+              
+                                      <MdPersonSearch fontSize={22} />
+                                  </Button>
                                 </div>
                               </Form.Group>
                             </Form>
@@ -737,26 +844,25 @@ export default function Funcionario() {
                             )}
                           </Modal.Body>
                           <Modal.Footer>
+                            <img src={LogoType} alt="..." className='d-block me-auto ' width={150} height={50} />
 
-                            {/* Condicional para exibir o botão correto */}
-                            {funcionarioOrdemDeReparacao ? (
-                             <button
-                             onClick={() => {
-                               adicionarOrdem("OR" + (ordens.length + 1));
-                               fecharModalOR(); // Fecha a primeira modal
-                               fecharModalTecnico(); // Fecha a segunda modal
-                             }}
-                             className="btn btn-primary"
-                           >
-                             Começar
-                           </button>
-                            ) : (
-                              <Button variant="primary" onClick={handleSubmitTecnicoOrdemDeReparacao} className="links-acessos">
-                                <HiArrowNarrowRight />
-                              </Button>
+                            {/* Exibe o botão "Começar" somente se o funcionário for encontrado */}
+                            {funcionarioOrdemDeReparacao && (
+                              <button
+                                onClick={() => {
+                                  adicionarOrdem("OR" + (ordens.length + 1));
+                                  fecharModalOR(); // Fecha a primeira modal
+                                  fecharModalTecnico(); // Fecha a segunda modal
+                                }}
+                                className="btn btn-primary"
+                              >
+                                Começar
+                              </button>
                             )}
                           </Modal.Footer>
                         </Modal>
+
+
                       </div>
                     </>
 
@@ -764,11 +870,8 @@ export default function Funcionario() {
                 </Modal.Body>
                 <Modal.Footer>
 
-                  {ordem && (
-                    <button className="links-acessos btn px-5" onClick={abrirModalTecnico}>
-                      Começar
-                    </button>
-                  )}
+                  <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
+
                 </Modal.Footer>
               </Modal>
 
@@ -910,38 +1013,7 @@ export default function Funcionario() {
                 </Modal.Footer>
               </Modal>
 
-              {/* Modal para Perfil */}
-              <Modal scrollable show={showPerfilModal} onHide={fecharPerfilModal} size='xl'>
-                <Modal.Header closeButton>
-                  <Modal.Title>Perfil</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Tabs
-                    defaultActiveKey="profile"
-                    id="uncontrolled-tab-example"
-                    className="mb-3"
-                  >
-                    <Tab eventKey="home" title="Dados">
-                      Tab content for Home
-                    </Tab>
-                    <Tab eventKey="profile" title="Editar">
-                      Tab content for Profile
-                    </Tab>
-                    <Tab eventKey="contact" title="Mudar Senha">
-                      Tab content for Contact
-                    </Tab>
-                  </Tabs>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                    Não
-                  </Button>
-                  <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                    Sim
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-
+            
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
@@ -979,13 +1051,13 @@ export default function Funcionario() {
                 <hr />
 
 
-             {/**  <button
+                {/**  <button
                   onClick={() => adicionarOrdem("OR" + (ordens.length + 1))}
                   className="btn btn-primary"
                 >
                   Adicionar Ordem
                 </button>
-                 */} 
+                 */}
 
 
 
