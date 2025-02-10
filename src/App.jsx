@@ -87,6 +87,7 @@ import AddAgendamentoAdmin  from "./pages/pagesAdd/AddAgendamentoAdmin.jsx";
 import Cartaz from "./components/componentesFuncionario/Cartaz.jsx";
 import AcessoEmail from "./components/componentesFuncionario/AcessoEmail.jsx";
 import HomeFuncionario from "./components/componentesFuncionario/HomeFuncionario.jsx";
+import Tela from "./components/componentesFuncionario/TelaActividade.jsx";
 
 
 
@@ -793,10 +794,17 @@ const App = () => {
                      {/**Routes de Add de Entidades */}
               <Route path="/homeFuncionario" element={
                 <ProtectedRouteFuncionario>
-                  <HomeFuncionario />
+                  <HomeFuncionario  displayF="d-none" />
                 </ProtectedRouteFuncionario>
               } />
+               
 
+
+               <Route path="/projectarTela" element={
+                <ProtectedRouteFuncionario>
+                  <Tela />
+                </ProtectedRouteFuncionario>
+              } />
              
 
 

@@ -7,24 +7,29 @@
 }
 
 .minha {
-  position: absolute;          /* Posiciona a div de forma absoluta em relação ao seu elemento pai */
-  top: 50%;                    /* Coloca a div no meio da altura */
-  left: 50%;                   /* Coloca a div no meio da largura */
-  transform: translate(-50%, -50%);  /* Move a div para que seu centro seja alinhado ao centro da tela */
+  position: absolute;
+  /* Posiciona a div de forma absoluta em relação ao seu elemento pai */
+  top: 50%;
+  /* Coloca a div no meio da altura */
+  left: 50%;
+  /* Coloca a div no meio da largura */
+  transform: translate(-50%, -50%);
+  /* Move a div para que seu centro seja alinhado ao centro da tela */
 }
 
 
 .sizeTitulo {
   font-size: 3.5em;
 }
+
 @media (max-width: 768px) {
   .sizeTitulo {
     font-size: 3em;
     margin-bottom: 17px;
   }
+
   .sizeSubTitulo {
-    font-size: 2em !important
-        ;
+    font-size: 2em !important;
     margin-bottom: 17px;
   }
 }
@@ -75,6 +80,7 @@
   background-color: #000000;
   border: 2px solid #fff;
 }
+
 .sizeTitu {
   font-size: 3em !important;
 }
@@ -82,11 +88,12 @@
 .fundoIcone {
   background-color: #0070fa !important;
 }
-.fundoIconeRigth{
+
+.fundoIconeRigth {
   background-color: #0070fa !important;
   border-top-left-radius: 0px !important;
   border-bottom-left-radius: 0px !important;
-    border-top-right-radius: 20px !important;
+  border-top-right-radius: 20px !important;
   border-bottom-right-radius: 20px !important;
 
 }
@@ -177,14 +184,17 @@
 .logoBig {
   display: none !important;
 }
+
 .logoSmall {
   display: none !important;
 }
+
 @media (max-width: 768px) {
   .spanTitle {
     border: 1px solid #fff;
     display: none;
   }
+
   .logoSmall {
     display: block !important;
   }
@@ -204,29 +214,53 @@
 }
 
 
-.btnReset{
-    background-color: #000000;
-    border: none;
+.btnReset {
+  background-color: #000000;
+  border: none;
 }
 
-.text-rigth{
-    text-align: right !important;
-    
+.text-rigth {
+  text-align: right !important;
+
 }
 
 
-.padingCimaBar{
+.padingCimaBar {
   height: 100% !important;
 }
 
-.bordarLeft{
+.bordarLeft {
   border-left: 4px solid var(--corPrimaria);
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
- 
+
 }
 
 
-.links-ass{
-  background-color:var(--corPrimaria) !important;
+.links-ass {
+  background-color: var(--corPrimaria) !important;
+}
+
+
+.flutuarIcones {
+  float: right;
+  margin-top: 50px;
+  font-weight: bolder !important;
+  font-size: 2em;
+  transition: .300ms all ease-in;
+  cursor: pointer;
+}
+
+.flutuarIcones:hover {
+  transform: scale(1.1);
+}
+
+.mEr {
+
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  transition: .300ms all ease-in;
+  display: block;
+  cursor: pointer;
 }

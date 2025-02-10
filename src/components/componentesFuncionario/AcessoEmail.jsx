@@ -9,6 +9,7 @@ import { Button, Form, Alert } from "react-bootstrap"; // Para estilos mais ráp
 import { MdLogin, MdPassword, MdVisibility, MdVisibilityOff } from "react-icons/md"; // Ícones para senha
 import { toast, ToastContainer } from "react-toastify"; // Importando Toastify para notificações
 import "react-toastify/dist/ReactToastify.css"; // Importando o estilo do Toastify
+import { BsArrowsFullscreen } from "react-icons/bs";
 
 export default function Cartaz() {
   const navigate = useNavigate();
@@ -21,17 +22,17 @@ export default function Cartaz() {
   // Função para lidar com o envio do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Validação simples
     if (!password) {
       setErrorMessage("Por favor, preencha o campo senha.");
       return;
     }
-  
+
     try {
       // Exibe a senha antes de enviar, para confirmar que está correta
       console.log("Senha a ser enviada: ", password); // Para verificar no console
-  
+
       // Enviar a senha para a API para verificação
       const response = await fetch("http://127.0.0.1:8000/api/senhas/1/verificar", {
         method: "POST",
@@ -40,12 +41,12 @@ export default function Cartaz() {
         },
         body: JSON.stringify({ senha: password }), // Envia a senha no corpo da requisição
       });
-  
+
       const data = await response.json(); // Para capturar a resposta JSON
-  
+
       // Exibe a resposta da API para debugging
       console.log("Resposta da API: ", data);
-  
+
       if (response.ok) {
         // Caso a senha seja válida, redireciona para a página desejada
         toast.success("Senha correta! Acessando...");
@@ -59,22 +60,31 @@ export default function Cartaz() {
       console.error(error); // Exibe o erro para debugging
     }
   };
-  
+
 
   // Função para alternar a visibilidade da senha
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  return (
-    <div className="seccao-cartaz">
-      <div className="container">
-        <img src={LogoMarca} alt="Logo branco da biturbo" className="d-block mx-auto imagemLogo" />
+  const handleRedirect = () => {
+    navigate("/projectarTela"); // Redireciona para a página /projectarTela
+  };
 
+
+  return (
+    <div className="seccao-cartaz">   
+  
+      <div className="container">
+      <BsArrowsFullscreen  onClick={handleRedirect} className="flutuarIcones"/>
+        <img src={LogoMarca} alt="Logo branco da biturbo" className="d-block mx-auto imagemLogo" />
+     
         <div className="row min-vh-75 d-flex align-items-center justify-content-between mx-auto">
           <div className="col-lg-6 col-md-6">
             <img src={imgAcesso} alt="..." className="w-100 d-block imagemLog" />
           </div>
+         
+
 
           <div className="col-lg-5 col-md-6">
             <h3 className="fw-bold sizeTitu">
@@ -117,7 +127,13 @@ export default function Cartaz() {
                 >
                   Acessar <MdLogin />
                 </Button>
+
+
+
+
               </Form>
+             
+            
             </div>
           </div>
         </div>

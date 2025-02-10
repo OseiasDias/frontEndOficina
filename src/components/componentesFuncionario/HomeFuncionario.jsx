@@ -6,8 +6,9 @@ import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
+import {  MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
+import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 
 import axios from 'axios';
 
@@ -29,21 +30,8 @@ import { HiArrowNarrowRight } from "react-icons/hi";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Não se esqueça de importar o CSS do bootstrap
 import { IoMdPerson } from 'react-icons/io';
 import { FaCheckDouble } from 'react-icons/fa';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { BsArrowsFullscreen } from 'react-icons/bs';
+import { CgCloseO } from 'react-icons/cg';
 
 
 
@@ -212,13 +200,15 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar 
 
 
 
-export default function Funcionario() {
+export default function Funcionario({ display ,displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
   const [ordens, setOrdens] = useState([
     { nomeMecanico: "Felipe Jose", numeroOrdem: "OR0012", estado: "Reparando", rodando: true },
     { nomeMecanico: "Paulo Assis", numeroOrdem: "OR0011", estado: "Reparando", rodando: false },
     { nomeMecanico: "Emanuel Dias", numeroOrdem: "OR0015", estado: "Reparando", rodando: false },
   ]);
+  const navigate = useNavigate(); // Hook para navegação
+
 
   // Função para adicionar uma nova ordem de serviço e cronômetro
   const adicionarOrdem = (numeroOrdem) => {
@@ -491,6 +481,15 @@ export default function Funcionario() {
   };
 
   //========================================================================================
+  const handleRedirect = () => {
+    navigate("/projectarTela"); // Redireciona para a página /projectarTela
+
+  };
+
+  const handleRedirectRegresso = () => {
+    navigate("/homeFuncionario"); // Redireciona para a página /projectarTela
+
+  };
 
   return (
     <div className="seccao-cartaz">
@@ -498,7 +497,7 @@ export default function Funcionario() {
         <div className="d-flex">
           <div className="menu-funionario">
 
-            <div className="menu-barra">
+            <div className={`menu-barra ${display}`}>
               <nav className='menuLateral vh-100'>
                 <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="280px" height="100px" />
                 <img src={LogoSmall} alt="logotipo small" className='my-3 ms-4 logoSmall' width="45px" height="37px" />
@@ -538,18 +537,29 @@ export default function Funcionario() {
                     <a href="#" title='Formação' onClick={abrirFormacaoModal}>
                       <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
                     </a>
+                  </li> 
+                  
+                  <li className='linhasMenu' onClick={handleRedirect}>
+                    <a href="#" title='Projectar' >
+                      <BsArrowsFullscreen className='icone-menu' />
+
+                      <span className='spanTitle'>Projectar </span>
+                    </a>
                   </li>
-                
+
                   <li className='linhasMenu'>
                     <a href="#" title='Sair' onClick={abrirSairModal}>
                       <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
                     </a>
                   </li>
+
+               
                 </ul>
               </nav>
 
 
             </div>
+
 
             <div className="modais">
 
@@ -825,8 +835,8 @@ export default function Funcionario() {
                                     onChange={handleNumeroTecnicoOrdemDeReparacaoChange}
                                   />
                                   <Button variant="primary" onClick={handleSubmitTecnicoOrdemDeReparacao} className="links-ass">
-              
-                                      <MdPersonSearch fontSize={22} />
+
+                                    <MdPersonSearch fontSize={22} />
                                   </Button>
                                 </div>
                               </Form.Group>
@@ -1013,7 +1023,7 @@ export default function Funcionario() {
                 </Modal.Footer>
               </Modal>
 
-            
+
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
@@ -1035,33 +1045,29 @@ export default function Funcionario() {
           </div>
 
           <div className="container-fluid">
+
             <div className="row">
+            <CgCloseO fontSize={30} onClick={handleRedirectRegresso} className={`mEr ${displayF}`} />
+
               <div className="div-feed borderKing col-lg-12 vh-100 h-100 padingCimaBar">
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
-                {ordens.map((ordem, index) => (
-                  <Cronometro
-                    key={index}
-                    nomeMecanico={ordem.nomeMecanico}
-                    numeroOrdem={ordem.numeroOrdem}
-                    estado={ordem.estado}
-                    rodando={ordem.rodando} // Passa o estado "rodando" para o Cronometro
-                    iniciarPausar={iniciarPausar} // Passa a função de iniciar/pausar
-                  />
-                ))}
+
+                <div className="f">
+                  {ordens.map((ordem, index) => (
+                    <Cronometro
+                      key={index}
+                      nomeMecanico={`${funcionarioOrdemDeReparacao?.nome} ${funcionarioOrdemDeReparacao?.sobrenome}`}
+                      numeroOrdem={ordemDeReparacao?.numero_trabalho}
+                      estado={ordem.estado}
+                      rodando={ordem.rodando} // Passa o estado "rodando" para o Cronometro
+                      iniciarPausar={iniciarPausar} // Passa a função de iniciar/pausar
+                    />
+                  ))}
+                </div>
                 <hr />
 
-
-                {/**  <button
-                  onClick={() => adicionarOrdem("OR" + (ordens.length + 1))}
-                  className="btn btn-primary"
-                >
-                  Adicionar Ordem
-                </button>
-                 */}
-
-
-
               </div>
+
             </div>
           </div>
         </div>
@@ -1069,15 +1075,3 @@ export default function Funcionario() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-//Menu funcionario
-
-
-
