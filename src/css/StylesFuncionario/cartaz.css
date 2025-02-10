@@ -218,3 +218,12 @@
 .padingCimaBar{
   height: 100% !important;
 }
+
+.bordarLeft{
+  border-left: 4px solid var(--corPrimaria);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+ 
+}
+
+

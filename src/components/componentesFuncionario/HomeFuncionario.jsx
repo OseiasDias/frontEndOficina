@@ -208,258 +208,6 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar 
 
 
 
-// eslint-disable-next-line react/prop-types
-export function VerORSeg({ idUnico, botao }) {
-  const id = idUnico;
-  const [ordem, setOrdem] = useState(null);
-  const [cliente, setCliente] = useState(null);
-  const [veiculo, setVeiculo] = useState(null);
-  const [empresaData, setEmpresaData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [servicos, setServicos] = useState([]);
-  const [loadingServices, setLoadingServices] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controle da visibilidade da modal
-  const [numeroTecnico, setNumeroTecnico] = useState(""); // Valor do número do técnico
-  const [funcionario, setFuncionario] = useState(null); // Para armazenar os dados do funcionário
-  const [erro, setErro] = useState(""); // Para exibir mensagem de erro caso não encontre o funcionário
-
-  useEffect(() => {
-    const fetchDados = async () => {
-      try {
-        const ordemResponse = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/${id}`);
-        setOrdem(ordemResponse.data);
-
-        const clienteResponse = await axios.get(`http://127.0.0.1:8000/api/clientes/${ordemResponse.data.cliente_id}`);
-        setCliente(clienteResponse.data);
-
-        const veiculoResponse = await axios.get(`http://127.0.0.1:8000/api/veiculos/${ordemResponse.data.veiculo_id}`);
-        setVeiculo(veiculoResponse.data);
-
-        const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
-        setEmpresaData(empresaResponse.data);
-
-        const servicosResponse = await axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-servicoU/${id}`);
-        setServicos(servicosResponse.data);
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      } finally {
-        setLoading(false);
-        setLoadingServices(false);
-      }
-    };
-
-    fetchDados();
-  }, [id]);
-
-  const handleModalClose = () => {
-    setIsModalOpen(false); // Fecha a modal
-  };
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true); // Abre a modal
-  };
-
-  const handleNumeroTecnicoChange = (e) => {
-    setNumeroTecnico(e.target.value); // Atualiza o número do técnico
-  };
-
-  const handleSubmitTecnico = async () => {
-    try {
-      // Realiza a busca do funcionário
-      const response = await axios.get(`http://127.0.0.1:8000/api/funcionario/numero/${numeroTecnico}`);
-
-      if (response.data) {
-        setFuncionario(response.data); // Se encontrado, armazena os dados do funcionário
-        setErro(""); // Limpa qualquer erro anterior
-      } else {
-        setFuncionario(null); // Limpa os dados do funcionário
-        setErro("Funcionário não encontrado"); // Exibe erro
-      }
-      // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      setFuncionario(null); // Limpa os dados do funcionário
-      setErro("Erro ao procurar funcionário"); // Exibe erro de requisição
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="text-center">
-        <h4>Carregando...</h4>
-        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
-      </div>
-    );
-  }
-
-  if (!ordem || !cliente || !veiculo) {
-    return (
-      <div className="text-center">
-        <h3 className="text-danger">Dados não encontrados.</h3>
-        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <div className="container-fl">
-        <div className="d-flex">
-          <div className="flexAuto w-100">
-            <div className="vh-100 alturaPereita">
-              <div className="container-fluid">
-                {/* Informações da Ordem de Reparação */}
-                <h6 className="h5 fw-900">DADOS DA ORDEM DE REPARAÇÃO</h6>
-                <hr />
-                <div className="row pb-3">
-                  <div className="col-12 col-md-4 col-lg-3">
-                    <img src={logotipo} alt="Logotipo" className="w-100" />
-                  </div>
-                  <div className="col-12 col-md-4 col-lg-6">
-                    <h5 className="fw-bold">{empresaData?.nome_empresa}</h5>
-                    <span className="d-block">{empresaData?.nif_empresa}</span>
-                    <span className="d-block">{empresaData?.rua}, {empresaData?.bairro}, {empresaData?.municipio}</span>
-                    <span className="d-block">Email: {ordem?.id} {empresaData?.email} - Fone: {empresaData?.telefone}</span>
-                    <span className="d-block">
-                      <b>Site:</b>
-                      <a href={empresaData?.site_empresa} className="text-black" target="_blank" rel="noopener noreferrer">
-                        {empresaData?.site_empresa}
-                      </a>
-                    </span>
-                  </div>
-                  <div className="col-12 col-md-4 col-lg-3">
-                    <span className="d-block"><b>Nº OR:</b> {ordem?.numero_trabalho}</span>
-                    <span className="d-block"><b>Emissão:</b> {new Date().toLocaleString()}</span>
-                  </div>
-                </div>
-                <hr />
-
-                {/* Dados da Ordem */}
-                <h6 className="h5emGe text-uppercase fw-bold">Informações da Ordem de Reparação</h6>
-                <table className="table table-bordered mt-4">
-                  <thead>
-                    <tr>
-                      <th>Campo</th>
-                      <th>Detalhes</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ordem?.numero_trabalho && (
-                      <tr>
-                        <td className="fw-bold sizelinha">Número da Ordem</td>
-                        <td className="sizelinha">{ordem.numero_trabalho}</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-
-                {/* Dados do Cliente */}
-                <h6 className="h5emGe text-uppercase fw-bold">Informações do Cliente</h6>
-                <div className="border p-2">
-                  <p><strong>Nome:</strong> {cliente?.primeiro_nome} {cliente?.sobrenome}</p>
-                  <p><strong>Celular:</strong> {cliente?.celular}</p>
-                  <p><strong>Email:</strong> {cliente?.email}</p>
-                  <p><strong>Endereço:</strong> {cliente?.endereco}</p>
-                </div>
-
-                {/* Dados do Veículo */}
-                <h6 className="h5emG text-uppercase fw-bold">Informações do Veículo</h6>
-                <div className="border p-2 col-lg-12">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <p><strong>Marca e Modelo:</strong> {veiculo?.marca_veiculo} {veiculo?.modelo_veiculo}</p>
-                      <p><strong>Ano Modelo:</strong> {veiculo?.ano_modelo}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Exibir Serviços */}
-        <div className="">
-          <h6 className="text-uppercase my-4">Serviços da Ordem de Reparação</h6>
-          {loadingServices ? (
-            <p>Carregando serviços...</p>
-          ) : (
-            <div className="row">
-              {servicos.length > 0 ? (
-                servicos.map((servico) => (
-                  <div className="col-12 col-md-6 my-2 col-lg-4" key={servico.id}>
-                    <div className="card mb-3 h-100">
-                      <div className="card-body h-100 justify-content-between">
-                        <h6 className="card-title">{servico.servico.nome_servico}</h6>
-                        <Button
-                          variant="primary"
-                          onClick={handleModalOpen}
-                          className="d-block ms-auto links-acessos  float-right btn-sizer"
-                        >
-                          <HiArrowNarrowRight />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum serviço encontrado para esta ordem de reparação.</p>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Modal para Número do Técnico */}
-        <Modal
-          show={isModalOpen}
-          onHide={handleModalClose}
-          backdrop="static"
-          keyboard={false}
-          scrollable
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title><h5>Informe o Número do Técnico</h5></Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group controlId="formNumeroTecnico">
-                <Form.Label>Número do Técnico</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text"><IoMdPerson fontSize={20} color="#0070fa" /></span>
-                  <Form.Control
-                    type="text"
-                    placeholder="Digite o número do técnico"
-                    value={numeroTecnico}
-                    onChange={handleNumeroTecnicoChange}
-                  />
-                </div>
-              </Form.Group>
-            </Form>
-
-            {/* Exibição do resultado da busca */}
-            {erro && <div className="text-danger">{erro}</div>}
-
-            {funcionario && (
-              <div className="mt-3">
-                <h6>Funcionário Encontrado <FaCheckDouble color='green' /></h6>
-                <p><strong>Nome:</strong> {funcionario.nome} {funcionario.sobrenome}</p>
-                <p><strong>Cargo:</strong> {funcionario.cargo}</p>
-
-              </div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-
-            <Button variant="primary" onClick={handleSubmitTecnico} className="links-acessos">
-              {botao}
-            </Button>
-            {/* Renderiza o botão passado como prop */}
-
-          </Modal.Footer>
-        </Modal>
-      </div>
-    </>
-  );
-}
 
 
 
@@ -598,16 +346,17 @@ export default function Funcionario() {
 
   // Função para manipular o campo de número da OR
   //const handleNumeroORChange = (e) => setNumeroOR(e.target.value);
-
+  const [idOrdemDeReparacao,setIdOrdemDeReparacao] = useState(1);
   // Função para enviar a busca e procurar pela OR
   const handleSubmitORSend = async (e) => {
     e.preventDefault();
     setLoading(true);  // Iniciar carregamento
-
+   
     try {
       const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/numero-trabalho/${numeroOR}`);
       if (response.data) {
         setOrdem(response.data);  // Atualiza os dados da ordem
+        setIdOrdemDeReparacao(response.data.id);
         setError("");  // Limpar erro se a OR for encontrada
       }
       // eslint-disable-next-line no-unused-vars
@@ -617,6 +366,8 @@ export default function Funcionario() {
     } finally {
       setLoading(false);  // Finalizar carregamento
     }
+  
+    
   };
 
 
@@ -647,7 +398,7 @@ export default function Funcionario() {
 
   //==========================================|CONFIGURACOES PARA VER ORDEM DE REPARCAO|====================================================
 
-  const idOrdemDeReparacao = 2;
+  
   const [ordemDeReparacao, setOrdemDeReparacao] = useState(null);
   const [clienteOrdemDeReparacao, setClienteOrdemDeReparacao] = useState(null);
   const [veiculoOrdemDeReparacao, setVeiculoOrdemDeReparacao] = useState(null);
@@ -778,7 +529,7 @@ export default function Funcionario() {
                   </li>
                   <li className='linhasMenu'>
                     <a href="#" title='Almoço' onClick={abrirAlmocoModal}>
-                      <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço</span>
+                      <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço {idOrdemDeReparacao}</span>
                     </a>
                   </li>
                   <li className='linhasMenu'>
@@ -1255,7 +1006,6 @@ export default function Funcionario() {
 
 
 //Menu funcionario
-
 
 
 
