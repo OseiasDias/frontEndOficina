@@ -6,7 +6,7 @@ import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import {  MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 
@@ -19,7 +19,7 @@ import LogoType from "../../assets/lgo.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useEffect } from 'react';
-import { BiReset } from "react-icons/bi";
+import {  BiReset } from "react-icons/bi";
 
 
 
@@ -73,8 +73,8 @@ const ProgressoBar = ({ numeroOrdem, defeito, numeroTecnico, progresso }) => {
 
 
 
-const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar }) => {
-  const tempoLimite = 6000; // 100 minutos = 6000 segundos
+const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar, numeroHoras }) => {
+  const tempoLimite = (6000 * numeroHoras); // 100 minutos = 6000 segundos
   const [segundos, setSegundos] = useState(0); // Contador de segundos
   const [tempoEsgotado, setTempoEsgotado] = useState(false); // Estado para indicar se o tempo esgotou
 
@@ -200,12 +200,16 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar 
 
 
 
-export default function Funcionario({ display ,displayF }) {
+export default function Funcionario({ display, displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
+  // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
+  const [nomeM, setNomeM] = useState("");
+  const [numeroM, setNumeroM] = useState("");
+  const [rodandoM, setRodandoM] = useState(true);
+  const [estadoM, setEstadoM] = useState("");
+
   const [ordens, setOrdens] = useState([
-    { nomeMecanico: "Felipe Jose", numeroOrdem: "OR0012", estado: "Reparando", rodando: true },
-    { nomeMecanico: "Paulo Assis", numeroOrdem: "OR0011", estado: "Reparando", rodando: false },
-    { nomeMecanico: "Emanuel Dias", numeroOrdem: "OR0015", estado: "Reparando", rodando: false },
+    { nomeMecanico: nomeM, numeroOrdem: numeroM, estado: estadoM, rodando: rodandoM },
   ]);
   const navigate = useNavigate(); // Hook para navegação
 
@@ -537,8 +541,8 @@ export default function Funcionario({ display ,displayF }) {
                     <a href="#" title='Formação' onClick={abrirFormacaoModal}>
                       <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
                     </a>
-                  </li> 
-                  
+                  </li>
+
                   <li className='linhasMenu' onClick={handleRedirect}>
                     <a href="#" title='Projectar' >
                       <BsArrowsFullscreen className='icone-menu' />
@@ -553,7 +557,7 @@ export default function Funcionario({ display ,displayF }) {
                     </a>
                   </li>
 
-               
+
                 </ul>
               </nav>
 
@@ -584,7 +588,7 @@ export default function Funcionario({ display ,displayF }) {
                           onChange={handleNumeroORChange}
                           required
                         />
-                        <Button variant="primary" type="submit" className="btn d-block mx-auto">
+                        <Button variant="primary"  type="submit" className="btn d-block mx-auto">
                           {loading ? "Pesquisando..." : "Pesquisar"}
                         </Button>
                       </div>
@@ -647,16 +651,11 @@ export default function Funcionario({ display ,displayF }) {
                                         <td className="sizelinha">{ordemDeReparacao.numero_trabalho}</td>
                                       </tr>
                                     )}
-                                    {ordemDeReparacao?.categoria_reparo && (
-                                      <tr>
-                                        <td className="fw-bold sizelinha">Categoria de Reparo</td>
-                                        <td className="sizelinha">{ordemDeReparacao.categoria_reparo}</td>
-                                      </tr>
-                                    )}
+
                                     {ordemDeReparacao?.km_entrada && (
                                       <tr>
                                         <td className="fw-bold sizelinha">KM de Entrada</td>
-                                        <td className="sizelinha">{ordemDeReparacao.km_entrada}</td>
+                                        <td className="sizelinha">{ordemDeReparacao.km_entrada} KM</td>
                                       </tr>
                                     )}
                                     {ordemDeReparacao?.cobrar_reparo && (
@@ -687,19 +686,19 @@ export default function Funcionario({ display ,displayF }) {
                                     {ordemDeReparacao?.detalhes && (
                                       <tr>
                                         <td className="fw-bold sizelinha">Detalhes</td>
-                                        <td className="sizelinha">{ordemDeReparacao.detalhes}</td>
+                                        <td className="sizelinha text-justify">{ordemDeReparacao.detalhes}</td>
                                       </tr>
                                     )}
                                     {ordemDeReparacao?.defeito_ou_servico && (
                                       <tr>
                                         <td className="fw-bold sizelinha">Defeito ou Serviço</td>
-                                        <td className="sizelinha">{ordemDeReparacao.defeito_ou_servico}</td>
+                                        <td className="sizelinha  text-justify">{ordemDeReparacao.defeito_ou_servico}</td>
                                       </tr>
                                     )}
                                     {ordemDeReparacao?.observacoes && (
                                       <tr>
                                         <td className="fw-bold sizelinha">Observações</td>
-                                        <td className="sizelinha">{ordemDeReparacao.observacoes}</td>
+                                        <td className="sizelinha  text-justify">{ordemDeReparacao.observacoes}</td>
                                       </tr>
                                     )}
 
@@ -764,12 +763,12 @@ export default function Funcionario({ display ,displayF }) {
 
                                       </div>
                                     </div>
-
                                   </div>
 
                                   {/* Exibir Serviços */}
                                   <div className="">
                                     <h6 className="text-uppercase fw-bold my-4">Serviços da Ordem de Reparação</h6>
+
                                     {loadingServicosOrdemDeReparacao ? (
                                       <p>Carregando serviços...</p>
                                     ) : (
@@ -835,7 +834,6 @@ export default function Funcionario({ display ,displayF }) {
                                     onChange={handleNumeroTecnicoOrdemDeReparacaoChange}
                                   />
                                   <Button variant="primary" onClick={handleSubmitTecnicoOrdemDeReparacao} className="links-ass">
-
                                     <MdPersonSearch fontSize={22} />
                                   </Button>
                                 </div>
@@ -860,9 +858,14 @@ export default function Funcionario({ display ,displayF }) {
                             {funcionarioOrdemDeReparacao && (
                               <button
                                 onClick={() => {
-                                  adicionarOrdem("OR" + (ordens.length + 1));
+                                  adicionarOrdem("OR" + (ordens.length + 1), "Manuel Dias");
                                   fecharModalOR(); // Fecha a primeira modal
                                   fecharModalTecnico(); // Fecha a segunda modal
+                                  limparDadosModalTecnico(); 
+                                  setNomeM(funcionarioOrdemDeReparacao.nome);
+                                  setNumeroM("FN002");
+                                  setRodandoM(true);
+                                  setEstadoM("ROdando");
                                 }}
                                 className="btn btn-primary"
                               >
@@ -1047,7 +1050,7 @@ export default function Funcionario({ display ,displayF }) {
           <div className="container-fluid">
 
             <div className="row">
-            <CgCloseO fontSize={30} onClick={handleRedirectRegresso} className={`mEr ${displayF}`} />
+              <CgCloseO fontSize={30} onClick={handleRedirectRegresso} className={`mEr ${displayF}`} />
 
               <div className="div-feed borderKing col-lg-12 vh-100 h-100 padingCimaBar">
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
@@ -1061,6 +1064,7 @@ export default function Funcionario({ display ,displayF }) {
                       estado={ordem.estado}
                       rodando={ordem.rodando} // Passa o estado "rodando" para o Cronometro
                       iniciarPausar={iniciarPausar} // Passa a função de iniciar/pausar
+                      numeroHoras={ordemDeReparacao.horas_reparacao}
                     />
                   ))}
                 </div>
