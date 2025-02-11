@@ -325,12 +325,16 @@ export default function Funcionario({ display, displayF }) {
   const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
   const [loading, setLoading] = useState(false);  // Indicador de carregamento
 
+    // Função para fechar a modal
+  const fecharModalTecnico = () => setShowModalTecnico(false);
+
   // Função para fechar o modal
   const fecharModalOR = () => {
     setShowModal(false);
     setNumeroOR("");  // Limpar campo de pesquisa
     setError("");  // Limpar erro
     setOrdem(null);  // Limpar resultado
+    fecharModalTecnico();
   };
 
   // Função para manipular o campo de número da OR
@@ -369,9 +373,7 @@ export default function Funcionario({ display, displayF }) {
   // Função para abrir a modal
   //const abrirModalTecnico = () => setShowModalTecnico(true);
 
-  // Função para fechar a modal
-  const fecharModalTecnico = () => setShowModalTecnico(false);
-
+  
   // Função para lidar com o envio do número do técnico
   const handleSubmitTecnico = (e) => {
     e.preventDefault();
@@ -862,6 +864,8 @@ export default function Funcionario({ display, displayF }) {
                                   fecharModalOR(); // Fecha a primeira modal
                                   fecharModalTecnico(); // Fecha a segunda modal
                                   limparDadosModalTecnico(); 
+                                  handleModalOrdemDeReparacaoClose(); // Fechar a modal
+
                                   setNomeM(funcionarioOrdemDeReparacao.nome);
                                   setNumeroM("FN002");
                                   setRodandoM(true);
