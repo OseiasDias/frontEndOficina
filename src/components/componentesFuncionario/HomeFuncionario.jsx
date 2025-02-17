@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaBook, FaClipboard } from 'react-icons/fa'; // Ícones de Font Awesome
 import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
-import { PiSignOutBold } from 'react-icons/pi';
+import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
 import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
@@ -19,7 +19,7 @@ import LogoType from "../../assets/lgo.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useEffect } from 'react';
-import {  BiReset } from "react-icons/bi";
+import { BiReset } from "react-icons/bi";
 
 
 
@@ -39,7 +39,7 @@ import { CgCloseO } from 'react-icons/cg';
 // eslint-disable-next-line react/prop-types
 
 
-const ProgressoBar = ({ numeroOrdem, defeito, numeroTecnico, progresso }) => {
+const ProgressoBar = ({ progresso }) => {
   let variante = 'success'; // Cor verde
 
   if (progresso >= 80) {
@@ -50,9 +50,7 @@ const ProgressoBar = ({ numeroOrdem, defeito, numeroTecnico, progresso }) => {
 
   // Concatenando as informações que queremos exibir dentro da barra
   const label = `
-    Ordem: ${numeroOrdem} | 
-    Defeito: ${defeito} | 
-    Técnico: ${numeroTecnico} | 
+   
     ${Math.round(progresso)}%
   `;
 
@@ -71,20 +69,33 @@ const ProgressoBar = ({ numeroOrdem, defeito, numeroTecnico, progresso }) => {
   );
 };
 
+const Cronometro = ({
+  nomeMecanico,
+  numeroOrdem,
+  estado,
+  rodando: rodandoProp,
+  iniciarPausar,
+  segundosAtual,
+  segundoFinal,
+  tempoEsgotado: tempoEsgotadoProp,
+}) => {
+  const tempoLimite = segundoFinal; // Usando o segundoFinal como tempo limite
+  const [segundos, setSegundos] = useState(segundosAtual); // Inicializa com segundosAtual
+  const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1); // Converte para booleano
+  const [rodando, setRodando] = useState(rodandoProp === 1); // Converte para booleano
+  const [funcionario, setFuncionario] = useState(null); // Estado para armazenar o funcionário específico
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
 
-const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar, numeroHoras }) => {
-  const tempoLimite = (6000 * numeroHoras); // 100 minutos = 6000 segundos
-  const [segundos, setSegundos] = useState(0); // Contador de segundos
-  const [tempoEsgotado, setTempoEsgotado] = useState(false); // Estado para indicar se o tempo esgotou
 
   // Função para reiniciar o cronômetro
   const reiniciar = () => {
-    setSegundos(0);
-    setTempoEsgotado(false); // Reseta o estado de tempo esgotado
-    localStorage.removeItem(`segundos-${numeroOrdem}`); // Limpa o valor do tempo salvo
-    localStorage.removeItem(`rodando-${numeroOrdem}`); // Limpa o estado de "rodando"
-    localStorage.removeItem(`startTime-${numeroOrdem}`); // Limpa o timestamp de início
+    setSegundos(0);  // Reinicia o cronômetro
+    setTempoEsgotado(false);  // Define que o tempo não está esgotado
+    localStorage.removeItem(`segundos-${numeroOrdem}`);  // Remove dados salvos no localStorage
+    localStorage.removeItem(`rodando-${numeroOrdem}`);
+    localStorage.removeItem(`startTime-${numeroOrdem}`);
   };
 
   // Efeito para carregar o tempo salvo e o estado de "rodando" do localStorage
@@ -94,45 +105,40 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar,
     const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
     if (tempoSalvo) {
-      setSegundos(parseInt(tempoSalvo)); // Recupera o tempo salvo
+      setSegundos(parseInt(tempoSalvo));
     }
     if (estadoRodandoSalvo === 'true') {
-      // eslint-disable-next-line no-undef
-      setRodando(true); // Recupera o estado de "rodando"
+      setRodando(true);
     }
 
-    // Se houver um tempo de início salvo e a contagem estiver rodando
     if (startTimeSalvo) {
       const currentTime = new Date().getTime();
-      const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000); // Calcular a diferença em segundos
-      setSegundos((prevSegundos) => prevSegundos + timeDifference); // Atualiza o tempo com a diferença calculada
+      const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
+      setSegundos((prevSegundos) => prevSegundos + timeDifference);
     }
-  }, []); // Executa apenas uma vez ao montar o componente
+  }, [numeroOrdem]); // Só será executado quando o numeroOrdem mudar
 
   // Efeito para garantir que o cronômetro continue funcionando em segundo plano
+
+
   useEffect(() => {
     let intervalo;
 
-    // Se o cronômetro estiver rodando, inicie o intervalo
     if (rodando && segundos < tempoLimite) {
-      // Salva o timestamp atual
-      localStorage.setItem(`startTime-${numeroOrdem}`, new Date().getTime().toString());
-
       intervalo = setInterval(() => {
         setSegundos((prevSegundos) => {
           const novoSegundos = prevSegundos + 1;
-          localStorage.setItem(`segundos-${numeroOrdem}`, novoSegundos); // Salva o tempo no localStorage
+          localStorage.setItem(`segundos-${numeroOrdem}`, novoSegundos);
           return novoSegundos;
         });
       }, 1000);
     } else if (segundos >= tempoLimite) {
-      setTempoEsgotado(true); // Define que o tempo esgotou
-      clearInterval(intervalo); // Para o cronômetro ao atingir o tempo limite
+      setTempoEsgotado(true);
+      clearInterval(intervalo);
     }
 
-    return () => clearInterval(intervalo); // Limpa o intervalo ao desmontar o componente
-  }, [rodando, segundos]); // Reexecuta sempre que o estado de "rodando" ou "segundos" mudar
-
+    return () => clearInterval(intervalo); // Limpa o intervalo ao desmontar
+  }, [rodando, segundos, tempoLimite, numeroOrdem]);
   // Função para formatar o tempo no formato mm:ss
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
@@ -143,31 +149,57 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar,
   // Calculando o progresso da barra (porcentagem)
   const progresso = (segundos / tempoLimite) * 100;
 
+  // Função para buscar um único funcionário por id (id do técnico)
+  useEffect(() => {
+    // Função para buscar os dados do funcionário
+    const fetchFuncionarioData = async () => {
+      try {
+        // Fazendo a requisição GET para a API
+        const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
+        setFuncionario(response.data); // Atualiza o estado com os dados do funcionário
+      // eslint-disable-next-line no-unused-vars
+      } catch (err) {
+        setError('Erro ao carregar dados do funcionário');
+      } finally {
+        setLoading(false); // Finaliza o carregamento
+      }
+    };
+
+    fetchFuncionarioData();
+  }); 
+
   return (
     <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }} className="p-3 w-100">
       <hr />
       <div className="d-flex justify-content-between">
         <div className="estado text-start">
-          <h5><b>Nº de OR:</b> {numeroOrdem}</h5>
-          <h5><b>Nome Técnico:</b> {nomeMecanico}</h5>
-          <h5><b>Estado:</b> {estado}</h5>
+          <h6>
+             <b className='fs-5'>{numeroOrdem} </b>
+          </h6>
+          <h6> {funcionario.nome}  {funcionario.sobrenome} | {estado}</h6>
         </div>
 
         <div className="oclock">
-          <h3>Cronômetro <FaRegClock size={35} className="fw-bolder" /> </h3>
-          {tempoEsgotado ? (
-            <p style={{ fontSize: '40px', color: 'red' }}>Tempo Esgotado!</p>
-          ) : (
-            <p style={{ fontSize: '40px' }}>{formatarTempo(segundos)}</p>
-          )}
+          <h5 className="d-flex">
+            <PiClockCountdownFill size={30} className="fw-bolder mt-1 me-2" />
+            {tempoEsgotado ? (
+              <p style={{ fontSize: '30px', color: 'red' }}>Tempo Esgotado!</p>
+            ) : (
+              <p style={{ fontSize: '30px' }}>{formatarTempo(segundos)}</p>
+            )}
+          </h5>
         </div>
       </div>
 
       {/* Barra de progresso */}
       <ProgressoBar progresso={progresso} numeroOrdem={numeroOrdem} />
 
-      <div>
-        <button onClick={() => iniciarPausar(numeroOrdem)} style={{ padding: '10px 20px', margin: '5px' }} disabled={tempoEsgotado}>
+      <div className="d-none">
+        <button
+          onClick={() => iniciarPausar(numeroOrdem)}
+          style={{ padding: '10px 20px', margin: '5px' }}
+          disabled={tempoEsgotado}
+        >
           {rodando ? 'Pausar' : 'Iniciar'}
         </button>
         <button onClick={reiniciar} style={{ padding: '10px 20px', margin: '5px' }} className="btnReset">
@@ -182,47 +214,57 @@ const Cronometro = ({ nomeMecanico, numeroOrdem, estado, rodando, iniciarPausar,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default function Funcionario({ display, displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
-  // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
+  // Estados para armazenar os dados do cronômetro
   const [nomeM, setNomeM] = useState("");
   const [numeroM, setNumeroM] = useState("");
   const [rodandoM, setRodandoM] = useState(true);
   const [estadoM, setEstadoM] = useState("");
+  const [ordens, setOrdens] = useState([]);
 
-  const [ordens, setOrdens] = useState([
-    { nomeMecanico: nomeM, numeroOrdem: numeroM, estado: estadoM, rodando: rodandoM },
-  ]);
+  // Função para buscar os dados da API
+  useEffect(() => {
+    const fetchCronometros = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/cronometros");
+        const data = await response.json();
+
+        // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
+        const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
+          .map(cronometro => ({
+            idTecnico: cronometro.tecnico_id,  // Ou nome real, se disponível
+            numeroOrdem: cronometro.numero_or,
+            estado: cronometro.estado,
+            rodando: cronometro.rodando === 1, // Se "rodando" for 1, consideramos como verdadeiro
+            segundosAtuais: cronometro.segundos_atual, // segundos atuais
+            segundosFinais: cronometro.segundo_final // segundos finais
+          }));
+
+        // Atualizando o estado com os dados filtrados
+        setOrdens(ordensFiltradas);
+      } catch (error) {
+        console.error("Erro ao buscar os cronômetros", error);
+      }
+    };
+
+    fetchCronometros();
+  }, []);  // O array vazio [] garante que a função seja chamada uma vez após o componente ser montado
+
   const navigate = useNavigate(); // Hook para navegação
 
 
   // Função para adicionar uma nova ordem de serviço e cronômetro
   const adicionarOrdem = (numeroOrdem) => {
     const novaOrdem = {
-      nomeMecanico: "Novo Técnico", // Nome do técnico pode ser alterado conforme necessário
+
       numeroOrdem,
       estado: "Reparando",
-      rodando: true, // Inicia o cronômetro para essa ordem
+      rodando: true,
+      segundosAtuais: 0, // Inicia do zero
+      segundosFinais: 3600, // Define um tempo limite padrão
     };
-    setOrdens([...ordens, novaOrdem]); // Adiciona a nova ordem ao estado
+    setOrdens([...ordens, novaOrdem]);
   };
 
   // Função para iniciar ou pausar o cronômetro de uma ordem específica
@@ -325,7 +367,7 @@ export default function Funcionario({ display, displayF }) {
   const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
   const [loading, setLoading] = useState(false);  // Indicador de carregamento
 
-    // Função para fechar a modal
+  // Função para fechar a modal
   const fecharModalTecnico = () => setShowModalTecnico(false);
 
   // Função para fechar o modal
@@ -373,7 +415,7 @@ export default function Funcionario({ display, displayF }) {
   // Função para abrir a modal
   //const abrirModalTecnico = () => setShowModalTecnico(true);
 
-  
+
   // Função para lidar com o envio do número do técnico
   const handleSubmitTecnico = (e) => {
     e.preventDefault();
@@ -497,6 +539,53 @@ export default function Funcionario({ display, displayF }) {
 
   };
 
+
+  //CADASTRAR O CRONOMETRO~
+
+  const cadastrarCronometro = async (props) => {
+    const {
+      numeroOr,
+      tecnicoId,
+      segundosAtual,
+      segundoFinal,
+      numeroHoras,
+      rodando,
+      estado,
+      progresso,
+      ordemReparacaoId,
+      acao,
+      tempoEsgotado,
+    } = props;
+
+    try {
+      // Dados a serem enviados
+      const dados = {
+        numero_or: numeroOr,
+        tecnico_id: tecnicoId, // ID do técnico (recebido por props)
+        segundos_atual: segundosAtual, // Recebido por props
+        segundo_final: segundoFinal, // Recebido por props
+        numero_horas: numeroHoras, // Recebido por props
+        rodando: rodando, // Recebido por props
+        estado: estado, // Recebido por props
+        progresso: progresso, // Recebido por props
+        ordem_reparacao_id: ordemReparacaoId, // Recebido por props
+        acao: acao, // Recebido por props
+        data_hora: new Date().toISOString(), // Data e hora atual
+        tempo_esgotado: tempoEsgotado, // Recebido por props
+      };
+
+      // Enviar dados via POST
+      const response = await axios.post("http://127.0.0.1:8000/api/cronometros", dados);
+
+      if (response.status === 201) {
+        console.log("Cronômetro cadastrado com sucesso:", response.data);
+      } else {
+        console.log("Erro ao cadastrar cronômetro:", response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar dados para o servidor:", error);
+    }
+  };
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
@@ -590,7 +679,7 @@ export default function Funcionario({ display, displayF }) {
                           onChange={handleNumeroORChange}
                           required
                         />
-                        <Button variant="primary"  type="submit" className="btn d-block mx-auto">
+                        <Button variant="primary" type="submit" className="btn d-block mx-auto">
                           {loading ? "Pesquisando..." : "Pesquisar"}
                         </Button>
                       </div>
@@ -858,23 +947,41 @@ export default function Funcionario({ display, displayF }) {
 
                             {/* Exibe o botão "Começar" somente se o funcionário for encontrado */}
                             {funcionarioOrdemDeReparacao && (
+
                               <button
                                 onClick={() => {
-                                  adicionarOrdem("OR" + (ordens.length + 1), "Manuel Dias");
+                                  const props = {
+                                    numeroOr: ordemDeReparacao?.numero_trabalho,
+                                    tecnicoId: funcionarioOrdemDeReparacao.id, // Exemplo de ID do técnico
+                                    segundosAtual: 0,
+                                    segundoFinal: (ordemDeReparacao?.horas_reparacao * 6000),
+                                    numeroHoras: ordemDeReparacao?.horas_reparacao,
+                                    rodando: 1,
+                                    estado: "rodandoA",
+                                    progresso: 0,
+                                    ordemReparacaoId: ordemDeReparacao.id,
+                                    acao: "Troca de óleo",
+                                    tempoEsgotado: 0,
+                                  };
+
+                                  cadastrarCronometro(props); // Chama a função com os valores
                                   fecharModalOR(); // Fecha a primeira modal
                                   fecharModalTecnico(); // Fecha a segunda modal
-                                  limparDadosModalTecnico(); 
+                                  limparDadosModalTecnico();
                                   handleModalOrdemDeReparacaoClose(); // Fechar a modal
-
+                                  iniciarPausar(props.numeroOr);
+                                  adicionarOrdem("OR" + (ordens.length + 1), "Manuel Dias");
                                   setNomeM(funcionarioOrdemDeReparacao.nome);
                                   setNumeroM("FN002");
                                   setRodandoM(true);
                                   setEstadoM("ROdando");
+
                                 }}
                                 className="btn btn-primary"
                               >
                                 Começar
                               </button>
+
                             )}
                           </Modal.Footer>
                         </Modal>
@@ -1063,15 +1170,19 @@ export default function Funcionario({ display, displayF }) {
                   {ordens.map((ordem, index) => (
                     <Cronometro
                       key={index}
-                      nomeMecanico={`${funcionarioOrdemDeReparacao?.nome} ${funcionarioOrdemDeReparacao?.sobrenome}`}
-                      numeroOrdem={ordemDeReparacao?.numero_trabalho}
+                      nomeMecanico={ordem.idTecnico}
+                      numeroOrdem={ordem.numeroOrdem}
                       estado={ordem.estado}
-                      rodando={ordem.rodando} // Passa o estado "rodando" para o Cronometro
-                      iniciarPausar={iniciarPausar} // Passa a função de iniciar/pausar
-                      numeroHoras={ordemDeReparacao.horas_reparacao}
+                      rodando={ordem.rodando}
+                      iniciarPausar={iniciarPausar}
+                      segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
+                      segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
+                      tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
                     />
                   ))}
                 </div>
+
+
                 <hr />
 
               </div>
