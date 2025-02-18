@@ -6,7 +6,7 @@ import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdDriveFileRenameOutline, MdOutlineAutoMode, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 
@@ -32,6 +32,7 @@ import { IoMdPerson } from 'react-icons/io';
 import { FaCheckDouble } from 'react-icons/fa';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 import { CgCloseO } from 'react-icons/cg';
+import { AiOutlineFieldNumber } from 'react-icons/ai';
 
 
 
@@ -69,6 +70,8 @@ const ProgressoBar = ({ progresso }) => {
   );
 };
 
+
+
 const Cronometro = ({
   nomeMecanico,
   numeroOrdem,
@@ -79,21 +82,19 @@ const Cronometro = ({
   segundoFinal,
   tempoEsgotado: tempoEsgotadoProp,
 }) => {
-  const tempoLimite = segundoFinal; // Usando o segundoFinal como tempo limite
-  const [segundos, setSegundos] = useState(segundosAtual); // Inicializa com segundosAtual
-  const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1); // Converte para booleano
-  const [rodando, setRodando] = useState(rodandoProp === 1); // Converte para booleano
-  const [funcionario, setFuncionario] = useState(null); // Estado para armazenar o funcionário específico
+  const tempoLimite = segundoFinal;
+  const [segundos, setSegundos] = useState(segundosAtual);
+  const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1);
+  const [rodando, setRodando] = useState(rodandoProp === 1);
+  const [funcionario, setFuncionario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
-
   // Função para reiniciar o cronômetro
   const reiniciar = () => {
-    setSegundos(0);  // Reinicia o cronômetro
-    setTempoEsgotado(false);  // Define que o tempo não está esgotado
-    localStorage.removeItem(`segundos-${numeroOrdem}`);  // Remove dados salvos no localStorage
+    setSegundos(0);
+    setTempoEsgotado(false);
+    localStorage.removeItem(`segundos-${numeroOrdem}`);
     localStorage.removeItem(`rodando-${numeroOrdem}`);
     localStorage.removeItem(`startTime-${numeroOrdem}`);
   };
@@ -104,26 +105,19 @@ const Cronometro = ({
     const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
     const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-    if (tempoSalvo) {
-      setSegundos(parseInt(tempoSalvo));
-    }
-    if (estadoRodandoSalvo === 'true') {
-      setRodando(true);
-    }
+    if (tempoSalvo) setSegundos(parseInt(tempoSalvo));
+    if (estadoRodandoSalvo === "true") setRodando(true);
 
     if (startTimeSalvo) {
       const currentTime = new Date().getTime();
       const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
       setSegundos((prevSegundos) => prevSegundos + timeDifference);
     }
-  }, [numeroOrdem]); // Só será executado quando o numeroOrdem mudar
+  }, [numeroOrdem]);
 
-  // Efeito para garantir que o cronômetro continue funcionando em segundo plano
-
-
+  // Efeito para garantir que o cronômetro continue funcionando
   useEffect(() => {
     let intervalo;
-
     if (rodando && segundos < tempoLimite) {
       intervalo = setInterval(() => {
         setSegundos((prevSegundos) => {
@@ -137,78 +131,85 @@ const Cronometro = ({
       clearInterval(intervalo);
     }
 
-    return () => clearInterval(intervalo); // Limpa o intervalo ao desmontar
+    return () => clearInterval(intervalo);
   }, [rodando, segundos, tempoLimite, numeroOrdem]);
-  // Função para formatar o tempo no formato mm:ss
+
+  // Função para formatar o tempo
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
     const segundosRestantes = segundos % 60;
-    return `${minutos < 10 ? '0' + minutos : minutos}:${segundosRestantes < 10 ? '0' + segundosRestantes : segundosRestantes}`;
+    return `${minutos < 10 ? "0" + minutos : minutos}:${segundosRestantes < 10 ? "0" + segundosRestantes : segundosRestantes}`;
   };
 
-  // Calculando o progresso da barra (porcentagem)
-  const progresso = (segundos / tempoLimite) * 100;
-
-  // Função para buscar um único funcionário por id (id do técnico)
+  // Função para buscar o funcionário
   useEffect(() => {
-    // Função para buscar os dados do funcionário
     const fetchFuncionarioData = async () => {
+      setLoading(true); // Inicia o carregamento
       try {
-        // Fazendo a requisição GET para a API
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
-        setFuncionario(response.data); // Atualiza o estado com os dados do funcionário
+        setFuncionario(response.data);
       // eslint-disable-next-line no-unused-vars
       } catch (err) {
-        setError('Erro ao carregar dados do funcionário');
+        setError("Erro ao carregar dados do funcionário");
       } finally {
         setLoading(false); // Finaliza o carregamento
       }
     };
 
-    fetchFuncionarioData();
-  }); 
+    if (nomeMecanico) fetchFuncionarioData();
+  }, [nomeMecanico]);
+
+  // Exibir mensagem de erro ou de carregamento se necessário
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
-    <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }} className="p-3 w-100">
+    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-3 w-100">
       <hr />
       <div className="d-flex justify-content-between">
-        <div className="estado text-start">
-          <h6>
-             <b className='fs-5'>{numeroOrdem} </b>
-          </h6>
-          <h6> {funcionario.nome}  {funcionario.sobrenome} | {estado}</h6>
+        <div className="estado text-start d-flex flex-column">
+          <div className="d-flex align-items-center">
+            <AiOutlineFieldNumber fontSize={25} className="me-2" />
+            <h6><b>{numeroOrdem}</b></h6>
+          </div>
+          <div className="d-flex align-items-center mt-2">
+            <MdDriveFileRenameOutline fontSize={20} className="me-2" />
+            <h6>{funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
+          </div>
+          <div className="d-flex align-items-center mt-2">
+            <MdOutlineAutoMode fontSize={20} className="me-2" />
+            <h6>{estado}</h6>
+          </div>
         </div>
-
         <div className="oclock">
           <h5 className="d-flex">
             <PiClockCountdownFill size={30} className="fw-bolder mt-1 me-2" />
             {tempoEsgotado ? (
-              <p style={{ fontSize: '30px', color: 'red' }}>Tempo Esgotado!</p>
+              <p style={{ fontSize: "30px", color: "red" }}>Tempo Esgotado!</p>
             ) : (
-              <p style={{ fontSize: '30px' }}>{formatarTempo(segundos)}</p>
+              <p style={{ fontSize: "30px" }}>{formatarTempo(segundos)}</p>
             )}
           </h5>
         </div>
       </div>
-
-      {/* Barra de progresso */}
-      <ProgressoBar progresso={progresso} numeroOrdem={numeroOrdem} />
-
+      <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
       <div className="d-none">
-        <button
-          onClick={() => iniciarPausar(numeroOrdem)}
-          style={{ padding: '10px 20px', margin: '5px' }}
-          disabled={tempoEsgotado}
-        >
-          {rodando ? 'Pausar' : 'Iniciar'}
+        <button onClick={() => iniciarPausar(numeroOrdem)} style={{ padding: "10px 20px", margin: "5px" }} disabled={tempoEsgotado}>
+          {rodando ? "Pausar" : "Iniciar"}
         </button>
-        <button onClick={reiniciar} style={{ padding: '10px 20px', margin: '5px' }} className="btnReset">
+        <button onClick={reiniciar} style={{ padding: "10px 20px", margin: "5px" }} className="btnReset">
           <BiReset size={40} color="#fff" />
         </button>
       </div>
     </div>
   );
 };
+
 
 
 
