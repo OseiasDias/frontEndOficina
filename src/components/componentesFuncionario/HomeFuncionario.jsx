@@ -148,7 +148,7 @@ const Cronometro = ({
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
@@ -161,7 +161,7 @@ const Cronometro = ({
 
   // Exibir mensagem de erro ou de carregamento se necessário
   if (loading) {
-    return <div>Carregando...</div>;
+    return <div >Carregando...</div>;
   }
 
   if (error) {
@@ -178,12 +178,13 @@ const Cronometro = ({
             <h6><b>{numeroOrdem}</b></h6>
           </div>
           <div className="d-flex align-items-center mt-2">
-            <MdDriveFileRenameOutline fontSize={20} className="me-2" />
-            <h6>{funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
-          </div>
-          <div className="d-flex align-items-center mt-2">
-            <MdOutlineAutoMode fontSize={20} className="me-2" />
-            <h6>{estado}</h6>
+            <div className="divLeft ">
+              <h6><MdDriveFileRenameOutline fontSize={20} className="me-2" /> {funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
+            </div>
+            <div className='divRight ms-3'>
+        
+              <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
+            </div>
           </div>
         </div>
         <div className="oclock">
@@ -445,23 +446,46 @@ export default function Funcionario({ display, displayF }) {
   const [funcionarioOrdemDeReparacao, setFuncionarioOrdemDeReparacao] = useState(null); // Para armazenar os dados do funcionário
   const [erroOrdemDeReparacao, setErroOrdemDeReparacao] = useState(""); // Para exibir mensagem de erro caso não encontre o funcionário
 
+
+  const retryRequest = async (requestFn, retries = 3, delay = 1000) => {
+    let attempt = 0;
+    while (attempt < retries) {
+      try {
+        return await requestFn();
+      } catch (error) {
+        if (error.response && error.response.status === 429) {
+          // Espera antes de tentar novamente (backoff exponencial)
+          const retryAfter = error.response.headers['retry-after'] || delay;
+          await new Promise(resolve => setTimeout(resolve, retryAfter * 1000)); // espera pelo tempo especificado (em segundos)
+          attempt += 1;
+          delay *= 2; // aumenta o delay a cada tentativa
+        } else {
+          throw error; // se o erro não for 429, lança o erro original
+        }
+      }
+    }
+    throw new Error('Limite de requisições excedido. Tente novamente mais tarde.');
+  };
+  
   useEffect(() => {
     const fetchDadosOrdemDeReparacao = async () => {
       try {
-        const ordemDeReparacaoResponse = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/${idOrdemDeReparacao}`);
+        // Requisições com retry
+        const ordemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/${idOrdemDeReparacao}`));
         setOrdemDeReparacao(ordemDeReparacaoResponse.data);
-
-        const clienteOrdemDeReparacaoResponse = await axios.get(`http://127.0.0.1:8000/api/clientes/${ordemDeReparacaoResponse.data.cliente_id}`);
+  
+        const clienteOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/clientes/${ordemDeReparacaoResponse.data.cliente_id}`));
         setClienteOrdemDeReparacao(clienteOrdemDeReparacaoResponse.data);
-
-        const veiculoOrdemDeReparacaoResponse = await axios.get(`http://127.0.0.1:8000/api/veiculos/${ordemDeReparacaoResponse.data.veiculo_id}`);
+  
+        const veiculoOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/veiculos/${ordemDeReparacaoResponse.data.veiculo_id}`));
         setVeiculoOrdemDeReparacao(veiculoOrdemDeReparacaoResponse.data);
-
-        const empresaOrdemDeReparacaoResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
+  
+        const empresaOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/empresas/1`));
         setEmpresaOrdemDeReparacao(empresaOrdemDeReparacaoResponse.data);
-
-        const servicosOrdemDeReparacaoResponse = await axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-servicoU/${idOrdemDeReparacao}`);
+  
+        const servicosOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-servicoU/${idOrdemDeReparacao}`));
         setServicosOrdemDeReparacao(servicosOrdemDeReparacaoResponse.data);
+        
       } catch (error) {
         console.error("Erro ao buscar dados da ordem de reparação:", error);
       } finally {
@@ -469,10 +493,10 @@ export default function Funcionario({ display, displayF }) {
         setLoadingServicosOrdemDeReparacao(false);
       }
     };
-
+  
     fetchDadosOrdemDeReparacao();
   }, [idOrdemDeReparacao]);
-
+  
   const handleModalOrdemDeReparacaoClose = () => {
     setIsModalOrdemDeReparacaoOpen(false); // Fecha a modal
   };
