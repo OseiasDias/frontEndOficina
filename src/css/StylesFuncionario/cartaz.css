@@ -271,3 +271,12 @@
   margin: auto !important;
   border: 2px solid #fff;
 }
+
+.centered-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Altura total da viewport */
+  background-color: #000000;
+  color: #fff;
+}

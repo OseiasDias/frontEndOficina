@@ -72,7 +72,7 @@ const ProgressoBar = ({ progresso }) => {
 
 
 
-const Cronometro = ({ 
+const Cronometro = ({
   nomeMecanico,
   numeroOrdem,
   estado,
@@ -104,10 +104,18 @@ const Cronometro = ({
     const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
     const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-    if (tempoSalvo) setSegundos(parseInt(tempoSalvo));
-    if (estadoRodandoSalvo === "true") setRodando(true);
+    if (tempoSalvo) {
+      // Se há tempo salvo, define o tempo de segundos como o valor salvo
+      setSegundos(parseInt(tempoSalvo));
+    }
+
+    if (estadoRodandoSalvo === "true") {
+      // Se o cronômetro estava rodando, mantém a flag "rodando"
+      setRodando(true);
+    }
 
     if (startTimeSalvo) {
+      // Se há um tempo de início salvo, calcula a diferença de tempo
       const currentTime = new Date().getTime();
       const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
       setSegundos((prevSegundos) => prevSegundos + timeDifference);
@@ -178,6 +186,16 @@ const Cronometro = ({
     }
   };
 
+  // Função para limpar todos os dados do localStorage
+  const limparLocalStorage = () => {
+    localStorage.removeItem(`segundos-${numeroOrdem}`);
+    localStorage.removeItem(`rodando-${numeroOrdem}`);
+    localStorage.removeItem(`startTime-${numeroOrdem}`);
+    setSegundos(0); // Resetar o cronômetro
+    setRodando(false); // Parar qualquer execução do cronômetro
+    setTempoEsgotado(false); // Garantir que o tempo esgotado seja falso
+  };
+
   return (
     <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-3 w-100">
       <hr />
@@ -215,10 +233,16 @@ const Cronometro = ({
         <button onClick={reiniciar} style={{ padding: "10px 20px", margin: "5px" }} className="btnReset">
           <BiReset size={40} color="#fff" />
         </button>
+        <button onClick={limparLocalStorage} style={{ padding: "10px 20px", margin: "5px" }} className="btnClear">
+          Limpar LocalStorage
+        </button>
       </div>
     </div>
   );
 };
+
+
+
 
 
 
@@ -521,18 +545,18 @@ export default function Funcionario({ display, displayF }) {
     try {
       // Realiza a busca do funcionário
       const response = await axios.get(`http://127.0.0.1:8000/api/funcionario/numero/${numeroTecnicoOrdemDeReparacao}`);
-  
+
       if (response.data) {
         setFuncionarioOrdemDeReparacao(response.data); // Se encontrado, armazena os dados do funcionário
         setErroOrdemDeReparacao(""); // Limpa qualquer erro anterior
-  
+
         // Adiciona a nova ordem com o número da ordem de reparação
         adicionarOrdem(ordemDeReparacao.numero_trabalho);
       } else {
         setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
         setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro
       }
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
       setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro de requisição
@@ -541,18 +565,24 @@ export default function Funcionario({ display, displayF }) {
 
   if (loadingOrdemDeReparacao) {
     return (
-      <div className="text-center">
-        <h4>Carregando...</h4>
-        <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+      <div className="centered-div">
+        <div className="text-center pt-5">
+          <h3 className='fw-bold my-3'>Aguarde esta,Carregando...</h3>
+          <img src={imgN} alt="Carregando" className="w-75 d-block mx-auto" />
+        </div>
       </div>
+
     );
   }
 
   if (!ordemDeReparacao || !clienteOrdemDeReparacao || !veiculoOrdemDeReparacao) {
     return (
-      <div className="text-center">
-        <h3 className="text-danger">Dados não encontrados.</h3>
-        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+
+      <div className="centered-div">
+        <div className="text-center pt-5">
+          <h3 className='fw-bold my-3'>Dados não encontrados</h3>
+          <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+        </div>
       </div>
     );
   }
@@ -1011,7 +1041,7 @@ export default function Funcionario({ display, displayF }) {
                                   setNumeroM("FN002");
                                   setRodandoM(true);
                                   setEstadoM("ROdando");*/
-                               
+
                                 }}
                                 className="btn btn-primary"
                               >
@@ -1217,7 +1247,7 @@ export default function Funcionario({ display, displayF }) {
                       segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
                       tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
                     />
-                  
+
                   ))}
                 </div>
 
