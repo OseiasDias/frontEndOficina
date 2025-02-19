@@ -6,10 +6,10 @@ import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch, MdDriveFileRenameOutline, MdOutlineAutoMode, MdPersonSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdDriveFileRenameOutline, MdMotionPhotosPause, MdOutlineAutoMode, MdOutlineNotStarted, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
-
+import { SiCcleaner } from "react-icons/si";
 import axios from 'axios';
 
 
@@ -72,7 +72,8 @@ const ProgressoBar = ({ progresso }) => {
 
 
 
-const Cronometro = ({
+
+const Cronometro = ({ 
   nomeMecanico,
   numeroOrdem,
   estado,
@@ -81,7 +82,7 @@ const Cronometro = ({
   tempoEsgotado: tempoEsgotadoProp,
 }) => {
   const tempoLimite = segundoFinal;
-  const [segundos, setSegundos] = useState(0); // Inicia o cronômetro do zero
+  const [segundos, setSegundos] = useState(590); // Inicia o cronômetro do zero
   const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1);
   const [rodando, setRodando] = useState(false); // Inicia como "não rodando"
   const [funcionario, setFuncionario] = useState(null);
@@ -105,17 +106,14 @@ const Cronometro = ({
     const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
     if (tempoSalvo) {
-      // Se há tempo salvo, define o tempo de segundos como o valor salvo
       setSegundos(parseInt(tempoSalvo));
     }
 
     if (estadoRodandoSalvo === "true") {
-      // Se o cronômetro estava rodando, mantém a flag "rodando"
       setRodando(true);
     }
 
     if (startTimeSalvo) {
-      // Se há um tempo de início salvo, calcula a diferença de tempo
       const currentTime = new Date().getTime();
       const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
       setSegundos((prevSegundos) => prevSegundos + timeDifference);
@@ -151,14 +149,15 @@ const Cronometro = ({
   // Função para buscar o funcionário
   useEffect(() => {
     const fetchFuncionarioData = async () => {
-      setLoading(true); // Inicia o carregamento
+      setLoading(true);
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
-        setLoading(false); // Finaliza o carregamento
+        setLoading(false);
       }
     };
 
@@ -186,14 +185,19 @@ const Cronometro = ({
     }
   };
 
-  // Função para limpar todos os dados do localStorage
-  const limparLocalStorage = () => {
-    localStorage.removeItem(`segundos-${numeroOrdem}`);
-    localStorage.removeItem(`rodando-${numeroOrdem}`);
-    localStorage.removeItem(`startTime-${numeroOrdem}`);
-    setSegundos(0); // Resetar o cronômetro
-    setRodando(false); // Parar qualquer execução do cronômetro
-    setTempoEsgotado(false); // Garantir que o tempo esgotado seja falso
+  // Função para limpar todos os dados de todos os cronômetros no localStorage
+  const limparTodosOsCronometros = () => {
+    // Itera sobre todas as chaves no localStorage e remove as relacionadas aos cronômetros
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('segundos-') || key.startsWith('rodando-') || key.startsWith('startTime-')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    // Resetar o estado do cronômetro
+    setSegundos(0);
+    setRodando(false);
+    setTempoEsgotado(false);
   };
 
   return (
@@ -227,19 +231,19 @@ const Cronometro = ({
       </div>
       <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
       <div className="d-flex justify-content-center mt-3">
-        <button onClick={iniciarPausar} style={{ padding: "10px 20px", margin: "5px" }} disabled={tempoEsgotado}>
-          {rodando ? "Pausar" : "Iniciar"}
+        <button onClick={iniciarPausar} style={{ padding: "0", margin: "0" , backgroundColor:"#00000000",border:"0"}} disabled={tempoEsgotado}>
+          {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
         </button>
-        <button onClick={reiniciar} style={{ padding: "10px 20px", margin: "5px" }} className="btnReset">
-          <BiReset size={40} color="#fff" />
+        <button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset mx-2">
+          <BiReset size={25} color="#fff" />
         </button>
-        <button onClick={limparLocalStorage} style={{ padding: "10px 20px", margin: "5px" }} className="btnClear">
-          Limpar LocalStorage
-        </button>
+       
+        <SiCcleaner className='ms-auto' onClick={limparTodosOsCronometros}  />
       </div>
     </div>
   );
 };
+
 
 
 
@@ -652,6 +656,11 @@ export default function Funcionario({ display, displayF }) {
       console.error("Erro ao enviar dados para o servidor:", error);
     }
   };
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
@@ -1036,11 +1045,13 @@ export default function Funcionario({ display, displayF }) {
                                   limparDadosModalTecnico();
                                   handleModalOrdemDeReparacaoClose(); // Fechar a modal
                                   iniciarPausar(props.numeroOr);
-                                  adicionarOrdem(props.numeroOr);
+                                  //adicionarOrdem(props.numeroOr);
                                   /*setNomeM(funcionarioOrdemDeReparacao.nome);
                                   setNumeroM("FN002");
                                   setRodandoM(true);
                                   setEstadoM("ROdando");*/
+                                  handleRefresh();
+                                
 
                                 }}
                                 className="btn btn-primary"
