@@ -72,20 +72,18 @@ const ProgressoBar = ({ progresso }) => {
 
 
 
-const Cronometro = ({
+const Cronometro = ({ 
   nomeMecanico,
   numeroOrdem,
   estado,
-  rodando: rodandoProp,
-  iniciarPausar,
   segundosAtual,
   segundoFinal,
   tempoEsgotado: tempoEsgotadoProp,
 }) => {
   const tempoLimite = segundoFinal;
-  const [segundos, setSegundos] = useState(segundosAtual);
+  const [segundos, setSegundos] = useState(0); // Inicia o cronômetro do zero
   const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1);
-  const [rodando, setRodando] = useState(rodandoProp === 1);
+  const [rodando, setRodando] = useState(false); // Inicia como "não rodando"
   const [funcionario, setFuncionario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -94,6 +92,7 @@ const Cronometro = ({
   const reiniciar = () => {
     setSegundos(0);
     setTempoEsgotado(false);
+    setRodando(false); // Para de rodar ao reiniciar
     localStorage.removeItem(`segundos-${numeroOrdem}`);
     localStorage.removeItem(`rodando-${numeroOrdem}`);
     localStorage.removeItem(`startTime-${numeroOrdem}`);
@@ -148,7 +147,6 @@ const Cronometro = ({
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
-        // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
@@ -159,14 +157,26 @@ const Cronometro = ({
     if (nomeMecanico) fetchFuncionarioData();
   }, [nomeMecanico]);
 
-  // Exibir mensagem de erro ou de carregamento se necessário
+  const navigate = useNavigate();
+
   if (loading) {
-    return <div >Carregando...</div>;
+    navigate("/homeFuncionario");
   }
 
   if (error) {
     return <div>{error}</div>;
   }
+
+  // Função para alternar o estado "rodando" (iniciar ou pausar)
+  const iniciarPausar = () => {
+    setRodando((prev) => !prev);
+    if (!rodando) {
+      const startTime = new Date().getTime();
+      localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
+    } else {
+      localStorage.removeItem(`startTime-${numeroOrdem}`);
+    }
+  };
 
   return (
     <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-3 w-100">
@@ -182,7 +192,6 @@ const Cronometro = ({
               <h6><MdDriveFileRenameOutline fontSize={20} className="me-2" /> {funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
             </div>
             <div className='divRight ms-3'>
-        
               <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
             </div>
           </div>
@@ -199,8 +208,8 @@ const Cronometro = ({
         </div>
       </div>
       <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
-      <div className="d-none">
-        <button onClick={() => iniciarPausar(numeroOrdem)} style={{ padding: "10px 20px", margin: "5px" }} disabled={tempoEsgotado}>
+      <div className="d-flex justify-content-center mt-3">
+        <button onClick={iniciarPausar} style={{ padding: "10px 20px", margin: "5px" }} disabled={tempoEsgotado}>
           {rodando ? "Pausar" : "Iniciar"}
         </button>
         <button onClick={reiniciar} style={{ padding: "10px 20px", margin: "5px" }} className="btnReset">
@@ -219,10 +228,10 @@ const Cronometro = ({
 export default function Funcionario({ display, displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
   // Estados para armazenar os dados do cronômetro
-  const [nomeM, setNomeM] = useState("");
+  /*const [nomeM, setNomeM] = useState("");
   const [numeroM, setNumeroM] = useState("");
   const [rodandoM, setRodandoM] = useState(true);
-  const [estadoM, setEstadoM] = useState("");
+  const [estadoM, setEstadoM] = useState("");*/
   const [ordens, setOrdens] = useState([]);
 
   // Função para buscar os dados da API
@@ -259,10 +268,9 @@ export default function Funcionario({ display, displayF }) {
   // Função para adicionar uma nova ordem de serviço e cronômetro
   const adicionarOrdem = (numeroOrdem) => {
     const novaOrdem = {
-
       numeroOrdem,
       estado: "Reparando",
-      rodando: true,
+      rodando: true, // Inicia o cronômetro automaticamente
       segundosAtuais: 0, // Inicia do zero
       segundosFinais: 3600, // Define um tempo limite padrão
     };
@@ -278,7 +286,7 @@ export default function Funcionario({ display, displayF }) {
           rodando: !ordem.rodando, // Alterna o estado "rodando" da ordem
         };
       }
-      return ordem;
+      return 1;
     });
     setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
   };
@@ -428,7 +436,7 @@ export default function Funcionario({ display, displayF }) {
   // Função para manipular a mudança do número do técnico
   const handleNumeroTecnicoChange = (e) => setNumeroTecnico(e.target.value);
 
-  //~==================================================================================================
+  //==================================================================================================
 
 
   //==========================================|CONFIGURACOES PARA VER ORDEM DE REPARCAO|====================================================
@@ -466,26 +474,26 @@ export default function Funcionario({ display, displayF }) {
     }
     throw new Error('Limite de requisições excedido. Tente novamente mais tarde.');
   };
-  
+
   useEffect(() => {
     const fetchDadosOrdemDeReparacao = async () => {
       try {
         // Requisições com retry
         const ordemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/${idOrdemDeReparacao}`));
         setOrdemDeReparacao(ordemDeReparacaoResponse.data);
-  
+
         const clienteOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/clientes/${ordemDeReparacaoResponse.data.cliente_id}`));
         setClienteOrdemDeReparacao(clienteOrdemDeReparacaoResponse.data);
-  
+
         const veiculoOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/veiculos/${ordemDeReparacaoResponse.data.veiculo_id}`));
         setVeiculoOrdemDeReparacao(veiculoOrdemDeReparacaoResponse.data);
-  
+
         const empresaOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/empresas/1`));
         setEmpresaOrdemDeReparacao(empresaOrdemDeReparacaoResponse.data);
-  
+
         const servicosOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-servicoU/${idOrdemDeReparacao}`));
         setServicosOrdemDeReparacao(servicosOrdemDeReparacaoResponse.data);
-        
+
       } catch (error) {
         console.error("Erro ao buscar dados da ordem de reparação:", error);
       } finally {
@@ -493,10 +501,10 @@ export default function Funcionario({ display, displayF }) {
         setLoadingServicosOrdemDeReparacao(false);
       }
     };
-  
+
     fetchDadosOrdemDeReparacao();
   }, [idOrdemDeReparacao]);
-  
+
   const handleModalOrdemDeReparacaoClose = () => {
     setIsModalOrdemDeReparacaoOpen(false); // Fecha a modal
   };
@@ -513,15 +521,18 @@ export default function Funcionario({ display, displayF }) {
     try {
       // Realiza a busca do funcionário
       const response = await axios.get(`http://127.0.0.1:8000/api/funcionario/numero/${numeroTecnicoOrdemDeReparacao}`);
-
+  
       if (response.data) {
         setFuncionarioOrdemDeReparacao(response.data); // Se encontrado, armazena os dados do funcionário
         setErroOrdemDeReparacao(""); // Limpa qualquer erro anterior
+  
+        // Adiciona a nova ordem com o número da ordem de reparação
+        adicionarOrdem(ordemDeReparacao.numero_trabalho);
       } else {
         setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
         setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro
       }
-      // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
       setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro de requisição
@@ -995,12 +1006,12 @@ export default function Funcionario({ display, displayF }) {
                                   limparDadosModalTecnico();
                                   handleModalOrdemDeReparacaoClose(); // Fechar a modal
                                   iniciarPausar(props.numeroOr);
-                                  adicionarOrdem("OR" + (ordens.length + 1), "Manuel Dias");
-                                  setNomeM(funcionarioOrdemDeReparacao.nome);
+                                  adicionarOrdem(props.numeroOr);
+                                  /*setNomeM(funcionarioOrdemDeReparacao.nome);
                                   setNumeroM("FN002");
                                   setRodandoM(true);
-                                  setEstadoM("ROdando");
-
+                                  setEstadoM("ROdando");*/
+                               
                                 }}
                                 className="btn btn-primary"
                               >
@@ -1192,7 +1203,9 @@ export default function Funcionario({ display, displayF }) {
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
 
                 <div className="f">
+
                   {ordens.map((ordem, index) => (
+
                     <Cronometro
                       key={index}
                       nomeMecanico={ordem.idTecnico}
@@ -1204,6 +1217,7 @@ export default function Funcionario({ display, displayF }) {
                       segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
                       tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
                     />
+                  
                   ))}
                 </div>
 
