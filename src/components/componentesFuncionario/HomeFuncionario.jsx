@@ -71,9 +71,7 @@ const ProgressoBar = ({ progresso }) => {
 };
 
 
-
-
-const Cronometro = ({ 
+const Cronometro = ({
   nomeMecanico,
   numeroOrdem,
   estado,
@@ -82,9 +80,9 @@ const Cronometro = ({
   tempoEsgotado: tempoEsgotadoProp,
 }) => {
   const tempoLimite = segundoFinal;
-  const [segundos, setSegundos] = useState(590); // Inicia o cronômetro do zero
+  const [segundos, setSegundos] = useState(segundosAtual); // Inicia o cronômetro com o valor salvo
   const [tempoEsgotado, setTempoEsgotado] = useState(tempoEsgotadoProp === 1);
-  const [rodando, setRodando] = useState(false); // Inicia como "não rodando"
+  const [rodando, setRodando] = useState(true); // Inicialmente, o cronômetro está parado
   const [funcionario, setFuncionario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -93,13 +91,13 @@ const Cronometro = ({
   const reiniciar = () => {
     setSegundos(0);
     setTempoEsgotado(false);
-    setRodando(false); // Para de rodar ao reiniciar
+    setRodando(false);
     localStorage.removeItem(`segundos-${numeroOrdem}`);
     localStorage.removeItem(`rodando-${numeroOrdem}`);
     localStorage.removeItem(`startTime-${numeroOrdem}`);
   };
 
-  // Efeito para carregar o tempo salvo e o estado de "rodando" do localStorage
+  // Efeito para carregar o tempo e o estado de "rodando" do localStorage
   useEffect(() => {
     const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
     const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
@@ -153,7 +151,6 @@ const Cronometro = ({
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
-      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
@@ -180,21 +177,21 @@ const Cronometro = ({
     if (!rodando) {
       const startTime = new Date().getTime();
       localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
+      localStorage.setItem(`rodando-${numeroOrdem}`, "true");
     } else {
       localStorage.removeItem(`startTime-${numeroOrdem}`);
+      localStorage.setItem(`rodando-${numeroOrdem}`, "false");
     }
   };
 
   // Função para limpar todos os dados de todos os cronômetros no localStorage
   const limparTodosOsCronometros = () => {
-    // Itera sobre todas as chaves no localStorage e remove as relacionadas aos cronômetros
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('segundos-') || key.startsWith('rodando-') || key.startsWith('startTime-')) {
         localStorage.removeItem(key);
       }
     });
 
-    // Resetar o estado do cronômetro
     setSegundos(0);
     setRodando(false);
     setTempoEsgotado(false);
@@ -210,7 +207,7 @@ const Cronometro = ({
             <h6><b>{numeroOrdem}</b></h6>
           </div>
           <div className="d-flex align-items-center mt-2">
-            <div className="divLeft ">
+            <div className="divLeft">
               <h6><MdDriveFileRenameOutline fontSize={20} className="me-2" /> {funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
             </div>
             <div className='divRight ms-3'>
@@ -230,20 +227,19 @@ const Cronometro = ({
         </div>
       </div>
       <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
-      <div className="d-flex justify-content-center mt-3">
-        <button onClick={iniciarPausar} style={{ padding: "0", margin: "0" , backgroundColor:"#00000000",border:"0"}} disabled={tempoEsgotado}>
+      <div className="d-flex justify-content-center mt-3 ">
+        <button onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
           {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
         </button>
         <button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset mx-2">
           <BiReset size={25} color="#fff" />
         </button>
-       
-        <SiCcleaner className='ms-auto' onClick={limparTodosOsCronometros}  />
+
+        <SiCcleaner className='ms-auto' onClick={limparTodosOsCronometros} />
       </div>
     </div>
   );
 };
-
 
 
 
@@ -555,7 +551,7 @@ export default function Funcionario({ display, displayF }) {
         setErroOrdemDeReparacao(""); // Limpa qualquer erro anterior
 
         // Adiciona a nova ordem com o número da ordem de reparação
-        adicionarOrdem(ordemDeReparacao.numero_trabalho);
+        //adicionarOrdem(ordemDeReparacao.numero_trabalho);
       } else {
         setFuncionarioOrdemDeReparacao(null); // Limpa os dados do funcionário
         setErroOrdemDeReparacao("Funcionário não encontrado"); // Exibe erro
@@ -1022,9 +1018,8 @@ export default function Funcionario({ display, displayF }) {
 
                             {/* Exibe o botão "Começar" somente se o funcionário for encontrado */}
                             {funcionarioOrdemDeReparacao && (
-
                               <button
-                                onClick={() => {
+                                onClick={async () => {
                                   const props = {
                                     numeroOr: ordemDeReparacao?.numero_trabalho,
                                     tecnicoId: funcionarioOrdemDeReparacao.id, // Exemplo de ID do técnico
@@ -1039,27 +1034,29 @@ export default function Funcionario({ display, displayF }) {
                                     tempoEsgotado: 0,
                                   };
 
-                                  cadastrarCronometro(props); // Chama a função com os valores
-                                  fecharModalOR(); // Fecha a primeira modal
-                                  fecharModalTecnico(); // Fecha a segunda modal
-                                  limparDadosModalTecnico();
-                                  handleModalOrdemDeReparacaoClose(); // Fechar a modal
-                                  iniciarPausar(props.numeroOr);
-                                  //adicionarOrdem(props.numeroOr);
-                                  /*setNomeM(funcionarioOrdemDeReparacao.nome);
-                                  setNumeroM("FN002");
-                                  setRodandoM(true);
-                                  setEstadoM("ROdando");*/
-                                  handleRefresh();
-                                
+                                  try {
+                                    // Executando as funções de forma assíncrona
+                                    await cadastrarCronometro(props); // Chama a função com os valores
+                                    await fecharModalOR(); // Fecha a primeira modal
+                                    await fecharModalTecnico(); // Fecha a segunda modal
+                                    await limparDadosModalTecnico(); // Limpa os dados do modal de técnico
+                                    await handleModalOrdemDeReparacaoClose(); // Fecha a modal da ordem de reparação
+                                    await iniciarPausar(props.numeroOr); // Inicia o cronômetro
+                                    await adicionarOrdem(ordemDeReparacao?.numero_trabalho); // Adiciona a ordem ao sistema
 
+                                    // Após todas as funções anteriores terminarem, chama o refresh
+                                    handleRefresh(); // Agora o refresh é chamado por último
+
+                                  } catch (error) {
+                                    console.error("Erro ao executar as funções:", error);
+                                  }
                                 }}
                                 className="btn btn-primary"
                               >
                                 Começar
                               </button>
-
                             )}
+
                           </Modal.Footer>
                         </Modal>
 
