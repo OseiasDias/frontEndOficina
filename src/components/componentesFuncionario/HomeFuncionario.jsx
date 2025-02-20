@@ -62,7 +62,7 @@ const ProgressoBar = ({ progresso }) => {
       label={label}
       style={{
         whiteSpace: 'pre-line',
-        fontSize: '0.9rem',
+        fontSize: '1rem',
         textAlign: 'center',
         color: 'black' // Cor do texto sempre preta, independentemente da cor da barra
       }}
@@ -137,6 +137,31 @@ const Cronometro = ({
     return () => clearInterval(intervalo);
   }, [rodando, segundos, tempoLimite, numeroOrdem]);
 
+  useEffect(() => {
+    const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
+    const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
+    const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
+  
+    if (tempoSalvo) {
+      setSegundos(parseInt(tempoSalvo));
+    }
+  
+    // Verifica se o cronômetro estava rodando antes de recarregar
+    if (estadoRodandoSalvo === "true") {
+      setRodando(true);
+    } else if (estadoRodandoSalvo === "false") {
+      setRodando(false); // Se estava pausado, não retome a contagem
+    }
+  
+    // Caso haja tempo salvo e o cronômetro já estava rodando antes do reload,
+    // calcule o tempo já passado
+    if (startTimeSalvo && estadoRodandoSalvo === "true") {
+      const currentTime = new Date().getTime();
+      const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
+      setSegundos((prevSegundos) => prevSegundos + timeDifference);
+    }
+  }, [numeroOrdem]);
+  
   // Função para formatar o tempo
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
@@ -151,6 +176,7 @@ const Cronometro = ({
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
@@ -208,8 +234,10 @@ const Cronometro = ({
           </div>
           <div className="d-flex align-items-center mt-2">
             <div className="divLeft">
-              <h6><MdDriveFileRenameOutline fontSize={20} className="me-2" /> {funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado"}</h6>
-            </div>
+            <h6>
+            <MdDriveFileRenameOutline fontSize={20} className="me-2" />
+            {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
+        </h6>            </div>
             <div className='divRight ms-3'>
               <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
             </div>
