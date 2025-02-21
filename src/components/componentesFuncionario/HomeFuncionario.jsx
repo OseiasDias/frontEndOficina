@@ -7,12 +7,11 @@ import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
 import { MdContentPasteSearch, MdDriveFileRenameOutline, MdMotionPhotosPause, MdOutlineAutoMode, MdOutlineNotStarted, MdPersonSearch } from 'react-icons/md';
-import { Modal, Button, Form } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
+import { Modal, Button, Form, Alert } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 import { SiCcleaner } from "react-icons/si";
 import axios from 'axios';
-
-
+import { TbNumber, TbPlayerTrackNextFilled } from "react-icons/tb";
 import LogoType from "../../assets/lgo.png";
 
 /* eslint-disable react/prop-types */
@@ -21,7 +20,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useEffect } from 'react';
 import { BiReset } from "react-icons/bi";
 
-
+import { GiAutoRepair } from "react-icons/gi";
 
 import logotipo from "../../assets/lgo.png";
 import imgErro from "../../assets/error.webp";
@@ -141,18 +140,18 @@ const Cronometro = ({
     const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
     const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
     const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
-  
+
     if (tempoSalvo) {
       setSegundos(parseInt(tempoSalvo));
     }
-  
+
     // Verifica se o cronômetro estava rodando antes de recarregar
     if (estadoRodandoSalvo === "true") {
       setRodando(true);
     } else if (estadoRodandoSalvo === "false") {
       setRodando(false); // Se estava pausado, não retome a contagem
     }
-  
+
     // Caso haja tempo salvo e o cronômetro já estava rodando antes do reload,
     // calcule o tempo já passado
     if (startTimeSalvo && estadoRodandoSalvo === "true") {
@@ -161,7 +160,7 @@ const Cronometro = ({
       setSegundos((prevSegundos) => prevSegundos + timeDifference);
     }
   }, [numeroOrdem]);
-  
+
   // Função para formatar o tempo
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
@@ -176,7 +175,7 @@ const Cronometro = ({
       try {
         const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`);
         setFuncionario(response.data);
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Erro ao carregar dados do funcionário");
       } finally {
@@ -234,10 +233,10 @@ const Cronometro = ({
           </div>
           <div className="d-flex align-items-center mt-2">
             <div className="divLeft">
-            <h6>
-            <MdDriveFileRenameOutline fontSize={20} className="me-2" />
-            {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
-        </h6>            </div>
+              <h6>
+                <MdDriveFileRenameOutline fontSize={20} className="me-2" />
+                {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
+              </h6>            </div>
             <div className='divRight ms-3'>
               <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
             </div>
@@ -279,13 +278,15 @@ const Cronometro = ({
 
 export default function Funcionario({ display, displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
-  // Estados para armazenar os dados do cronômetro
-  /*const [nomeM, setNomeM] = useState("");
-  const [numeroM, setNumeroM] = useState("");
-  const [rodandoM, setRodandoM] = useState(true);
-  const [estadoM, setEstadoM] = useState("");*/
+
   const [ordens, setOrdens] = useState([]);
 
+  const [numeroOrdem, setNumeroOrdem] = useState(''); // Estado para armazenar o número da ordem
+  const [showSearchForm, setShowSearchForm] = useState(true); // Controle para alternar entre a tela de busca e a de confirmação
+  //const [cronometroData, setCronometroData] = useState(null);
+  const [funcionarioId, setFuncionarioId] = useState(null);
+
+  const [erroMensagem, setErroMensagem] = useState('');
   // Função para buscar os dados da API
   useEffect(() => {
     const fetchCronometros = async () => {
@@ -347,6 +348,7 @@ export default function Funcionario({ display, displayF }) {
 
 
 
+
   //========================================|CONFIGURACOES DO MENU ASIDE|===================================================
 
   const [showModal, setShowModal] = useState(false); // Estado para controlar a visibilidade da modal de OR
@@ -364,7 +366,7 @@ export default function Funcionario({ display, displayF }) {
   //const fecharModal = () => setShowModal(false);
 
   const abrirConfirmModal = () => setShowConfirmModal(true);
-  const fecharConfirmModal = () => setShowConfirmModal(false);
+  //const fecharConfirmModal = () => setShowConfirmModal(false);
 
   const abrirLimpezaModal = () => setShowLimpezaModal(true);
   const fecharLimpezaModal = () => setShowLimpezaModal(false);
@@ -391,10 +393,6 @@ export default function Funcionario({ display, displayF }) {
 
 
   // Função para confirmar o término do serviço
-  const handleConfirmarTerminarServico = () => {
-    alert('Serviço terminado!');
-    fecharConfirmModal();
-  };
 
   // Função para confirmar a limpeza
   const handleConfirmarLimpeza = (resposta) => {
@@ -473,7 +471,84 @@ export default function Funcionario({ display, displayF }) {
 
   const [showModalTecnico, setShowModalTecnico] = useState(false);
   const [numeroTecnico, setNumeroTecnico] = useState(''); // Estado para armazenar o número do técnico
+  // eslint-disable-next-line no-unused-vars
+  const [isFormValid, setIsFormValid] = useState(false);
+  //1const [showSearchForm, setShowSearchForm] = useState(true);
 
+
+  const buscarFuncionarioPorNumero = async () => {
+    try {
+      // Verifica se o número do técnico foi preenchido
+      if (!numeroTecnico) {
+        setErroMensagem('Por favor, insira o número do técnico.');
+        return;
+      }
+
+      // Faz a requisição à API para buscar o funcionário pelo número
+      const response = await fetch(`http://127.0.0.1:8000/api/funcionariosIdReturn/id/${numeroTecnico}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        // Se a requisição for bem-sucedida e o funcionário for encontrado
+        if (data.id) {
+          setErroMensagem(''); // Limpa a mensagem de erro
+          console.log('Funcionário encontrado, ID:', data.id);
+          // Aqui você pode exibir o ID ou fazer algo com o dado
+          // Por exemplo, pode definir um estado com o id retornado
+          setFuncionarioId(data.id);
+        } else {
+          setErroMensagem('Nenhum funcionário encontrado com esse número.');
+        }
+      } else {
+        setErroMensagem(data.message || 'Erro ao buscar o funcionário. Tente novamente.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar o funcionário:', error);
+      setErroMensagem('Ocorreu um erro ao buscar o funcionário. Tente novamente.');
+    }
+  };
+
+  const buscarDados = async () => {
+    try {
+      // Verifica se o número da ordem foi preenchido
+      if (!numeroOrdem) {
+        setErroMensagem('Por favor, insira o número da ordem de reparação.');
+        return;
+      }
+
+      // Faz a requisição à API
+      const response = await fetch(`http://127.0.0.1:8000/api/cronometros/buscar/${numeroOrdem}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        // Se a requisição for bem-sucedida e houver dados
+        if (data.id) {
+          console.log('Dados encontrados:', data);
+          setErroMensagem(''); // Limpa a mensagem de erro
+          // Altera o estado para mostrar o próximo formulário (número do técnico)
+          setShowSearchForm(false); // Para exibir o campo do número do técnico
+        } else {
+          setErroMensagem('Nenhum resultado encontrado para o número da ordem fornecido.');
+          setShowSearchForm(true); // Para continuar mostrando o campo de busca da ordem
+        }
+      } else {
+        // Se a requisição falhar
+        setErroMensagem(data.message || 'Erro ao buscar os dados. Tente novamente.');
+        setShowSearchForm(true); // Continua mostrando o campo de busca
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      setErroMensagem('Ocorreu um erro ao buscar os dados. Tente novamente.');
+      setShowSearchForm(true); // Continua mostrando o campo de busca
+    }
+  };
+
+
+  // Função para fechar a modal de confirmação
+  const fecharConfirmModal = () => {
+    setShowConfirmModal(false);
+    setShowSearchForm(true); // Voltar ao formulário inicial
+  };
   // Função para abrir a modal
   //const abrirModalTecnico = () => setShowModalTecnico(true);
 
@@ -684,6 +759,9 @@ export default function Funcionario({ display, displayF }) {
   const handleRefresh = () => {
     window.location.reload();
   };
+
+
+  //CONFIGURAR MODAL TERMINAR
 
   return (
     <div className="seccao-cartaz">
@@ -1109,6 +1187,7 @@ export default function Funcionario({ display, displayF }) {
                 <Modal.Body>
                   <Form onSubmit={handleSubmitTecnico}>
                     <Form.Group className="mb-3" controlId="formNumeroTecnico">
+
                       <Form.Label>Número do Técnico</Form.Label>
                       <div className="input-group col-lg-6 ">
 
@@ -1134,20 +1213,79 @@ export default function Funcionario({ display, displayF }) {
               {/* Modal de Confirmação para Terminar o Serviço */}
               <Modal scrollable show={showConfirmModal} onHide={fecharConfirmModal}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Confirmação</Modal.Title>
+                  <Modal.Title>{showSearchForm ? 'Buscar Reparação a Terminar' : 'Insira o teu número de Técnico'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <p>Tem certeza que deseja terminar a reparação?</p>
+                  {erroMensagem && (
+                    <Alert variant="danger">
+                      {erroMensagem}
+                    </Alert>
+                  )}
+
+                  {showSearchForm ? (
+                    <Form>
+                      <Form.Group className="mb-3" controlId="formNumeroOrdem">
+                        <Form.Label>Número da Ordem de Reparação</Form.Label>
+                        <div className="input-group">
+                          <span className="input-group-text">
+                            <GiAutoRepair fontSize={20} color="#0070fa" />
+                          </span>
+                          <Form.Control
+                            type="text"
+                            placeholder="Digite o número da ordem"
+                            value={numeroOrdem}
+                            onChange={(e) => setNumeroOrdem(e.target.value)}
+                          />
+                          <Button variant="primary" onClick={buscarDados} className="d-block py-1 ms-auto">
+                            Próximo &nbsp;
+                            <TbPlayerTrackNextFilled fontSize={16} />
+                          </Button>
+                        </div>
+                      </Form.Group>
+                    </Form>
+                  ) : (
+                    <div>
+                      {/* Exibindo o campo para o número do técnico */}
+                      <Form.Group className="mb-3" controlId="formNumeroTecnico">
+                        <Form.Label>Número do Técnico</Form.Label>
+                        <div className="input-group">
+                          <span className="input-group-text">
+                            <TbNumber fontSize={20} color="#0070fa" />
+                          </span>
+                          <Form.Control
+                            type="text"
+                            placeholder="Digite o número do técnico"
+                            value={numeroTecnico}
+                            onChange={(e) => setNumeroTecnico(e.target.value)}
+                          />
+                          <Button
+                            variant="primary"
+                            onClick={buscarFuncionarioPorNumero} // Chama a função de busca
+                            className="btn"
+                          >
+                            Buscar
+                          </Button>
+                        </div>
+                      </Form.Group>
+
+                      {/* Exibindo o ID do funcionário encontrado */}
+                      {funcionarioId && (
+                        <div>
+                          <p>Funcionário encontrado! ID: {funcionarioId}</p>
+                        </div>
+                      )}
+
+                      {/* Exibindo mensagem de erro caso o funcionário não seja encontrado */}
+                   
+                    </div>
+
+                  )}
                 </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={fecharConfirmModal}>
-                    Cancelar
-                  </Button>
-                  <Button variant="danger" onClick={handleConfirmarTerminarServico}>
-                    Terminar Reparação
-                  </Button>
+                <Modal.Footer className="d-flex justify-content-between align-items-center">
+                  <img src={LogoType} alt="Logo" className="d-block mx-auto" width={230} height={60} />
                 </Modal.Footer>
               </Modal>
+
 
               {/* Modal de Confirmação para Manutenção e Limpeza */}
               <Modal scrollable show={showLimpezaModal} onHide={fecharLimpezaModal}>
