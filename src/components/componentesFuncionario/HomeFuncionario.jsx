@@ -710,6 +710,56 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
+
+  //CADASTRAR CRONOMETRO AUXILIAR
+  const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
+    const {
+      tecnicoId,
+      idCronometro,
+      ordemReparacaoId,
+      numeroOr,
+      segundosAtual,
+      segundoFinal,
+      numeroHoras,
+      rodando,
+      estado,
+      progresso,
+      acao,
+      tempoEsgotado,
+    } = props;
+  
+    try {
+      // Dados a serem enviados
+      const dados = {
+        tecnico_id: tecnicoId, // ID do técnico (recebido por props)
+        id_cronometro: idCronometro, // ID do cronômetro (recebido por props)
+        ordem_reparacao_id: ordemReparacaoId, // ID da ordem de reparação (recebido por props)
+        numero_or: numeroOr, // Número da ordem de reparação (recebido por props)
+        segundos_atual: segundosAtual, // Recebido por props
+        segundo_final: segundoFinal, // Recebido por props
+        numero_horas: numeroHoras, // Recebido por props
+        rodando: rodando, // Recebido por props
+        estado: estado, // Recebido por props
+        progresso: progresso, // Recebido por props
+        acao: acao, // Recebido por props
+        data_hora: new Date().toISOString(), // Data e hora atual
+        tempo_esgotado: tempoEsgotado, // Recebido por props
+      };
+  
+      // Enviar dados via POST
+      const response = await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/", dados);
+  
+      if (response.status === 201) {
+        console.log("Ordem de reparação, cronômetro e técnico cadastrados com sucesso:", response.data);
+      } else {
+        console.log("Erro ao cadastrar:", response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar dados para o servidor:", error);
+    }
+  };
+
+
   const handleRefresh = () => {
     window.location.reload();
   };
@@ -844,9 +894,6 @@ export default function Funcionario({ display, displayF }) {
                           {loading ? "Pesquisando..." : "Pesquisar"}
                         </Button>
                       </div>
-
-
-
                     </Form.Group>
                   </Form>
 
@@ -1127,6 +1174,7 @@ export default function Funcionario({ display, displayF }) {
                                   try {
                                     // Executando as funções de forma assíncrona
                                     await cadastrarCronometro(props); // Chama a função com os valores
+                                    await cadastrarOrdemReparacaoCronometroTecnico(props);
                                     await fecharModalOR(); // Fecha a primeira modal
                                     await fecharModalTecnico(); // Fecha a segunda modal
                                     await limparDadosModalTecnico(); // Limpa os dados do modal de técnico
