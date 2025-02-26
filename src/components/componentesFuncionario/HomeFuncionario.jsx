@@ -13,7 +13,6 @@ import { SiCcleaner } from "react-icons/si";
 import axios from 'axios';
 import { TbNumber, TbPlayerTrackNextFilled } from "react-icons/tb";
 import LogoType from "../../assets/lgo.png";
-
 /* eslint-disable react/prop-types */
 import "../../css/StylesFuncionario/cartaz.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
@@ -473,9 +472,7 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
-  // Função para buscar os dados da ordem de reparação
 
-  // Função para buscar dados da ordem de reparação
   // Função para buscar dados da ordem de reparação
   const buscarDados = async () => {
     if (!numeroOrdem) {
@@ -660,9 +657,7 @@ export default function Funcionario({ display, displayF }) {
 
   };
 
-
   //CADASTRAR O CRONOMETRO
-
   const cadastrarCronometro = async (props) => {
     const {
       numeroOr,
@@ -708,53 +703,56 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
-// CADASTRAR CRONOMETRO AUXILIAR
-const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
-  const {
-    tecnicoId,
-    idCronometro = "2",
-    ordemReparacaoId = "2",
-    numeroOr,
-    segundosAtual,
-    segundoFinal,
-    numeroHoras,
-    rodando,
-    estado,
-    progresso,
-    acao,
-    tempoEsgotado,
-  } = props;
+  // CADASTRAR CRONOMETRO AUXILIAR
 
-  try {
-    // Dados a serem enviados
-    const dados = {
-      tecnico_id: tecnicoId, // ID do técnico (recebido por props)
-      id_cronometro: idCronometro, // ID do cronômetro (recebido por props)
-      ordem_reparacao_id: ordemReparacaoId, // ID da ordem de reparação (recebido por props)
-      numero_or: numeroOr, // Número da ordem de reparação (recebido por props)
-      segundos_atual: segundosAtual, // Recebido por props
-      segundo_final: segundoFinal, // Recebido por props
-      numero_horas: numeroHoras, // Recebido por props
-      rodando: rodando, // Recebido por props
-      estado: estado, // Recebido por props
-      progresso: progresso, // Recebido por props
-      acao: acao, // Recebido por props
-      data_hora: new Date().toISOString(), // Data e hora atual
-      tempo_esgotado: tempoEsgotado, // Recebido por props
-    };
+  const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
 
-    // Enviar dados via POST
-    const response = await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/", dados);
+    const {
+      tecnicoId,
+      idCronometro,
+      ordemReparacaoId,
+      numeroOr,
+      segundosAtual,
+      segundoFinal,
+      numeroHoras,
+      rodando,
+      estado,
+      progresso,
+      acao,
+      tempoEsgotado,
+    } = props;
 
-    if (response.status === 201) {
-      console.log("Ordem de reparação, cronômetro e técnico cadastrados com sucesso:", response.data);
-    } else {
-      console.log("Erro ao cadastrar:", response.data);
+    try {
+      // Dados a serem enviados
+      const dados = {
+      
+        tecnico_id: tecnicoId, // ID do técnico (recebido por props)
+        id_cronometro: idCronometro, // ID do cronômetro (recebido por props)
+        ordem_reparacao_id: ordemReparacaoId, // ID da ordem de reparação (recebido por props)
+        numero_or: numeroOr, // Número da ordem de reparação (recebido por props)
+        segundos_atual: segundosAtual, // Segundos atuais (recebido por props)
+        segundo_final: segundoFinal, // Segundo final (recebido por props)
+        numero_horas: numeroHoras, // Número de horas (recebido por props)
+        rodando: rodando, // Status de execução (recebido por props)
+        estado: estado, // Estado do cronômetro (recebido por props)
+        progresso: progresso, // Progresso do cronômetro (recebido por props)
+        acao: acao, // Ação associada (recebido por props)
+        data_hora: new Date().toISOString(), // Data e hora atual
+        tempo_esgotado: tempoEsgotado, // Tempo esgotado (recebido por props)
+      };
+
+      // Enviar dados via POST
+      const response = await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/", dados);
+
+      if (response.status === 201) {
+        console.log("Ordem de reparação e cronômetro cadastrados com sucesso:", response.data);
+      } else {
+        console.log("Erro ao cadastrar ordem de reparação e cronômetro:", response.data);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar dados para o servidor:", error);
     }
-  } catch (error) {
-    console.error("Erro ao enviar dados para o servidor:", error);
-  }
-};
+  };
 
 
   const handleRefresh = () => {
@@ -773,16 +771,16 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
       segundosFinais: 3600,
       tempoEsgotado: false,
     },
-      // Exemplo de dados. Cada item aqui seria uma ordem.
-      {
-        idTecnico: 1,
-        numeroOrdem: 'OR001',
-        estado: 'iniciado',
-        rodando: 0,
-        segundosAtuais: 120,
-        segundosFinais: 3600,
-        tempoEsgotado: false,
-      },
+    // Exemplo de dados. Cada item aqui seria uma ordem.
+    {
+      idTecnico: 1,
+      numeroOrdem: 'OR001',
+      estado: 'iniciado',
+      rodando: 0,
+      segundosAtuais: 120,
+      segundosFinais: 3600,
+      tempoEsgotado: false,
+    },
     {
       idTecnico: 2,
       numeroOrdem: 'OR002',
@@ -1143,7 +1141,7 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
                               <div className="mt-3">
                                 <h6>Funcionário Encontrado <FaCheckDouble color='green' /></h6>
                                 <p><strong>Nome:</strong> {funcionarioOrdemDeReparacao.nome} {funcionarioOrdemDeReparacao.sobrenome}</p>
-                                <p><strong>Cargo:</strong> {funcionarioOrdemDeReparacao.cargo}</p>
+                                <p><strong>Cargo:</strong>  {funcionarioOrdemDeReparacao.cargo}</p>
                               </div>
                             )}
                           </Modal.Body>
@@ -1158,6 +1156,7 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
                                     numeroOr: ordemDeReparacao?.numero_trabalho,
                                     tecnicoId: funcionarioOrdemDeReparacao.id, // Exemplo de ID do técnico
                                     segundosAtual: 0,
+                                    ordem_reparacao_id:ordemDeReparacao.id,
                                     segundoFinal: (ordemDeReparacao?.horas_reparacao * 6000),
                                     numeroHoras: ordemDeReparacao?.horas_reparacao,
                                     rodando: 1,
@@ -1170,6 +1169,7 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
 
                                   try {
                                     // Executando as funções de forma assíncrona
+                                  
                                     await cadastrarCronometro(props); // Chama a função com os valores
                                     await cadastrarOrdemReparacaoCronometroTecnico(props);
                                     await fecharModalOR(); // Fecha a primeira modal
@@ -1433,7 +1433,7 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
 
                 <div className="row">
-             
+
                   {ordens.map((ordem, index) => (
 
                     <>
@@ -1463,7 +1463,7 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
                       <h4 className='ps-4'>
                         Tempo Individual
                       </h4>
-                   
+
                       {ordensSecundaria.map((ordem, index) => (
                         <div className="col-lg-6" key={index}>
                           <Cronometro
@@ -1478,8 +1478,8 @@ const cadastrarOrdemReparacaoCronometroTecnico = async (props) => {
                           />
                         </div>
                       ))}
-                      </div>
-                    
+                    </div>
+
                   </>
 
                 </div>
