@@ -143,7 +143,6 @@ const Cronometro = ({
       setRodando(false); // Se estava pausado, não retome a contagem
     }
 
-    // Caso haja tempo salvo e o cronômetro já estava rodando antes do reload,
     // calcule o tempo já passado
     if (startTimeSalvo && estadoRodandoSalvo === "true") {
       const currentTime = new Date().getTime();
@@ -277,21 +276,20 @@ export default function Funcionario({ display, displayF }) {
   const [funcionarioId, setFuncionarioId] = useState(null);
   const [erroMensagem, setErroMensagem] = useState('');
   // Função para buscar os dados da API
-
-  const [idTecnico, setIdTecnico] = useState(1);  // Valor inicial: 1
-  const [idCronometro, setIdCronometro] = useState(1);  // Valor inicial: 1
-  const [idOR, setIdOR] = useState(4);  // Valor inicial: 4
-  const [numOR, setNumOR] = useState("OR-004");  // Valor inicial: "OR-004"
-  const [segundosAtual, setSegundosAtual] = useState(0);  // Valor inicial: 0
-  const [segundoFinal, setSegundoFinal] = useState(3);  // Valor inicial: 3
-  const [numHoras, setNumHoras] = useState(5);  // Valor inicial: 5
-  const [rondandoR, setRondandoR] = useState(6);  // Valor inicial: 6
-  const [estadoE, setEstadoE] = useState(1);  // Valor inicial: 1
-  const [progressoP, setProgressoP] = useState(3);  // Valor inicial: 3
-  const [accaoA, setAccaoA] = useState("accao 1");  // Valor inicial: "accao 1"
-  const [dataHora, setDataHora] = useState("2025-02-26 02:24:10");  // Valor inicial: "2025-02-26 02:24:10"
-  const [tempoEsgotado, setTempoEsgotado] = useState(0);  // Valor inicial: 0
-
+   // Estados iniciais
+   const [idTecnico, setIdTecnico] = useState(1);
+   const [idCronometro, setIdCronometro] = useState(1);
+   const [idOR, setIdOR] = useState(4);
+   const [numOR, setNumOR] = useState("OR-004");
+   const [segundosAtual, setSegundosAtual] = useState(0);
+   const [segundoFinal, setSegundoFinal] = useState(300);
+   const [numHoras, setNumHoras] = useState(5);
+   const [rondandoR, setRondandoR] = useState(1);
+   const [estadoE, setEstadoE] = useState("iniciar");
+   const [progressoP, setProgressoP] = useState(3);
+   const [accaoA, setAccaoA] = useState("accao 1");
+   const [dataHora, setDataHora] = useState("2025-02-26T02:24:10"); 
+   const [tempoEsgotado, setTempoEsgotado] = useState(0);
 
   useEffect(() => {
     const fetchCronometros = async () => {
@@ -713,43 +711,29 @@ export default function Funcionario({ display, displayF }) {
   };
 
   // CADASTRAR CRONOMETRO AUXILIAR
-  const cadastrarOrdemReparacaoCronometroTecnico = async ({
-    idTecnico,
-    idCronometro,
-    idOR,
-    numOR,
-    segundosAtual,
-    segundoFinal,
-    numHoras,
-    rondandoR,
-    estadoE,
-    progressoP,
-    accaoA,
-    dataHora,
-    tempoEsgostado
-  }) => {
-    // Dados a serem enviados no corpo da requisição POST
+
+  const cadastrarOrdemReparacaoCronometroTecnico = async () => {
     const dados = {
-      tecnico_id: idTecnico,             // Usando o parâmetro idTecnico
-      id_cronometro: idCronometro,       // Usando o parâmetro idCronometro
-      ordem_reparacao_id: idOR,          // Usando o parâmetro idOR
-      numero_or: numOR,                  // Usando o parâmetro numOR
-      segundos_atual: segundosAtual,     // Usando o parâmetro segundosAtual
-      segundo_final: segundoFinal,       // Usando o parâmetro segundoFinal
-      numero_horas: numHoras,            // Usando o parâmetro numHoras
-      rodando: rondandoR,                // Usando o parâmetro rondandoR
-      estado: estadoE,                   // Usando o parâmetro estadoE
-      progresso: progressoP,             // Usando o parâmetro progressoP
-      acao: accaoA,                      // Usando o parâmetro accaoA
-      data_hora: dataHora,               // Usando o parâmetro dataHora
-      tempo_esgotado: tempoEsgostado,    // Usando o parâmetro tempoEsgostado
-      created_at: null,                  // Atributos de data e hora, caso seja necessário ajustar no backend
-      updated_at: null
+      tecnico_id: idTecnico,
+      id_cronometro: idCronometro,
+      ordem_reparacao_id: idOR,
+      numero_or: numOR,
+      segundos_atual: segundosAtual,
+      segundo_final: segundoFinal,
+      numero_horas: numHoras,
+      rodando: rondandoR,
+      estado: estadoE,
+      progresso: progressoP,
+      acao: accaoA,
+      data_hora: dataHora,
+      tempo_esgotado: tempoEsgotado,
     };
 
     try {
-      // Enviar dados via POST
-      const response = await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/", dados);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/",
+        dados
+      );
 
       if (response.status === 201) {
         console.log("Cronômetro cadastrado com sucesso:", response.data);
@@ -761,55 +745,9 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
-  /* const cadastrarOrdemReparacaoCronometroTecnico = async () => {
-     // Dados diretamente definidos na função
-     const numeroOr = "OR-0017";
-     const tecnicoId = 1;
-     const idCronometro = 1;
-     const segundosAtual = 10;
-     const segundoFinal = 200;
-     const numeroHoras = 13;
-     const rodando = 1;
-     const estado = "TerminadoA";  // Verifique se "TerminadoA" é um valor válido
-     const progresso = 510;  // Verifique se 510 é um valor válido
-     const ordemReparacaoId = 4; // Defina um valor para ordemReparacaoId ou passe conforme necessário
-     const acao = "Ação 1";
-     const tempoEsgotado = 0;
-   
-     try {
-       // Dados a serem enviados
-       const dados = {
-         numero_or: numeroOr,
-         tecnico_id: tecnicoId,
-         id_cronometro: idCronometro,
-         segundos_atual: segundosAtual,
-         segundo_final: segundoFinal,
-         numero_horas: numeroHoras,
-         rodando: rodando,
-         estado: estado,
-         progresso: progresso,
-         ordem_reparacao_id: ordemReparacaoId,
-         acao: acao,
-         data_hora: new Date().toISOString(),
-         tempo_esgotado: tempoEsgotado,
-       };
-   
-       // Enviar dados via POST
-       const response = await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/", dados);
-   
-       if (response.status === 201) {
-         console.log("Cronômetro cadastrado com sucesso:", response.data);
-       } else {
-         console.log("Erro ao cadastrar cronômetro:", response.data);
-       }
-     } catch (error) {
-       console.error("Erro ao enviar dados para o servidor:", error);
-     }
-   };
-   */
-
+ 
   const handleRefresh = () => {
-    //  window.location.reload();
+    window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
 
@@ -1203,7 +1141,7 @@ export default function Funcionario({ display, displayF }) {
                             {/* Exibe o botão "Começar" somente se o funcionário for encontrado */}
                             {funcionarioOrdemDeReparacao && (
                               <button
-                                onClick={async () => {
+                                onClick={async (e) => {
                                   const props = {
                                     numeroOr: ordemDeReparacao?.numero_trabalho,
                                     tecnicoId: funcionarioOrdemDeReparacao.id, // Exemplo de ID do técnico
@@ -1219,26 +1157,26 @@ export default function Funcionario({ display, displayF }) {
                                     tempoEsgotado: 0,
                                   };
 
-                                  setIdTecnico(1);
-                                  setIdCronometro(1);  // Valor inicial: 1
-                                  setIdOR(4);  // Valor inicial: 4
+                                  setIdTecnico(Number(1));
+                                  setIdCronometro(Number(1));  // Valor inicial: 1
+                                  setIdOR(Number(4));  // Valor inicial: 4
                                   setNumOR("OR-004");  // Valor inicial: "OR-004"
-                                  setSegundosAtual(0);  // Valor inicial: 0
-                                  setSegundoFinal(3);  // Valor inicial: 3
-                                  setNumHoras(5);  // Valor inicial: 5
-                                  setRondandoR(6);  // Valor inicial: 6
-                                  setEstadoE(1);  // Valor inicial: 1
-                                  setProgressoP(3);  // Valor inicial: 3
+                                  setSegundosAtual(Number(0));  // Valor inicial: 0
+                                  setSegundoFinal(Number(300));  // Valor inicial: 3
+                                  setNumHoras(Number(5));  // Valor inicial: 5
+                                  setRondandoR(Number(1));  // Valor inicial: 6
+                                  setEstadoE("iniciar");  // Valor inicial: 1
+                                  setProgressoP(Number(3));  // Valor inicial: 3
                                   setAccaoA("accao 1");  // Valor inicial: "accao 1"
-                                  setDataHora("2025-02-26 02:24:10");  // Valor inicial: "2025-02-26 02:24:10"
-                                  setTempoEsgotado(0);  // Valor inicial: 0
+                                  setDataHora(new Date("2025-02-26T02:24:10"));  // Valor inicial: "2025-02-26 02:24:10"
+                                  setTempoEsgotado(Number(0));  // Valor inicial: 0
                 
                                   try {
                                     // Executando as funções de forma assíncrona
 
                                     await cadastrarCronometro(props); // Chama a função com os valores
-                                    await cadastrarOrdemReparacaoCronometroTecnico({idTecnico,idCronometro,idOR,numOR,segundosAtual,segundoFinal,numHoras,rondandoR,estadoE,progressoP,accaoA,dataHora,tempoEsgotado});
-
+                                    e.preventDefault(); // Evita o recarregamento da página
+                                    await cadastrarOrdemReparacaoCronometroTecnico();
                                     //await cadastrarOrdemReparacaoCronometroTecnico({idTecnico,idCronometro,idOR,numOR,segundosAtual,segundoFinal,numHoras,rondandoR,estadoE,progressoP,accaoA,dataHora,tempoEsgotado});
                                     await fecharModalOR(); // Fecha a primeira modal
                                     await fecharModalTecnico(); // Fecha a segunda modal
