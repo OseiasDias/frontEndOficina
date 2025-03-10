@@ -491,16 +491,9 @@ export default function Funcionario({ display, displayF }) {
   //const [showSearchForm, setShowSearchForm] = useState(true);
   const [tecnicoId, setTecnicoId] = useState(null); // Armazena o ID do técnico
 
-  //Função para comparar os IDs do técnico e do funcionário
-  const verificarIdTecnico = () => {
-    if (funcionarioId === tecnicoId) {
-      console.log('O ID do funcionário é igual ao ID do técnico.');
-      setErroMensagem('O ID do funcionário corresponde ao técnico da ordem de reparação!');
-    } else {
-      console.log('O ID do funcionário não corresponde ao ID do técnico.');
-      setErroMensagem('O número do técnico não corresponde ao técnico associado à ordem de reparação.');
-    }
-  };
+  const [estado, setEstado] = useState('');
+  const [message, setMessage] = useState('');
+
 
 
 
@@ -512,13 +505,13 @@ export default function Funcionario({ display, displayF }) {
       setErroMensagem("Por favor, insira um número de técnico.");
       return;
     }
-  
+
     setErroMensagem(""); // Limpa qualquer mensagem de erro anterior
-  
+
     try {
       // Fazendo a requisição para o backend Laravel
-      const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${numeroTecnico}`);
-  
+      const response = await axios.get(`http://127.0.0.1:8000/api/funcionariosIdReturn/id/${numeroTecnico}`);
+
       // Verificar se a resposta contém o id do funcionário
       if (response.data && response.data.id) {
         setFuncionarioId(response.data.id);
@@ -537,11 +530,11 @@ export default function Funcionario({ display, displayF }) {
         // Outro tipo de erro
         setErroMensagem("Erro desconhecido.");
       }
-  
+
       console.error("Erro ao buscar funcionário: ", err);
     }
   };
-  
+
 
   // Função para lidar com o envio do número do técnico
   const handleSubmitTecnico = (e) => {
@@ -823,7 +816,42 @@ export default function Funcionario({ display, displayF }) {
 
     setShowSearchForm(true); // Volta para o formulário da Ordem de Reparação
   };
+  // Método para atualizar o estado, chamando o endpoint
+  const atualizarEstado = async () => {
+    const data = { estado: "Terminado" };
 
+    try {
+      // Aqui você pode fazer a requisição de atualização de estado
+      const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${numeroOrdem}`, {
+        method: 'PUT', // ou 'PATCH'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setMessage('Estado atualizado com sucesso!');
+      } else {
+        const error = await response.json();
+        setMessage(error.message || 'Erro ao atualizar estado');
+      }
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      setMessage('Erro ao se comunicar com o servidor');
+    }
+  };
+
+  // Método para comparar os IDs
+  const compararIds = () => {
+    if (idTecnico === funcionarioId) {
+      atualizarEstado(); // Chama o método de atualização
+      setMessage(`Os IDs são iguais. Estado será atualizado para ID: ${idTecnico}`);
+    } else {
+      setMessage(`Os IDs são diferentes. Nenhuma atualização foi realizada.`);
+    }
+  };
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
@@ -1352,8 +1380,12 @@ export default function Funcionario({ display, displayF }) {
                           />
                           <Button
                             variant="primary"
-                            onClick={buscarFuncionarioPorNumero}
-                            className="btn"
+                            onClick={() => {
+                              buscarFuncionarioPorNumero(); // Chama a função buscarFuncionarioPorNumero
+                              compararIds(); // Chama a função compararIds
+                          }}
+                          className="btn"
+                                                
                             disabled={!numeroTecnico}
                           >
                             Buscar
@@ -1361,16 +1393,16 @@ export default function Funcionario({ display, displayF }) {
                         </div>
                       </Form.Group>
 
-                     
+
+                      <div>
+                        <h3>Funcionário encontrado! ID: {idTecnico}</h3>
+                      </div>
+                      {funcionarioId && (
                         <div>
-                          <h3>Funcionário encontrado! ID: {idTecnico}</h3>
+                          <h3>Funcionário encontrado! ID: {funcionarioId}</h3>
                         </div>
-                        {funcionarioId && (
-          <div>
-            <h3>Funcionário encontrado! ID: {funcionarioId}</h3>
-          </div>
-        )}
-                    
+                      )}
+
                     </div>
                   )}
                 </Modal.Body>
