@@ -1,6 +1,6 @@
 //Imports do Menu
 import { useState } from 'react';
-import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaBook, FaClipboard } from 'react-icons/fa'; // Ícones de Font Awesome
+import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaClipboard, FaUserClock } from 'react-icons/fa'; // Ícones de Font Awesome
 import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
@@ -68,6 +68,8 @@ const Cronometro = ({
   segundosAtual,
   segundoFinal,
   tempoEsgotado: tempoEsgotadoProp,
+  displayF
+
 }) => {
   const tempoLimite = segundoFinal;
   const [segundos, setSegundos] = useState(segundosAtual); // Inicia o cronômetro com o valor salvo
@@ -211,7 +213,7 @@ const Cronometro = ({
     setRodando(false);
     setTempoEsgotado(false);
   };
-
+  const classNameValor = displayF;
   return (
     <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-3 w-100">
       <hr />
@@ -223,11 +225,11 @@ const Cronometro = ({
           </div>
           <div className="d-flex align-items-center mt-2">
             <div className="divLeft">
-              <h6>
+              <h6 className={classNameValor}>
                 <MdDriveFileRenameOutline fontSize={20} className="me-2" />
                 {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
               </h6>            </div>
-            <div className='divRight ms-3'>
+            <div className='divRight m'>
               <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
             </div>
           </div>
@@ -276,6 +278,37 @@ export default function Funcionario({ display, displayF }) {
   const [funcionarioId, setFuncionarioId] = useState(null);
   const [erroMensagem, setErroMensagem] = useState('');
   // Função para buscar os dados da API
+
+    
+  useEffect(() => {
+    const fetchCronometros = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/");
+        const data = await response.json();
+
+        // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
+        const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
+          .map(cronometro => ({
+            idTecnico: cronometro.tecnico_id,  // Ou nome real, se disponível
+            numeroOrdem: cronometro.numero_or,
+            estado: cronometro.estado,
+            rodando: cronometro.rodando === 1, // Se "rodando" for 1, consideramos como verdadeiro
+            segundosAtuais: cronometro.segundos_atual, // segundos atuais
+            segundosFinais: cronometro.segundo_final // segundos finais
+          }));
+
+        // Atualizando o estado com os dados filtrados
+        setOrdensSecundaria(ordensFiltradas);
+      } catch (error) {
+
+        console.error("Erro ao buscar os cronômetros", error);
+        handleRefresh();
+      }
+    };
+
+    fetchCronometros();
+  }, []);
+
 
   useEffect(() => {
     const fetchCronometros = async () => {
@@ -392,6 +425,8 @@ export default function Funcionario({ display, displayF }) {
   const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
   const [loading, setLoading] = useState(false);  // Indicador de carregamento
   // Função para fechar a modal
+  const [ordensSecundaria, setOrdensSecundaria] = useState([]);
+
   const fecharModalTecnico = () => setShowModalTecnico(false);
   // Função para fechar o modal
   const fecharModalOR = () => {
@@ -770,42 +805,9 @@ export default function Funcionario({ display, displayF }) {
 
 
   const handleRefresh = () => {
-    //window.location.reload();
+    window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
-
-  const ordensSecundaria = [
-    // Exemplo de dados. Cada item aqui seria uma ordem.
-    {
-      idTecnico: 1,
-      numeroOrdem: 'OR001',
-      estado: 'iniciado',
-      rodando: 0,
-      segundosAtuais: 120,
-      segundosFinais: 3600,
-      tempoEsgotado: false,
-    },
-    // Exemplo de dados. Cada item aqui seria uma ordem.
-    {
-      idTecnico: 1,
-      numeroOrdem: 'OR001',
-      estado: 'iniciado',
-      rodando: 0,
-      segundosAtuais: 120,
-      segundosFinais: 3600,
-      tempoEsgotado: false,
-    },
-    {
-      idTecnico: 2,
-      numeroOrdem: 'OR002',
-      estado: 'em progresso',
-      rodando: 1,
-      segundosAtuais: 300,
-      segundosFinais: 3600,
-      tempoEsgotado: false,
-    },
-    // Adicione quantas ordens precisar
-  ];
 
 
   return (
@@ -852,8 +854,8 @@ export default function Funcionario({ display, displayF }) {
                     </a>
                   </li>
                   <li className='linhasMenu'>
-                    <a href="#" title='Formação' onClick={abrirFormacaoModal}>
-                      <FaBook className='icone-menu' /> <span className='spanTitle'>Formação</span>
+                    <a href="#" title='Tempo Individual' onClick={abrirFormacaoModal}>
+                    <FaUserClock className='icone-menu' /> <span className='spanTitle'>Tempo Individual</span>
                     </a>
                   </li>
 
@@ -1176,7 +1178,7 @@ export default function Funcionario({ display, displayF }) {
                                     segundoFinal: (ordemDeReparacao?.horas_reparacao * 6000),
                                     numeroHoras: ordemDeReparacao?.horas_reparacao,
                                     rodando: 1,
-                                    estado: "rodandoA",
+                                    estado: "Em Execução",
                                     progresso: 0,
                                     ordemReparacaoId: ordemDeReparacao.id,
                                     acao: "Troca de óleo",
@@ -1191,7 +1193,7 @@ export default function Funcionario({ display, displayF }) {
                                   const segundoFinal =  props.segundoFinal;
                                   const numeroHoras = props.numeroHoras;
                                   const rodando = 1;
-                                  const estado = "Rondando";
+                                  const estado = props.estado;
                                   const progresso = 50;
                                   const acao = "Ação 1";
                                   const dataHora = "2025-02-26 02:24:10";
@@ -1217,20 +1219,7 @@ export default function Funcionario({ display, displayF }) {
                                       dataHora,
                                       tempoEsgotado
                                     });
-                                    /*await cadastrarOrdemReparacaoCronometroTecnico({
-                                      idTecnico: 2,
-                                      idCronometro: 1,
-                                      idOR: 1,
-                                      numOR: "OR12",
-                                      segundosAtual: 10,
-                                      segundoFinal: 1000,
-                                      numHoras: 12,
-                                      rondandoR: 1,
-                                      estadoE: "Reparando",
-                                      progressoP: 12,
-                                      accaoA: "accao 12",
-                                      tempoEsgotado: 1,
-                                    });*/
+                                   
                                     //await cadastrarOrdemReparacaoCronometroTecnico({idTecnico,idCronometro,idOR,numOR,segundosAtual,segundoFinal,numHoras,rondandoR,estadoE,progressoP,accaoA,dataHora,tempoEsgotado});
                                     await fecharModalOR(); // Fecha a primeira modal
                                     await fecharModalTecnico(); // Fecha a segunda modal
@@ -1445,22 +1434,39 @@ export default function Funcionario({ display, displayF }) {
                 </Modal.Footer>
               </Modal>
               {/* Modal para Formação */}
-              <Modal scrollable show={showFormacaoModal} onHide={fecharFormacaoModal}>
+            {/* Modal para Formação */}
+            <Modal scrollable show={showFormacaoModal} size='xl' onHide={fecharFormacaoModal}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Formação</Modal.Title>
+                  <Modal.Title>Tempo Individual</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                  <h5>Está em formação?</h5>
+                <Modal.Body >
+                <>
+                    <div className="row ">
+                      
+                      {ordensSecundaria.map((ordem, index) => (
+                        <div className="col-lg-12" key={index}>
+                          <Cronometro
+                            nomeMecanico={ordem.idTecnico}
+                            numeroOrdem={ordem.numeroOrdem}
+                            estado={ordem.estado}
+                            rodando={ordem.rodando}
+                            iniciarPausar={iniciarPausar}
+                            segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
+                            segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
+                            tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                  </>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                    Não
-                  </Button>
-                  <Button variant="primary" onClick={() => handleConfirmacao("Sim")}>
-                    Sim
-                  </Button>
+                <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
+
                 </Modal.Footer>
               </Modal>
+              
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
@@ -1511,36 +1517,13 @@ export default function Funcionario({ display, displayF }) {
                             segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
                             segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
                             tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
+                             displayF="d-none"
                           />
                         </div>
 
                       </div></>
 
                   ))}
-
-                  <>
-                    <div className="row ">
-                      <h4 className='ps-4'>
-                        Tempo Individual
-                      </h4>
-
-                      {ordensSecundaria.map((ordem, index) => (
-                        <div className="col-lg-6" key={index}>
-                          <Cronometro
-                            nomeMecanico={ordem.idTecnico}
-                            numeroOrdem={ordem.numeroOrdem}
-                            estado={ordem.estado}
-                            rodando={ordem.rodando}
-                            iniciarPausar={iniciarPausar}
-                            segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
-                            segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
-                            tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
-                          />
-                        </div>
-                      ))}
-                    </div>
-
-                  </>
 
                 </div>
                 <hr />
