@@ -815,7 +815,7 @@ export default function Funcionario({ display, displayF }) {
       <div className="container-fluid">
         <div className="d-flex">
           <div className="menu-funionario">
-
+           
             <div className={`menu-barra ${display}`}>
 
               <nav className='menuLateral vh-100'>
