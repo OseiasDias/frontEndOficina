@@ -276,20 +276,6 @@ export default function Funcionario({ display, displayF }) {
   const [funcionarioId, setFuncionarioId] = useState(null);
   const [erroMensagem, setErroMensagem] = useState('');
   // Função para buscar os dados da API
-   // Estados iniciais
-   const [idTecnico, setIdTecnico] = useState(1);
-   const [idCronometro, setIdCronometro] = useState(1);
-   const [idOR, setIdOR] = useState(4);
-   const [numOR, setNumOR] = useState("OR-004");
-   const [segundosAtual, setSegundosAtual] = useState(0);
-   const [segundoFinal, setSegundoFinal] = useState(300);
-   const [numHoras, setNumHoras] = useState(5);
-   const [rondandoR, setRondandoR] = useState(1);
-   const [estadoE, setEstadoE] = useState("iniciar");
-   const [progressoP, setProgressoP] = useState(3);
-   const [accaoA, setAccaoA] = useState("accao 1");
-   const [dataHora, setDataHora] = useState("2025-02-26T02:24:10"); 
-   const [tempoEsgotado, setTempoEsgotado] = useState(0);
 
   useEffect(() => {
     const fetchCronometros = async () => {
@@ -311,7 +297,9 @@ export default function Funcionario({ display, displayF }) {
         // Atualizando o estado com os dados filtrados
         setOrdens(ordensFiltradas);
       } catch (error) {
+
         console.error("Erro ao buscar os cronômetros", error);
+        handleRefresh();
       }
     };
 
@@ -542,6 +530,8 @@ export default function Funcionario({ display, displayF }) {
   const [erroOrdemDeReparacao, setErroOrdemDeReparacao] = useState(""); // Para exibir mensagem de erro caso não encontre o funcionário
 
 
+
+
   const retryRequest = async (requestFn, retries = 3, delay = 1000) => {
     let attempt = 0;
     while (attempt < retries) {
@@ -712,42 +702,75 @@ export default function Funcionario({ display, displayF }) {
 
   // CADASTRAR CRONOMETRO AUXILIAR
 
-  const cadastrarOrdemReparacaoCronometroTecnico = async () => {
-    const dados = {
-      tecnico_id: idTecnico,
+  // Função para cadastrar a ordem de reparação
+  const cadastrarOrdemReparacaoCronometroTecnico = async ({
+    tecnicoId,
+    idCronometro,
+    ordemReparacaoId,
+    numeroOr,
+    segundosAtual,
+    segundoFinal,
+    numeroHoras,
+    rodando,
+    estado,
+    progresso,
+    acao,
+    dataHora,
+    tempoEsgotado
+  }) => {
+    // Dados a serem enviados para o endpoint, com valores dinâmicos recebidos como parâmetro
+    const dadosAux = {
+      tecnico_id: tecnicoId,
       id_cronometro: idCronometro,
-      ordem_reparacao_id: idOR,
-      numero_or: numOR,
+      ordem_reparacao_id: ordemReparacaoId,
+      numero_or: numeroOr,
       segundos_atual: segundosAtual,
       segundo_final: segundoFinal,
-      numero_horas: numHoras,
-      rodando: rondandoR,
-      estado: estadoE,
-      progresso: progressoP,
-      acao: accaoA,
+      numero_horas: numeroHoras,
+      rodando: rodando,
+      estado: estado,
+      progresso: progresso,
+      acao: acao,
       data_hora: dataHora,
-      tempo_esgotado: tempoEsgotado,
+      tempo_esgotado: tempoEsgotado
     };
 
     try {
+      // Enviar os dados via POST
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/",
-        dados
+        "http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos",
+        dadosAux
       );
 
+      // Verificar a resposta do servidor
       if (response.status === 201) {
-        console.log("Cronômetro cadastrado com sucesso:", response.data);
+        console.log("Cadastro realizado com sucesso:", response.data);
+        alert("Cadastro realizado com sucesso!");
       } else {
-        console.log("Erro ao cadastrar cronômetro:", response.data);
+        console.error("Erro ao cadastrar cronômetro:", response.data);
+        alert("Erro ao cadastrar cronômetro. Tente novamente.");
       }
     } catch (error) {
-      console.error("Erro ao enviar dados para o servidor:", error);
+      // Lidar com erros de requisição
+      if (error.response) {
+        // Se houver erro na resposta do servidor
+        console.error("Erro na resposta do servidor:", error.response.data);
+        alert("Erro na resposta do servidor. Tente novamente.");
+      } else if (error.request) {
+        // Se não houver resposta do servidor
+        console.error("Erro na requisição:", error.request);
+        alert("Erro na requisição. Tente novamente.");
+      } else {
+        // Se houver erro ao configurar a requisição
+        console.error("Erro ao configurar a requisição:", error.message);
+        alert("Erro ao configurar a requisição. Tente novamente.");
+      }
     }
   };
 
- 
+
   const handleRefresh = () => {
-    window.location.reload();
+    //window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
 
@@ -1129,11 +1152,14 @@ export default function Funcionario({ display, displayF }) {
 
                             {funcionarioOrdemDeReparacao && (
                               <div className="mt-3">
-                                <h6>Funcionário Encontrado <FaCheckDouble color='green' /></h6>
+                                <h6>Funcionário Encontrado <FaCheckDouble color="green" /></h6>
                                 <p><strong>Nome:</strong> {funcionarioOrdemDeReparacao.nome} {funcionarioOrdemDeReparacao.sobrenome}</p>
-                                <p><strong>Cargo:</strong>  {funcionarioOrdemDeReparacao.cargo}</p>
+                                <p><strong>Cargo:</strong> {funcionarioOrdemDeReparacao.cargo}</p>
+
+
                               </div>
                             )}
+
                           </Modal.Body>
                           <Modal.Footer>
                             <img src={LogoType} alt="..." className='d-block me-auto ' width={150} height={50} />
@@ -1141,7 +1167,7 @@ export default function Funcionario({ display, displayF }) {
                             {/* Exibe o botão "Começar" somente se o funcionário for encontrado */}
                             {funcionarioOrdemDeReparacao && (
                               <button
-                                onClick={async (e) => {
+                                onClick={async () => {
                                   const props = {
                                     numeroOr: ordemDeReparacao?.numero_trabalho,
                                     tecnicoId: funcionarioOrdemDeReparacao.id, // Exemplo de ID do técnico
@@ -1156,27 +1182,55 @@ export default function Funcionario({ display, displayF }) {
                                     acao: "Troca de óleo",
                                     tempoEsgotado: 0,
                                   };
-
-                                  setIdTecnico(Number(1));
-                                  setIdCronometro(Number(1));  // Valor inicial: 1
-                                  setIdOR(Number(4));  // Valor inicial: 4
-                                  setNumOR("OR-004");  // Valor inicial: "OR-004"
-                                  setSegundosAtual(Number(0));  // Valor inicial: 0
-                                  setSegundoFinal(Number(300));  // Valor inicial: 3
-                                  setNumHoras(Number(5));  // Valor inicial: 5
-                                  setRondandoR(Number(1));  // Valor inicial: 6
-                                  setEstadoE("iniciar");  // Valor inicial: 1
-                                  setProgressoP(Number(3));  // Valor inicial: 3
-                                  setAccaoA("accao 1");  // Valor inicial: "accao 1"
-                                  setDataHora(new Date("2025-02-26T02:24:10"));  // Valor inicial: "2025-02-26 02:24:10"
-                                  setTempoEsgotado(Number(0));  // Valor inicial: 0
-                
+                                  // Valores a serem passados para a função (normalmente vindo de variáveis de estado ou diretamente)
+                                  const tecnicoId = props.tecnicoId;
+                                  const idCronometro = props.idCronometro;
+                                  const ordemReparacaoId = props. ordemReparacaoId;
+                                  const numeroOr =  props.numeroOr;
+                                  const segundosAtual = 10;
+                                  const segundoFinal =  props.segundoFinal;
+                                  const numeroHoras = props.numeroHoras;
+                                  const rodando = 1;
+                                  const estado = "Rondando";
+                                  const progresso = 50;
+                                  const acao = "Ação 1";
+                                  const dataHora = "2025-02-26 02:24:10";
+                                  const tempoEsgotado = 0;
                                   try {
                                     // Executando as funções de forma assíncrona
 
                                     await cadastrarCronometro(props); // Chama a função com os valores
-                                    e.preventDefault(); // Evita o recarregamento da página
-                                    await cadastrarOrdemReparacaoCronometroTecnico();
+                                    //e.preventDefault(); // Evita o recarregamento da página
+
+                                    cadastrarOrdemReparacaoCronometroTecnico({
+                                      tecnicoId,
+                                      idCronometro,
+                                      ordemReparacaoId,
+                                      numeroOr,
+                                      segundosAtual,
+                                      segundoFinal,
+                                      numeroHoras,
+                                      rodando,
+                                      estado,
+                                      progresso,
+                                      acao,
+                                      dataHora,
+                                      tempoEsgotado
+                                    });
+                                    /*await cadastrarOrdemReparacaoCronometroTecnico({
+                                      idTecnico: 2,
+                                      idCronometro: 1,
+                                      idOR: 1,
+                                      numOR: "OR12",
+                                      segundosAtual: 10,
+                                      segundoFinal: 1000,
+                                      numHoras: 12,
+                                      rondandoR: 1,
+                                      estadoE: "Reparando",
+                                      progressoP: 12,
+                                      accaoA: "accao 12",
+                                      tempoEsgotado: 1,
+                                    });*/
                                     //await cadastrarOrdemReparacaoCronometroTecnico({idTecnico,idCronometro,idOR,numOR,segundosAtual,segundoFinal,numHoras,rondandoR,estadoE,progressoP,accaoA,dataHora,tempoEsgotado});
                                     await fecharModalOR(); // Fecha a primeira modal
                                     await fecharModalTecnico(); // Fecha a segunda modal
