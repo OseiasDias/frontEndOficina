@@ -263,11 +263,6 @@ const Cronometro = ({
 
 
 
-
-
-
-
-
 export default function Funcionario({ display, displayF }) {
   // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
 
@@ -277,9 +272,37 @@ export default function Funcionario({ display, displayF }) {
   //const [cronometroData, setCronometroData] = useState(null);
   const [funcionarioId, setFuncionarioId] = useState(null);
   const [erroMensagem, setErroMensagem] = useState('');
-  // Função para buscar os dados da API
+  //Função para buscar os dados da API
 
-    
+  const [idTecnico, setIdTecnico] = useState(null);  // Estado para armazenar o idTecnico
+  const [loading, setLoading] = useState(false);  // Estado para indicar se a requisição está carregando
+  const [error, setError] = useState(null);  // Estado para armazenar erros
+
+  // Função para buscar o idTecnico usando numero_or
+  const fetchIdTecnico = async () => {
+    setLoading(true);
+    setErroMensagem(""); // Limpar mensagens de erro anteriores
+
+    try {
+      // Fazendo a requisição para o backend Laravel
+      const response = await axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordemNumero/${numeroOrdem}`);
+
+      // Verificar se a resposta contém dados do idTecnico
+      if (response.data && response.data.idTecnico) {
+        setIdTecnico(response.data.idTecnico);
+        setShowSearchForm(false); // Se encontrado, mudar para a parte de inserção do número do técnico
+      } else {
+        setErroMensagem("Ordem de Reparação não encontrada.");
+      }
+    } catch (err) {
+      setErroMensagem("Erro ao buscar OR.Tente novamente.");
+      console.error("Erro ao buscar dados: ", err);
+    } finally {
+      setLoading(false); // Finaliza o estado de carregamento
+    }
+  };
+
+
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
@@ -315,7 +338,6 @@ export default function Funcionario({ display, displayF }) {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/cronometros");
         const data = await response.json();
-
         // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
         const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
           .map(cronometro => ({
@@ -422,8 +444,8 @@ export default function Funcionario({ display, displayF }) {
   };
   //===============================|CONFIGIURAR AS MODAIS |==============================
   const [ordem, setOrdem] = useState(null);  // Dados da ordem encontrada
-  const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
-  const [loading, setLoading] = useState(false);  // Indicador de carregamento
+  //const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
+  //const [loading, setLoading] = useState(false);  // Indicador de carregamento
   // Função para fechar a modal
   const [ordensSecundaria, setOrdensSecundaria] = useState([]);
 
@@ -468,7 +490,8 @@ export default function Funcionario({ display, displayF }) {
   const [isFormValid, setIsFormValid] = useState(false);
   //const [showSearchForm, setShowSearchForm] = useState(true);
   const [tecnicoId, setTecnicoId] = useState(null); // Armazena o ID do técnico
-  // Função para comparar os IDs do técnico e do funcionário
+
+  //Função para comparar os IDs do técnico e do funcionário
   const verificarIdTecnico = () => {
     if (funcionarioId === tecnicoId) {
       console.log('O ID do funcionário é igual ao ID do técnico.');
@@ -478,69 +501,48 @@ export default function Funcionario({ display, displayF }) {
       setErroMensagem('O número do técnico não corresponde ao técnico associado à ordem de reparação.');
     }
   };
+
+
+
   // Função para buscar o funcionário pelo número do técnico
+
+  // Função para buscar funcionário pelo número do técnico
   const buscarFuncionarioPorNumero = async () => {
-    try {
-      if (!numeroTecnico) {
-        setErroMensagem('Por favor, insira o número do técnico.');
-        return;
-      }
-
-      const response = await fetch(`http://127.0.0.1:8000/api/funcionariosIdReturn/id/${numeroTecnico}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        if (data.id) {
-          setFuncionarioId(data.id); // Armazena o ID do funcionário
-          verificarIdTecnico(); // Verifica se o ID do funcionário corresponde ao ID do técnico
-        } else {
-          setErroMensagem('Nenhum funcionário encontrado com esse número.');
-        }
-      } else {
-        setErroMensagem(data.message || 'Erro ao buscar o funcionário. Tente novamente.');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar o funcionário:', error);
-      setErroMensagem('Ocorreu um erro ao buscar o funcionário. Tente novamente.');
-    }
-  };
-
-
-  // Função para buscar dados da ordem de reparação
-  const buscarDados = async () => {
-    if (!numeroOrdem) {
-      setErroMensagem('Por favor, insira o número da ordem de reparação.');
+    if (!numeroTecnico) {
+      setErroMensagem("Por favor, insira um número de técnico.");
       return;
     }
-
+  
+    setErroMensagem(""); // Limpa qualquer mensagem de erro anterior
+  
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/cronometros/buscar/${numeroOrdem}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        const mensagemErro = data.message || 'Erro ao buscar os dados. Tente novamente.';
-        setErroMensagem(mensagemErro);
-        return;
-      }
-
-      // Verifica se o ID do técnico foi encontrado
-      if (data.tecnico_id) {
-        setTecnicoId(data.tecnico_id);
-        setShowSearchForm(false); // Esconde o formulário de busca e exibe a próxima etapa
+      // Fazendo a requisição para o backend Laravel
+      const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${numeroTecnico}`);
+  
+      // Verificar se a resposta contém o id do funcionário
+      if (response.data && response.data.id) {
+        setFuncionarioId(response.data.id);
       } else {
-        setErroMensagem('Técnico não encontrado para a ordem informada.');
+        setErroMensagem("Funcionário não encontrado.");
       }
-      // eslint-disable-next-line no-unused-vars
-    } catch (error) {
-      setErroMensagem('Ocorreu um erro ao buscar os dados. Tente novamente.');
+    } catch (err) {
+      // Se o erro for de rede ou outro erro de comunicação
+      if (err.response) {
+        // O servidor respondeu com um código de erro
+        setErroMensagem(`Erro ao buscar dados do funcionário: ${err.response.statusText}`);
+      } else if (err.request) {
+        // A requisição foi feita mas não houve resposta
+        setErroMensagem("Erro de rede: O servidor não respondeu.");
+      } else {
+        // Outro tipo de erro
+        setErroMensagem("Erro desconhecido.");
+      }
+  
+      console.error("Erro ao buscar funcionário: ", err);
     }
   };
+  
 
-  // Função para fechar a modal de confirmação
-  const fecharConfirmModal = () => {
-    setShowConfirmModal(false);
-    setShowSearchForm(true); // Voltar ao formulário inicial
-  };
   // Função para lidar com o envio do número do técnico
   const handleSubmitTecnico = (e) => {
     e.preventDefault();
@@ -808,14 +810,26 @@ export default function Funcionario({ display, displayF }) {
     window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
+  // Função para fechar o modal e reiniciar os estados
+  const fecharModal = () => {
+    setShowConfirmModal(false);
+    // Reinicia os estados para a primeira parte do modal
+    setNumeroOrdem("");
+    setNumeroTecnico("");
+    setIdTecnico(null);
+    setFuncionarioId(null);
+    setErroMensagem("");
+    setErroMensagem(""); // Limpar mensagens de erro anteriores
 
+    setShowSearchForm(true); // Volta para o formulário da Ordem de Reparação
+  };
 
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
         <div className="d-flex">
           <div className="menu-funionario">
-           
+
             <div className={`menu-barra ${display}`}>
 
               <nav className='menuLateral vh-100'>
@@ -855,7 +869,7 @@ export default function Funcionario({ display, displayF }) {
                   </li>
                   <li className='linhasMenu'>
                     <a href="#" title='Tempo Individual' onClick={abrirFormacaoModal}>
-                    <FaUserClock className='icone-menu' /> <span className='spanTitle'>Tempo Individual</span>
+                      <FaUserClock className='icone-menu' /> <span className='spanTitle'>Tempo Individual</span>
                     </a>
                   </li>
 
@@ -1187,10 +1201,10 @@ export default function Funcionario({ display, displayF }) {
                                   // Valores a serem passados para a função (normalmente vindo de variáveis de estado ou diretamente)
                                   const tecnicoId = props.tecnicoId;
                                   const idCronometro = props.idCronometro;
-                                  const ordemReparacaoId = props. ordemReparacaoId;
-                                  const numeroOr =  props.numeroOr;
+                                  const ordemReparacaoId = props.ordemReparacaoId;
+                                  const numeroOr = props.numeroOr;
                                   const segundosAtual = 10;
-                                  const segundoFinal =  props.segundoFinal;
+                                  const segundoFinal = props.segundoFinal;
                                   const numeroHoras = props.numeroHoras;
                                   const rodando = 1;
                                   const estado = props.estado;
@@ -1219,7 +1233,7 @@ export default function Funcionario({ display, displayF }) {
                                       dataHora,
                                       tempoEsgotado
                                     });
-                                   
+
                                     //await cadastrarOrdemReparacaoCronometroTecnico({idTecnico,idCronometro,idOR,numOR,segundosAtual,segundoFinal,numHoras,rondandoR,estadoE,progressoP,accaoA,dataHora,tempoEsgotado});
                                     await fecharModalOR(); // Fecha a primeira modal
                                     await fecharModalTecnico(); // Fecha a segunda modal
@@ -1288,22 +1302,17 @@ export default function Funcionario({ display, displayF }) {
                 </Modal.Body>
               </Modal>
 
-              {/* Modal de Confirmação para Terminar o Serviço */}
-              <Modal scrollable show={showConfirmModal} onHide={fecharConfirmModal}>
+              <Modal scrollable show={showConfirmModal} onHide={fecharModal}>
                 <Modal.Header closeButton>
-                  <Modal.Title>{showSearchForm ? 'Buscar Reparação a Terminar' : 'Insira o teu número de Técnico'}</Modal.Title>
+                  <Modal.Title>{showSearchForm ? 'Buscar Reparação a Terminar' : 'Insira o número de Técnico'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
-
                   {showSearchForm ? (
                     <Form>
                       <Form.Group className="mb-3" controlId="formNumeroOrdem">
                         <Form.Label>Número da Ordem de Reparação</Form.Label>
                         {erroMensagem && (
-                          <Alert variant="danger my-2">
-                            {erroMensagem}
-                          </Alert>
+                          <Alert variant="danger my-2">{erroMensagem}</Alert>
                         )}
                         <div className="input-group">
                           <span className="input-group-text">
@@ -1315,21 +1324,22 @@ export default function Funcionario({ display, displayF }) {
                             value={numeroOrdem}
                             onChange={(e) => setNumeroOrdem(e.target.value)}
                           />
-
-                          <Button variant="primary" onClick={buscarDados} className="d-block py-1 ms-auto">
-                            Próximo {numeroOrdem}&nbsp;
+                          <Button
+                            variant="primary"
+                            onClick={fetchIdTecnico}
+                            className="d-block py-1 ms-auto"
+                            disabled={loading || !numeroOrdem}
+                          >
+                            {loading ? "Carregando..." : "Próximo " + numeroOrdem}
                             <TbPlayerTrackNextFilled fontSize={16} />
                           </Button>
                         </div>
-
                       </Form.Group>
                     </Form>
                   ) : (
                     <div>
                       <Form.Group className="mb-3" controlId="formNumeroTecnico">
-
                         <Form.Label>Número do Técnico</Form.Label>
-
                         <div className="input-group">
                           <span className="input-group-text">
                             <TbNumber fontSize={20} color="#0070fa" />
@@ -1344,22 +1354,28 @@ export default function Funcionario({ display, displayF }) {
                             variant="primary"
                             onClick={buscarFuncionarioPorNumero}
                             className="btn"
+                            disabled={!numeroTecnico}
                           >
                             Buscar
                           </Button>
                         </div>
                       </Form.Group>
 
-                      {funcionarioId && (
+                     
                         <div>
-                          <p>Funcionário encontrado! ID: {funcionarioId}</p>
+                          <h3>Funcionário encontrado! ID: {idTecnico}</h3>
                         </div>
-                      )}
+                        {funcionarioId && (
+          <div>
+            <h3>Funcionário encontrado! ID: {funcionarioId}</h3>
+          </div>
+        )}
+                    
                     </div>
                   )}
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between align-items-center">
-                  <img src={LogoType} alt="Logo" className="d-block mx-auto" width={230} height={60} />
+                  <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
                 </Modal.Footer>
               </Modal>
               {/* Modal de Confirmação para Manutenção e Limpeza */}
@@ -1434,15 +1450,15 @@ export default function Funcionario({ display, displayF }) {
                 </Modal.Footer>
               </Modal>
               {/* Modal para Formação */}
-            {/* Modal para Formação */}
-            <Modal scrollable show={showFormacaoModal} size='xl' onHide={fecharFormacaoModal}>
+              {/* Modal para Formação */}
+              <Modal scrollable show={showFormacaoModal} size='xl' onHide={fecharFormacaoModal}>
                 <Modal.Header closeButton>
                   <Modal.Title>Tempo Individual</Modal.Title>
                 </Modal.Header>
                 <Modal.Body >
-                <>
+                  <>
                     <div className="row ">
-                      
+
                       {ordensSecundaria.map((ordem, index) => (
                         <div className="col-lg-12" key={index}>
                           <Cronometro
@@ -1462,11 +1478,11 @@ export default function Funcionario({ display, displayF }) {
                   </>
                 </Modal.Body>
                 <Modal.Footer>
-                <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
+                  <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
 
                 </Modal.Footer>
               </Modal>
-              
+
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
@@ -1517,7 +1533,7 @@ export default function Funcionario({ display, displayF }) {
                             segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
                             segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
                             tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
-                             displayF="d-none"
+                            displayF="d-none"
                           />
                         </div>
 
