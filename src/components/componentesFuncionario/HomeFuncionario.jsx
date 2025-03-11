@@ -6,7 +6,7 @@ import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
 import { MdContentPasteSearch, MdDriveFileRenameOutline, MdMotionPhotosPause, MdOutlineAutoMode, MdOutlineNotStarted, MdPersonSearch } from 'react-icons/md';
-import { Modal, Button, Form, Alert } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
+import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 import { SiCcleaner } from "react-icons/si";
 import axios from 'axios';
@@ -325,7 +325,7 @@ export default function Funcionario({ display, displayF }) {
       } catch (error) {
 
         console.error("Erro ao buscar os cronômetros", error);
-        handleRefresh();
+       
       }
     };
 
@@ -488,18 +488,11 @@ export default function Funcionario({ display, displayF }) {
   const [numeroTecnico, setNumeroTecnico] = useState(''); // Estado para armazenar o número do técnico
   // eslint-disable-next-line no-unused-vars
   const [isFormValid, setIsFormValid] = useState(false);
-  //const [showSearchForm, setShowSearchForm] = useState(true);
-  const [tecnicoId, setTecnicoId] = useState(null); // Armazena o ID do técnico
-
-  const [estado, setEstado] = useState('');
   const [message, setMessage] = useState('');
-
-
-
 
   // Função para buscar o funcionário pelo número do técnico
 
-  // Função para buscar funcionário pelo número do técnico
+
   const buscarFuncionarioPorNumero = async () => {
     if (!numeroTecnico) {
       setErroMensagem("Por favor, insira um número de técnico.");
@@ -799,7 +792,7 @@ export default function Funcionario({ display, displayF }) {
   };
 
 
-  const handleRefresh = () => {
+  const handleRefresh =  () => {
     window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
@@ -821,8 +814,8 @@ export default function Funcionario({ display, displayF }) {
     const data = { estado: "Terminado" };
 
     try {
-      // Aqui você pode fazer a requisição de atualização de estado
-      const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${numeroOrdem}`, {
+      // Realizando a requisição para atualizar o estado
+      const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdem}`, {
         method: 'PUT', // ou 'PATCH'
         headers: {
           'Content-Type': 'application/json',
@@ -830,27 +823,36 @@ export default function Funcionario({ display, displayF }) {
         body: JSON.stringify(data),
       });
 
+      // Verificando se a resposta foi bem-sucedida
       if (response.ok) {
+        // eslint-disable-next-line no-unused-vars
         const result = await response.json();
         setMessage('Estado atualizado com sucesso!');
       } else {
         const error = await response.json();
         setMessage(error.message || 'Erro ao atualizar estado');
       }
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (error) {
+      // Tratando erros de comunicação com o servidor
       setMessage('Erro ao se comunicar com o servidor');
     }
   };
-
   // Método para comparar os IDs
-  const compararIds = () => {
+  // Método para comparar os IDs
+  const compararIds = async () => {
     if (idTecnico === funcionarioId) {
-      atualizarEstado(); // Chama o método de atualização
+      // Chama o método de atualização se os IDs forem iguais
+      await atualizarEstado(); // Chama a função de atualizar estado
       setMessage(`Os IDs são iguais. Estado será atualizado para ID: ${idTecnico}`);
     } else {
       setMessage(`Os IDs são diferentes. Nenhuma atualização foi realizada.`);
     }
+  };
+  // Manipulador de clique do botão
+  const handleClicker = async () => {
+    await buscarFuncionarioPorNumero(); // Chama a função de busca e espera a resposta
+    compararIds(); // Só chama compararIds depois da busca
   };
   return (
     <div className="seccao-cartaz">
@@ -1271,7 +1273,7 @@ export default function Funcionario({ display, displayF }) {
                                     await adicionarOrdem(ordemDeReparacao?.numero_trabalho); // Adiciona a ordem ao sistema
 
                                     // Após todas as funções anteriores terminarem, chama o refresh
-                                    handleRefresh(); // Agora o refresh é chamado por último
+                                   //await handleRefresh(); // Agora o refresh é chamado por último
 
                                   } catch (error) {
                                     console.error("Erro ao executar as funções:", error);
@@ -1380,16 +1382,14 @@ export default function Funcionario({ display, displayF }) {
                           />
                           <Button
                             variant="primary"
-                            onClick={() => {
-                              buscarFuncionarioPorNumero(); // Chama a função buscarFuncionarioPorNumero
-                              compararIds(); // Chama a função compararIds
-                          }}
-                          className="btn"
-                                                
+                            onClick={handleClicker}
+                            className="btn"
+
                             disabled={!numeroTecnico}
                           >
                             Buscar
                           </Button>
+                          {message && <p>{message}</p>}
                         </div>
                       </Form.Group>
 
@@ -1481,7 +1481,7 @@ export default function Funcionario({ display, displayF }) {
                   </Button>
                 </Modal.Footer>
               </Modal>
-              {/* Modal para Formação */}
+          
               {/* Modal para Formação */}
               <Modal scrollable show={showFormacaoModal} size='xl' onHide={fecharFormacaoModal}>
                 <Modal.Header closeButton>
@@ -1489,24 +1489,30 @@ export default function Funcionario({ display, displayF }) {
                 </Modal.Header>
                 <Modal.Body >
                   <>
-                    <div className="row ">
-
-                      {ordensSecundaria.map((ordem, index) => (
-                        <div className="col-lg-12" key={index}>
-                          <Cronometro
-                            nomeMecanico={ordem.idTecnico}
-                            numeroOrdem={ordem.numeroOrdem}
-                            estado={ordem.estado}
-                            rodando={ordem.rodando}
-                            iniciarPausar={iniciarPausar}
-                            segundosAtual={ordem.segundosAtuais || 0} // Usa segundosAtuais da ordem ou 0 como padrão
-                            segundoFinal={ordem.segundosFinais || 3600} // Usa segundosFinais da ordem ou 3600 como padrão
-                            tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
-                          />
-                        </div>
-                      ))}
-                    </div>
-
+                    {loading ? (
+                      // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
+                      <div className="text-center">
+                        <Spinner animation="border" variant="primary" />
+                        <p>Carregando ordens...</p>
+                      </div>
+                    ) : (
+                      <div className="row">
+                        {ordensSecundaria.map((ordem, index) => (
+                          <div className="col-lg-12" key={index}>
+                            <Cronometro
+                              nomeMecanico={ordem.idTecnico}
+                              numeroOrdem={ordem.numeroOrdem}
+                              estado={ordem.estado}
+                              rodando={ordem.rodando}
+                              iniciarPausar={() => { }} // Substitua isso com a lógica de iniciar/pausar
+                              segundosAtual={ordem.segundosAtuais || 0}
+                              segundoFinal={ordem.segundosFinais || 3600}
+                              tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </>
                 </Modal.Body>
                 <Modal.Footer>
@@ -1582,4 +1588,4 @@ export default function Funcionario({ display, displayF }) {
       </div>
     </div>
   );
-}
+} 
