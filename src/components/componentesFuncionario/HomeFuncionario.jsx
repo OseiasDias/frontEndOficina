@@ -264,8 +264,7 @@ const Cronometro = ({
 
 
 export default function Funcionario({ display, displayF }) {
-  // Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
-
+  //Estado para armazenar as ordens de serviço com o cronômetro iniciando automaticamente
   const [ordens, setOrdens] = useState([]);
   const [numeroOrdem, setNumeroOrdem] = useState(''); // Estado para armazenar o número da ordem
   const [showSearchForm, setShowSearchForm] = useState(true); // Controle para alternar entre a tela de busca e a de confirmação
@@ -303,8 +302,20 @@ export default function Funcionario({ display, displayF }) {
   };
 
 
+  const [loadingAux, setLoadingAux] = useState(false);
+  const [ordensSecundaria, setOrdensSecundaria] = useState([]);
+  const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Estado para controlar visibilidade da modal
+
+  // Função para abrir a modal
+  const abrirFormacaoModal = () => setShowFormacaoModal(true);
+
+  // Função para fechar a modal
+  const fecharFormacaoModal = () => setShowFormacaoModal(false);
+
+  // Este useEffect será executado toda vez que a modal for aberta
   useEffect(() => {
     const fetchCronometros = async () => {
+      setLoadingAux(true); // Ativa o carregamento
       try {
         const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/");
         const data = await response.json();
@@ -312,26 +323,28 @@ export default function Funcionario({ display, displayF }) {
         // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
         const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
           .map(cronometro => ({
-            idTecnico: cronometro.tecnico_id,  // Ou nome real, se disponível
+            idTecnico: cronometro.tecnico_id,
             numeroOrdem: cronometro.numero_or,
             estado: cronometro.estado,
-            rodando: cronometro.rodando === 1, // Se "rodando" for 1, consideramos como verdadeiro
-            segundosAtuais: cronometro.segundos_atual, // segundos atuais
-            segundosFinais: cronometro.segundo_final // segundos finais
+            rodando: cronometro.rodando === 1,
+            segundosAtuais: cronometro.segundos_atual,
+            segundosFinais: cronometro.segundo_final
           }));
 
         // Atualizando o estado com os dados filtrados
         setOrdensSecundaria(ordensFiltradas);
       } catch (error) {
-
         console.error("Erro ao buscar os cronômetros", error);
-       
+      } finally {
+        setLoadingAux(false); // Desativa o carregamento
       }
     };
 
-    fetchCronometros();
-  }, []);
-
+    // Só chama fetchCronometros se a modal for aberta
+    if (showFormacaoModal) {
+      fetchCronometros();
+    }
+  }, [showFormacaoModal]); // Executa sempre que a modal for aberta
 
   useEffect(() => {
     const fetchCronometros = async () => {
@@ -398,7 +411,7 @@ export default function Funcionario({ display, displayF }) {
   const [showAguardarTrabalhoModal, setShowAguardarTrabalhoModal] = useState(false); // Modal de "Aguardar Trabalho"
   const [showAguardarPecasModal, setShowAguardarPecasModal] = useState(false); // Modal de "Aguardar Peças"
   const [showAlmocoModal, setShowAlmocoModal] = useState(false); // Modal de "Almoço"
-  const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Modal de "Formação"
+  // const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Modal de "Formação"
   const [showSairModal, setShowSairModal] = useState(false); // Modal de "Sair"
   const [numeroOR, setNumeroOR] = useState(''); // Estado para armazenar o número da OR
 
@@ -413,8 +426,8 @@ export default function Funcionario({ display, displayF }) {
   const fecharAguardarPecasModal = () => setShowAguardarPecasModal(false);
   const abrirAlmocoModal = () => setShowAlmocoModal(true);
   const fecharAlmocoModal = () => setShowAlmocoModal(false);
-  const abrirFormacaoModal = () => setShowFormacaoModal(true);
-  const fecharFormacaoModal = () => setShowFormacaoModal(false);
+  //const abrirFormacaoModal = () => setShowFormacaoModal(true);
+  // const fecharFormacaoModal = () => setShowFormacaoModal(false);
   const abrirSairModal = () => setShowSairModal(true);
   const fecharSairModal = () => setShowSairModal(false);
   // Função para lidar com a mudança no campo de número de OR
@@ -447,7 +460,7 @@ export default function Funcionario({ display, displayF }) {
   //const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
   //const [loading, setLoading] = useState(false);  // Indicador de carregamento
   // Função para fechar a modal
-  const [ordensSecundaria, setOrdensSecundaria] = useState([]);
+  //const [ordensSecundaria, setOrdensSecundaria] = useState([]);
 
   const fecharModalTecnico = () => setShowModalTecnico(false);
   // Função para fechar o modal
@@ -792,7 +805,7 @@ export default function Funcionario({ display, displayF }) {
   };
 
 
-  const handleRefresh =  () => {
+  const handleRefresh = () => {
     window.location.reload();
   };
   //CONFIGURAR MODAL TERMINAR
@@ -1273,7 +1286,7 @@ export default function Funcionario({ display, displayF }) {
                                     await adicionarOrdem(ordemDeReparacao?.numero_trabalho); // Adiciona a ordem ao sistema
 
                                     // Após todas as funções anteriores terminarem, chama o refresh
-                                   //await handleRefresh(); // Agora o refresh é chamado por último
+                                    //await handleRefresh(); // Agora o refresh é chamado por último
 
                                   } catch (error) {
                                     console.error("Erro ao executar as funções:", error);
@@ -1481,45 +1494,44 @@ export default function Funcionario({ display, displayF }) {
                   </Button>
                 </Modal.Footer>
               </Modal>
-          
+
               {/* Modal para Formação */}
-              <Modal scrollable show={showFormacaoModal} size='xl' onHide={fecharFormacaoModal}>
+              <Modal scrollable show={showFormacaoModal} size="xl" onHide={fecharFormacaoModal}>
                 <Modal.Header closeButton>
                   <Modal.Title>Tempo Individual</Modal.Title>
                 </Modal.Header>
-                <Modal.Body >
-                  <>
-                    {loading ? (
-                      // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
-                      <div className="text-center">
-                        <Spinner animation="border" variant="primary" />
-                        <p>Carregando ordens...</p>
-                      </div>
-                    ) : (
-                      <div className="row">
-                        {ordensSecundaria.map((ordem, index) => (
-                          <div className="col-lg-12" key={index}>
-                            <Cronometro
-                              nomeMecanico={ordem.idTecnico}
-                              numeroOrdem={ordem.numeroOrdem}
-                              estado={ordem.estado}
-                              rodando={ordem.rodando}
-                              iniciarPausar={() => { }} // Substitua isso com a lógica de iniciar/pausar
-                              segundosAtual={ordem.segundosAtuais || 0}
-                              segundoFinal={ordem.segundosFinais || 3600}
-                              tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </>
+                <Modal.Body>
+                  {loadingAux ? (
+                    // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
+                    <div className="text-center">
+                      <Spinner animation="border" variant="primary" />
+                      <p>Carregando ordens...</p>
+                    </div>
+                  ) : (
+                    <div className="row">
+                      {ordensSecundaria.map((ordem, index) => (
+                        <div className="col-lg-12" key={index}>
+                          <Cronometro
+                            nomeMecanico={ordem.idTecnico}
+                            numeroOrdem={ordem.numeroOrdem}
+                            estado={ordem.estado}
+                            rodando={ordem.rodando}
+                            iniciarPausar={() => { }} // Substitua isso com a lógica de iniciar/pausar
+                            segundosAtual={ordem.segundosAtuais || 0}
+                            segundoFinal={ordem.segundosFinais || 3600}
+                            tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </Modal.Body>
                 <Modal.Footer>
-                  <img src={LogoType} alt="..." className='d-block mx-auto ' width={250} height={70} />
-
+                  <img src={LogoType} alt="..." className="d-block mx-auto" width={250} height={70} />
                 </Modal.Footer>
               </Modal>
+
+
 
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
