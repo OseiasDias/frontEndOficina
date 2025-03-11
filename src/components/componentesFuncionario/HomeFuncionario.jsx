@@ -312,15 +312,17 @@ export default function Funcionario({ display, displayF }) {
   // Função para fechar a modal
   const fecharFormacaoModal = () => setShowFormacaoModal(false);
 
-  // Este useEffect será executado toda vez que a modal for aberta
   useEffect(() => {
     const fetchCronometros = async () => {
       setLoadingAux(true); // Ativa o carregamento
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/");
+        const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordens/ativas");
         const data = await response.json();
-
-        // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
+  
+        // Verifique a resposta da API
+        console.log(data); // Depuração para ver como os dados estão chegando
+  
+        // Filtrando os cronômetros que não estão com o estado "Rodando"
         const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
           .map(cronometro => ({
             idTecnico: cronometro.tecnico_id,
@@ -330,7 +332,9 @@ export default function Funcionario({ display, displayF }) {
             segundosAtuais: cronometro.segundos_atual,
             segundosFinais: cronometro.segundo_final
           }));
-
+  
+        console.log(ordensFiltradas); // Verifique se o filtro está funcionando corretamente
+  
         // Atualizando o estado com os dados filtrados
         setOrdensSecundaria(ordensFiltradas);
       } catch (error) {
@@ -339,13 +343,14 @@ export default function Funcionario({ display, displayF }) {
         setLoadingAux(false); // Desativa o carregamento
       }
     };
-
+  
     // Só chama fetchCronometros se a modal for aberta
     if (showFormacaoModal) {
       fetchCronometros();
     }
   }, [showFormacaoModal]); // Executa sempre que a modal for aberta
-
+  
+  
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
@@ -402,6 +407,20 @@ export default function Funcionario({ display, displayF }) {
     });
     setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
   };
+
+    // Função para iniciar ou pausar o cronômetro de uma ordem específica
+    const iniciarPausarAux = (numeroOrdem) => {
+      const novasOrdens = ordens.map((ordem) => {
+        if (ordem.numeroOrdem === numeroOrdem) {
+          return {
+            ...ordem,
+            rodando: !ordem.rodando, // Alterna o estado "rodando" da ordem
+          };
+        }
+        return 1;
+      });
+      setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
+    };
 
   //========================================|CONFIGURACOES DO MENU ASIDE|===================================================
 
@@ -1283,6 +1302,8 @@ export default function Funcionario({ display, displayF }) {
                                     await limparDadosModalTecnico(); // Limpa os dados do modal de técnico
                                     await handleModalOrdemDeReparacaoClose(); // Fecha a modal da ordem de reparação
                                     await iniciarPausar(props.numeroOr); // Inicia o cronômetro
+                                    await iniciarPausarAux(props.numeroOr); // Inicia o cronômetro
+
                                     await adicionarOrdem(ordemDeReparacao?.numero_trabalho); // Adiciona a ordem ao sistema
 
                                     // Após todas as funções anteriores terminarem, chama o refresh
@@ -1505,7 +1526,7 @@ export default function Funcionario({ display, displayF }) {
                     // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
                     <div className="text-center">
                       <Spinner animation="border" variant="primary" />
-                      <p>Carregando ordens...</p>
+                      <p>Carregando Cronometros Individual...</p>
                     </div>
                   ) : (
                     <div className="row">
@@ -1516,7 +1537,7 @@ export default function Funcionario({ display, displayF }) {
                             numeroOrdem={ordem.numeroOrdem}
                             estado={ordem.estado}
                             rodando={ordem.rodando}
-                            iniciarPausar={() => { }} // Substitua isso com a lógica de iniciar/pausar
+                            iniciarPausar={iniciarPausarAux} // Substitua isso com a lógica de iniciar/pausar
                             segundosAtual={ordem.segundosAtuais || 0}
                             segundoFinal={ordem.segundosFinais || 3600}
                             tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
