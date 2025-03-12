@@ -305,3 +305,9 @@
 
   font-size: 15pt;
 }
+
+
+.bg-difinido{
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
+  background-size: cover;
+}

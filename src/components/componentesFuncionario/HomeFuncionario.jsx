@@ -505,6 +505,7 @@ const Cronometro = ({
       <div className="modais">
         {/* Modal para solicitar o número identificador do técnico */}
         <Modal scrollable show={showConfirmModal} onHide={fecharModal}>
+
           <Modal.Header closeButton>
             <Modal.Title>{showSearchForm ? 'Buscar Reparação a Terminar' : 'Insira o número de Técnico'}</Modal.Title>
           </Modal.Header>
@@ -534,7 +535,7 @@ const Cronometro = ({
                       disabled={loading || !numeroOrdemL}
                     >
                       {loading ? <Spinner /> : "Avançar"}
-                     
+
                     </Button>
                   </div>
                 </Form.Group>
@@ -1901,35 +1902,41 @@ export default function Funcionario({ display, displayF }) {
                 </Modal.Footer>
               </Modal>
 
-              {/* Modal para Formação */}
-              <Modal scrollable show={showFormacaoModal} size="xl" onHide={fecharFormacaoModal}>
+              {/* Modal Tempo Individual */}
+             
+              <Modal
+                scrollable
+                show={showFormacaoModal}
+                size="xl"
+                onHide={fecharFormacaoModal}
+                dialogClassName="modal-fullscreen"
+              >
                 <Modal.Header closeButton>
                   <Modal.Title>Tempo Individual</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+
+                <Modal.Body className='bg-difinido'>
                   {loadingAux ? (
                     // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
                     <div className="text-center">
                       <Spinner animation="border" variant="primary" />
-                      <p>Carregando Cronometros Individual...</p>
+                      <p className='text-white'>Carregando Cronometros Individual...</p>
                     </div>
                   ) : ordensSecundaria.length === 0 ? (
                     // Exibe uma mensagem caso não haja ordens
-
                     <div className="text-center pt-5">
-                      <h3 className='fw-bold my-3'>Dados não encontrados</h3>
+                      <h3 className="fw-bold my-3">Dados não encontrados</h3>
                       <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
                     </div>
                   ) : (
                     <div className="row">
                       {ordensSecundaria.map((ordem, index) => (
-                        <div className="col-lg-12" key={index}>
+                        <div className="col-lg-6" key={index}>
                           <Cronometro
                             nomeMecanico={ordem.idTecnico}
                             numeroOrdem={ordem.numeroOrdem}
                             estado={ordem.estado}
                             rodando={ordem.rodando}
-                            //iniciarPausar={iniciarPausarAux} // Substitua isso com a lógica de iniciar/pausar
                             segundosAtual={ordem.segundosAtuais || 0}
                             segundoFinal={ordem.segundosFinais || 3600}
                             tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
@@ -1944,6 +1951,7 @@ export default function Funcionario({ display, displayF }) {
                   <img src={LogoType} alt="..." className="d-block mx-auto" width={250} height={70} />
                 </Modal.Footer>
               </Modal>
+
 
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
