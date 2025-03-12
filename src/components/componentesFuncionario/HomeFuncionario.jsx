@@ -1,14 +1,13 @@
 //Imports do Menu
 import { useState } from 'react';
-import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaClipboard, FaUserClock, FaAngleDoubleDown, FaAngleUp, FaAngleDown } from 'react-icons/fa'; // Ícones de Font Awesome
+import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaClipboard, FaUserClock, FaAngleUp, FaAngleDown } from 'react-icons/fa'; // Ícones de Font Awesome
 import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch, MdDriveFileRenameOutline, MdMotionPhotosPause, MdOutlineAutoMode, MdOutlineNotStarted, MdPersonSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdDriveFileRenameOutline, MdMotionPhotosPause, MdOutlineAutoMode, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
-import { SiCcleaner } from "react-icons/si";
 import axios from 'axios';
 import { TbNumber, TbPlayerTrackNextFilled } from "react-icons/tb";
 import LogoType from "../../assets/lgo.png";
@@ -16,20 +15,18 @@ import LogoType from "../../assets/lgo.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useEffect } from 'react';
-import { BiReset } from "react-icons/bi";
 import { GiAutoRepair } from "react-icons/gi";
 import logotipo from "../../assets/lgo.png";
 import imgErro from "../../assets/error.webp";
 import imgN from "../../assets/not-found.png";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Não se esqueça de importar o CSS do bootstrap
-import { IoMdEyeOff, IoMdPerson } from 'react-icons/io';
+import { IoMdPerson } from 'react-icons/io';
 import { FaCheckDouble } from 'react-icons/fa';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 import { CgCloseO } from 'react-icons/cg';
 import { AiOutlineFieldNumber } from 'react-icons/ai'
 
-import { IoEye } from "react-icons/io5";
 // eslint-disable-next-line react/prop-types
 const ProgressoBar = ({ progresso }) => {
   let variante = 'success'; // Cor verde
@@ -61,6 +58,7 @@ const ProgressoBar = ({ progresso }) => {
 };
 
 
+
 const Cronometro = ({
   nomeMecanico,
   numeroOrdem,
@@ -79,12 +77,15 @@ const Cronometro = ({
   const [funcionario, setFuncionario] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [opcaoAtiva, setOpcaoAtiva] = useState(null); // Estado para controlar a opção ativa
+
 
   // Função para reiniciar o cronômetro
   const reiniciar = () => {
     setSegundos(0);
     setTempoEsgotado(false);
     setRodando(false);
+    setOpcaoAtiva(null); // Limpa a opção ativa quando o cronômetro for reiniciado
     localStorage.removeItem(`segundos-${numeroOrdem}`);
     localStorage.removeItem(`rodando-${numeroOrdem}`);
     localStorage.removeItem(`startTime-${numeroOrdem}`);
@@ -197,8 +198,19 @@ const Cronometro = ({
   }
 
   // Função para alternar o estado "rodando" (iniciar ou pausar)
-  const iniciarPausar = () => {
-    setRodando((prev) => !prev);
+
+
+
+
+  // Função para alternar o estado "rodando" (iniciar ou pausar)
+  const iniciarPausar = (opcao) => {
+    if (opcaoAtiva === opcao) {
+      setOpcaoAtiva(null); // Se a opção clicada já estiver ativa, desmarque
+      setRodando(false);
+    } else {
+      setOpcaoAtiva(opcao); // Marca a opção clicada
+    }
+    setRodando((prev) => !prev);((prev) => !prev);
     if (!rodando) {
       const startTime = new Date().getTime();
       localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
@@ -209,8 +221,13 @@ const Cronometro = ({
     }
   };
 
+
+
+
+
+
   // Função para limpar todos os dados de todos os cronômetros no localStorage
-  const limparTodosOsCronometros = () => {
+  /*const limparTodosOsCronometros = () => {
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('segundos-') || key.startsWith('rodando-') || key.startsWith('startTime-')) {
         localStorage.removeItem(key);
@@ -220,11 +237,11 @@ const Cronometro = ({
     setSegundos(0);
     setRodando(false);
     setTempoEsgotado(false);
-  };
+  };*/
   const classNameValor = displayF;
   return (
     <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-0  backFundo w-100">
-    
+
       <div className="d-flex pt-2 justify-content-between">
         <div className="estado text-start d-flex flex-column">
           <div className="d-flex align-items-center">
@@ -263,7 +280,7 @@ const Cronometro = ({
 
       <div className="row pb-3  ">
         <div className="col-11 py-1">
-          <ProgressoBar  progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
+          <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
         </div>
         <button onClick={toggleOptionsVisibility} className='col-1 setasDesign  p-0  text-white d-block ms-auto' style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}>
           {isOptionsVisible ? <FaAngleUp /> : <FaAngleDown />}
@@ -271,33 +288,60 @@ const Cronometro = ({
 
       </div>
       {/* Opções com visibilidade controlada */}
-      <div className={`d-flex justify-content-between pb-2 mt-1 ${isOptionsVisible ? "" : "d-none"}`}>
-
-        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
-          <span className='text-white'>Almoço </span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
-        </button>
-        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
-          <span className='text-white'> Manutenção e limpeza</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
-        </button>
-        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
-          <span className='text-white'>Terminar o serviço</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
-        </button>
-        <button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset d-non mx-2">
-
-          <span className='text-white'>Aguardar Trabalho</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
-        </button>
 
 
-
-
-        {/**<button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset d-non mx-2">
-          <SiCcleaner className='ms-auto d-non' onClick={limparTodosOsCronometros} />
-        </button>
-       */}
+      <div className={`row justify-content-between pb-2 mt-1 ${isOptionsVisible ? "" : "d-none"}`}>
+        <div className={`col-6 col-lg-3 col-md-4 ${tempoEsgotado || (opcaoAtiva && opcaoAtiva !== 'almoco') ? 'd-none' : ''}`}>
+          <button
+            className="d-block"
+            onClick={() => iniciarPausar('almoco')}
+            style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}
+          >
+            <span className="text-white">Almoço &nbsp;</span>
+            {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <FaUtensils color="#fff" fontSize={25} />}
+          </button>
+        </div>
+        <div className={`col-6 col-lg-3 col-md-4 ${tempoEsgotado || (opcaoAtiva && opcaoAtiva !== 'manutencao') ? 'd-none' : ''}`}>
+          <button
+            className="d-block"
+            onClick={() => iniciarPausar('manutencao')}
+            style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}
+          >
+            <span className="text-white">Manutenção e limpeza &nbsp;</span>
+            {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <FaCogs color="#fff" fontSize={25} />}
+          </button>
+        </div>
+        <div className={`col-6 col-lg-3 col-md-4 ${tempoEsgotado || (opcaoAtiva && opcaoAtiva !== 'aguardar') ? 'd-none' : ''}`}>
+          <button
+            onClick={reiniciar}
+            style={{ padding: "0", margin: "0" }}
+            className={`btnReset d-non mx-2 ${opcaoAtiva === 'aguardar' ? 'active' : ''}`}
+          >
+            <span className="text-white">Aguardar Trabalho &nbsp;</span>
+            {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <FaToolbox color="#fff" fontSize={25} />}
+          </button>
+        </div>
+        <div className={`col-6 col-lg-3 col-md-4 ${tempoEsgotado || (opcaoAtiva && opcaoAtiva !== 'terminar') ? 'd-none' : ''}`}>
+          <button
+            className="d-block"
+            onClick={() => iniciarPausar('terminar')}
+            style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}
+          >
+            <span className="text-white">Terminar o serviço &nbsp;</span>
+            {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <FaHammer color="#fff" fontSize={25} />}
+          </button>
+        </div>
       </div>
+
     </div>
+
+
   );
 };
+
+
+
+
 
 
 
@@ -911,13 +955,13 @@ export default function Funcionario({ display, displayF }) {
     <div className="seccao-cartaz">
       <div className="container-fluid">
         <div className="d-flex">
-          <div className="menu-funionario">
+          <div className="menu-funionario ">
 
             <div className={`menu-barra ${display}`}>
 
               <nav className='menuLateral vh-100'>
-                <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="280px" height="100px" />
-                <img src={LogoSmall} alt="logotipo small" className='my-3 ms-4 logoSmall' width="45px" height="37px" />
+                <img src={LogoTIpo} alt="logotipo small" className='mb-2 d-block mx-auto logoBig' width="210px" height="90px" />
+                <img src={LogoSmall} alt="logotipo small" className='my-3 ms-4 logoSmall' width="40px" height="32px" />
 
                 <ul className="menu-lateral ">
                   <li className='linhasMenu'>
@@ -925,27 +969,27 @@ export default function Funcionario({ display, displayF }) {
                       <MdContentPasteSearch className='icone-menu' /> <span className='spanTitle'>Procurar OR</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
+                  <li className='linhasMenu  d-none'>
                     <a href="#" title='Terminar o serviço' onClick={abrirConfirmModal}>
                       <FaHammer className='icone-menu' /> <span className='spanTitle'>Terminar o serviço</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
+                  <li className='linhasMenu d-none'>
                     <a href="#" title='Manutenção e limpeza' onClick={abrirLimpezaModal}>
                       <FaCogs className='icone-menu' /> <span className='spanTitle'>Manutenção e limpeza</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
+                  <li className='linhasMenu  d-none'>
                     <a href="#" title='Aguardar Trabalho' onClick={abrirAguardarTrabalhoModal}>
                       <FaToolbox className='icone-menu' /> <span className='spanTitle'>Aguardar Trabalho</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
+                  <li className='linhasMenu d-none'>
                     <a href="#" title='Aguardar Peças' onClick={abrirAguardarPecasModal}>
                       <FaRegClock className='icone-menu' /> <span className='spanTitle'>Aguardar Peças</span>
                     </a>
                   </li>
-                  <li className='linhasMenu'>
+                  <li className='linhasMenu  d-none'>
                     <a href="#" title='Almoço' onClick={abrirAlmocoModal}>
                       <FaUtensils className='icone-menu' /> <span className='spanTitle'>Almoço </span>
                     </a>
@@ -1604,10 +1648,10 @@ export default function Funcionario({ display, displayF }) {
 
 
           <div className="container-fluid">
-            
+
             <div className="row ">
               <CgCloseO fontSize={30} onClick={handleRedirectRegresso} className={`mEr ${displayF}`} />
-            
+
               <div className="div-feed border-4    min-vh-100 borderKing col-lg-12 vh-100 h-100 padingCimaBar">
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
                 <h4 className='my-3 ms-2'>Tempo Total de cada OR</h4>

@@ -112,7 +112,9 @@
 
 .menu-lateral {
   padding-top: 40px;
-  width: 350px;
+  width: 300px;
+
+
 }
 
 .linhasMenu {
@@ -197,14 +199,17 @@
 
   .logoSmall {
     display: block !important;
+    position: relative;
+    left: -15px;
   }
 
   .menu-lateral {
-    width: 120px;
+    width: 50px;
+    padding-left:10px;
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
 
   .logoBig {
     display: block !important;
