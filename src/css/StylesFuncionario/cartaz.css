@@ -279,4 +279,24 @@
   height: 100vh; /* Altura total da viewport */
   background-color: #000000;
   color: #fff;
+
+}
+
+
+.backFundo{
+ border-top: 2px solid #fff;
+  border-radius: 15px;
+  border-bottom: 2px solid #fff;
+  margin: 10px 5px;
+  padding: 0 12px !important;
+  background-color: 
+  #000;
+  color: #fff;
+  box-shadow: var(--SombraA);
+
+}
+
+.setasDesign{
+
+  font-size: 15pt;
 }

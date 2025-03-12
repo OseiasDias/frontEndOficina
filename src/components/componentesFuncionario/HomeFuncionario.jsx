@@ -1,6 +1,6 @@
 //Imports do Menu
 import { useState } from 'react';
-import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaClipboard, FaUserClock } from 'react-icons/fa'; // Ícones de Font Awesome
+import { FaRegClock, FaToolbox, FaHammer, FaCogs, FaUtensils, FaClipboard, FaUserClock, FaAngleDoubleDown, FaAngleUp, FaAngleDown } from 'react-icons/fa'; // Ícones de Font Awesome
 import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiClockCountdownFill, PiSignOutBold } from 'react-icons/pi';
@@ -23,13 +23,13 @@ import imgErro from "../../assets/error.webp";
 import imgN from "../../assets/not-found.png";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Não se esqueça de importar o CSS do bootstrap
-import { IoMdPerson } from 'react-icons/io';
+import { IoMdEyeOff, IoMdPerson } from 'react-icons/io';
 import { FaCheckDouble } from 'react-icons/fa';
 import { BsArrowsFullscreen } from 'react-icons/bs';
 import { CgCloseO } from 'react-icons/cg';
 import { AiOutlineFieldNumber } from 'react-icons/ai'
 
-
+import { IoEye } from "react-icons/io5";
 // eslint-disable-next-line react/prop-types
 const ProgressoBar = ({ progresso }) => {
   let variante = 'success'; // Cor verde
@@ -68,7 +68,8 @@ const Cronometro = ({
   segundosAtual,
   segundoFinal,
   tempoEsgotado: tempoEsgotadoProp,
-  displayF
+  displayF,
+
 
 }) => {
   const tempoLimite = segundoFinal;
@@ -89,6 +90,13 @@ const Cronometro = ({
     localStorage.removeItem(`startTime-${numeroOrdem}`);
   };
 
+  // Estado para controlar a visibilidade da div
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false); // Inicialmente oculta
+
+  // Função para alternar a visibilidade da div
+  const toggleOptionsVisibility = () => {
+    setIsOptionsVisible((prev) => !prev);
+  };
   // Efeito para carregar o tempo e o estado de "rodando" do localStorage
   useEffect(() => {
     const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
@@ -215,9 +223,9 @@ const Cronometro = ({
   };
   const classNameValor = displayF;
   return (
-    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-3 w-100">
-      <hr />
-      <div className="d-flex justify-content-between">
+    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-0  backFundo w-100">
+    
+      <div className="d-flex pt-2 justify-content-between">
         <div className="estado text-start d-flex flex-column">
           <div className="d-flex align-items-center">
             <AiOutlineFieldNumber fontSize={25} className="me-2" />
@@ -226,35 +234,66 @@ const Cronometro = ({
           <div className="d-flex align-items-center mt-2">
             <div className="divLeft">
               <h6 className={classNameValor}>
+
                 <MdDriveFileRenameOutline fontSize={20} className="me-2" />
                 {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
               </h6>            </div>
             <div className='divRight m'>
-              <h6> <MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
+              <h6><MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
+
             </div>
           </div>
         </div>
         <div className="oclock">
+          {/* Botão para alternar a visibilidade das opções */}
+
           <h5 className="d-flex">
             <PiClockCountdownFill size={30} className="fw-bolder mt-1 me-2" />
             {tempoEsgotado ? (
-              <p style={{ fontSize: "30px", color: "red" }}>Tempo Esgotado!</p>
+              <p style={{ fontSize: "22px", color: "red" }}>Tempo Esgotado!</p>
             ) : (
               <p style={{ fontSize: "30px" }}>{formatarTempo(segundos)}</p>
             )}
           </h5>
+
+
         </div>
       </div>
-      <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
-      <div className="d-flex justify-content-center mt-3 ">
-        <button onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
-          {rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
-        </button>
-        <button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset mx-2">
-          <BiReset size={25} color="#fff" />
+
+
+      <div className="row pb-3  ">
+        <div className="col-11 py-1">
+          <ProgressoBar  progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
+        </div>
+        <button onClick={toggleOptionsVisibility} className='col-1 setasDesign  p-0  text-white d-block ms-auto' style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}>
+          {isOptionsVisible ? <FaAngleUp /> : <FaAngleDown />}
         </button>
 
-        <SiCcleaner className='ms-auto' onClick={limparTodosOsCronometros} />
+      </div>
+      {/* Opções com visibilidade controlada */}
+      <div className={`d-flex justify-content-between pb-2 mt-1 ${isOptionsVisible ? "" : "d-none"}`}>
+
+        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
+          <span className='text-white'>Almoço </span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
+        </button>
+        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
+          <span className='text-white'> Manutenção e limpeza</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
+        </button>
+        <button className='d-block' onClick={iniciarPausar} style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }} disabled={tempoEsgotado}>
+          <span className='text-white'>Terminar o serviço</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
+        </button>
+        <button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset d-non mx-2">
+
+          <span className='text-white'>Aguardar Trabalho</span>{rodando ? <MdMotionPhotosPause size={25} color="#fff" /> : <MdOutlineNotStarted color='#fff' fontSize={25} />}
+        </button>
+
+
+
+
+        {/**<button onClick={reiniciar} style={{ padding: "0", margin: "0" }} className="btnReset d-non mx-2">
+          <SiCcleaner className='ms-auto d-non' onClick={limparTodosOsCronometros} />
+        </button>
+       */}
       </div>
     </div>
   );
@@ -268,11 +307,8 @@ export default function Funcionario({ display, displayF }) {
   const [ordens, setOrdens] = useState([]);
   const [numeroOrdem, setNumeroOrdem] = useState(''); // Estado para armazenar o número da ordem
   const [showSearchForm, setShowSearchForm] = useState(true); // Controle para alternar entre a tela de busca e a de confirmação
-  //const [cronometroData, setCronometroData] = useState(null);
   const [funcionarioId, setFuncionarioId] = useState(null);
   const [erroMensagem, setErroMensagem] = useState('');
-  //Função para buscar os dados da API
-
   const [idTecnico, setIdTecnico] = useState(null);  // Estado para armazenar o idTecnico
   const [loading, setLoading] = useState(false);  // Estado para indicar se a requisição está carregando
   const [error, setError] = useState(null);  // Estado para armazenar erros
@@ -301,15 +337,12 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
-
   const [loadingAux, setLoadingAux] = useState(false);
   const [ordensSecundaria, setOrdensSecundaria] = useState([]);
   const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Estado para controlar visibilidade da modal
 
   // Função para abrir a modal
   const abrirFormacaoModal = () => setShowFormacaoModal(true);
-
-  // Função para fechar a modal
   const fecharFormacaoModal = () => setShowFormacaoModal(false);
 
   useEffect(() => {
@@ -318,10 +351,10 @@ export default function Funcionario({ display, displayF }) {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordens/ativas");
         const data = await response.json();
-  
+
         // Verifique a resposta da API
         console.log(data); // Depuração para ver como os dados estão chegando
-  
+
         // Filtrando os cronômetros que não estão com o estado "Rodando"
         const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
           .map(cronometro => ({
@@ -332,9 +365,9 @@ export default function Funcionario({ display, displayF }) {
             segundosAtuais: cronometro.segundos_atual,
             segundosFinais: cronometro.segundo_final
           }));
-  
+
         console.log(ordensFiltradas); // Verifique se o filtro está funcionando corretamente
-  
+
         // Atualizando o estado com os dados filtrados
         setOrdensSecundaria(ordensFiltradas);
       } catch (error) {
@@ -343,14 +376,14 @@ export default function Funcionario({ display, displayF }) {
         setLoadingAux(false); // Desativa o carregamento
       }
     };
-  
+
     // Só chama fetchCronometros se a modal for aberta
     if (showFormacaoModal) {
       fetchCronometros();
     }
   }, [showFormacaoModal]); // Executa sempre que a modal for aberta
-  
-  
+
+
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
@@ -380,16 +413,14 @@ export default function Funcionario({ display, displayF }) {
   }, []);  // O array vazio [] garante que a função seja chamada uma vez após o componente ser montado
 
   const navigate = useNavigate(); // Hook para navegação
-
-
   // Função para adicionar uma nova ordem de serviço e cronômetro
   const adicionarOrdem = (numeroOrdem) => {
     const novaOrdem = {
       numeroOrdem,
-      estado: "Reparando",
+      estado: "Em Execução",
       rodando: true, // Inicia o cronômetro automaticamente
-      segundosAtuais: 0, // Inicia do zero
-      segundosFinais: 3600, // Define um tempo limite padrão
+      //segundosAtuais: 0, // Inicia do zero
+      //segundosFinais: 3600, // Define um tempo limite padrão
     };
     setOrdens([...ordens, novaOrdem]);
   };
@@ -408,19 +439,19 @@ export default function Funcionario({ display, displayF }) {
     setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
   };
 
-    // Função para iniciar ou pausar o cronômetro de uma ordem específica
-    const iniciarPausarAux = (numeroOrdem) => {
-      const novasOrdens = ordens.map((ordem) => {
-        if (ordem.numeroOrdem === numeroOrdem) {
-          return {
-            ...ordem,
-            rodando: !ordem.rodando, // Alterna o estado "rodando" da ordem
-          };
-        }
-        return 1;
-      });
-      setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
-    };
+  // Função para iniciar ou pausar o cronômetro de uma ordem específica
+  const iniciarPausarAux = (numeroOrdem) => {
+    const novasOrdens = ordens.map((ordem) => {
+      if (ordem.numeroOrdem === numeroOrdem) {
+        return {
+          ...ordem,
+          rodando: !ordem.rodando, // Alterna o estado "rodando" da ordem
+        };
+      }
+      return 1;
+    });
+    setOrdens(novasOrdens); // Atualiza o estado com a ordem alterada
+  };
 
   //========================================|CONFIGURACOES DO MENU ASIDE|===================================================
 
@@ -430,10 +461,8 @@ export default function Funcionario({ display, displayF }) {
   const [showAguardarTrabalhoModal, setShowAguardarTrabalhoModal] = useState(false); // Modal de "Aguardar Trabalho"
   const [showAguardarPecasModal, setShowAguardarPecasModal] = useState(false); // Modal de "Aguardar Peças"
   const [showAlmocoModal, setShowAlmocoModal] = useState(false); // Modal de "Almoço"
-  // const [showFormacaoModal, setShowFormacaoModal] = useState(false); // Modal de "Formação"
   const [showSairModal, setShowSairModal] = useState(false); // Modal de "Sair"
   const [numeroOR, setNumeroOR] = useState(''); // Estado para armazenar o número da OR
-
   // Funções para abrir e fechar as modais
   const abrirModal = () => setShowModal(true);
   const abrirConfirmModal = () => setShowConfirmModal(true);
@@ -445,8 +474,6 @@ export default function Funcionario({ display, displayF }) {
   const fecharAguardarPecasModal = () => setShowAguardarPecasModal(false);
   const abrirAlmocoModal = () => setShowAlmocoModal(true);
   const fecharAlmocoModal = () => setShowAlmocoModal(false);
-  //const abrirFormacaoModal = () => setShowFormacaoModal(true);
-  // const fecharFormacaoModal = () => setShowFormacaoModal(false);
   const abrirSairModal = () => setShowSairModal(true);
   const fecharSairModal = () => setShowSairModal(false);
   // Função para lidar com a mudança no campo de número de OR
@@ -476,13 +503,7 @@ export default function Funcionario({ display, displayF }) {
   };
   //===============================|CONFIGIURAR AS MODAIS |==============================
   const [ordem, setOrdem] = useState(null);  // Dados da ordem encontrada
-  //const [error, setError] = useState("");  // Mensagem de erro se não encontrar a ordem
-  //const [loading, setLoading] = useState(false);  // Indicador de carregamento
-  // Função para fechar a modal
-  //const [ordensSecundaria, setOrdensSecundaria] = useState([]);
-
   const fecharModalTecnico = () => setShowModalTecnico(false);
-  // Função para fechar o modal
   const fecharModalOR = () => {
     setShowModal(false);
     setNumeroOR("");  // Limpar campo de pesquisa
@@ -521,10 +542,7 @@ export default function Funcionario({ display, displayF }) {
   // eslint-disable-next-line no-unused-vars
   const [isFormValid, setIsFormValid] = useState(false);
   const [message, setMessage] = useState('');
-
   // Função para buscar o funcionário pelo número do técnico
-
-
   const buscarFuncionarioPorNumero = async () => {
     if (!numeroTecnico) {
       setErroMensagem("Por favor, insira um número de técnico.");
@@ -755,8 +773,6 @@ export default function Funcionario({ display, displayF }) {
     }
   };
 
-  // CADASTRAR CRONOMETRO AUXILIAR
-
   // Função para cadastrar a ordem de reparação
   const cadastrarOrdemReparacaoCronometroTecnico = async ({
     tecnicoId,
@@ -830,17 +846,19 @@ export default function Funcionario({ display, displayF }) {
   //CONFIGURAR MODAL TERMINAR
   // Função para fechar o modal e reiniciar os estados
   const fecharModal = () => {
+
     setShowConfirmModal(false);
-    // Reinicia os estados para a primeira parte do modal
+    //Reinicia os estados para a primeira parte do modal
     setNumeroOrdem("");
     setNumeroTecnico("");
     setIdTecnico(null);
     setFuncionarioId(null);
     setErroMensagem("");
     setErroMensagem(""); // Limpar mensagens de erro anteriores
-
     setShowSearchForm(true); // Volta para o formulário da Ordem de Reparação
+
   };
+
   // Método para atualizar o estado, chamando o endpoint
   const atualizarEstado = async () => {
     const data = { estado: "Terminado" };
@@ -871,21 +889,24 @@ export default function Funcionario({ display, displayF }) {
     }
   };
   // Método para comparar os IDs
-  // Método para comparar os IDs
   const compararIds = async () => {
     if (idTecnico === funcionarioId) {
       // Chama o método de atualização se os IDs forem iguais
       await atualizarEstado(); // Chama a função de atualizar estado
-      setMessage(`Os IDs são iguais. Estado será atualizado para ID: ${idTecnico}`);
+      iniciarPausarAux(numeroOrdem);
+      // setMessage(`Os IDs são iguais. Estado será atualizado para ID: ${idTecnico}`);
     } else {
       setMessage(`Os IDs são diferentes. Nenhuma atualização foi realizada.`);
     }
   };
+
   // Manipulador de clique do botão
   const handleClicker = async () => {
     await buscarFuncionarioPorNumero(); // Chama a função de busca e espera a resposta
     compararIds(); // Só chama compararIds depois da busca
   };
+
+
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
@@ -1303,7 +1324,6 @@ export default function Funcionario({ display, displayF }) {
                                     await handleModalOrdemDeReparacaoClose(); // Fecha a modal da ordem de reparação
                                     await iniciarPausar(props.numeroOr); // Inicia o cronômetro
                                     await iniciarPausarAux(props.numeroOr); // Inicia o cronômetro
-
                                     await adicionarOrdem(ordemDeReparacao?.numero_trabalho); // Adiciona a ordem ao sistema
 
                                     // Após todas as funções anteriores terminarem, chama o refresh
@@ -1423,10 +1443,10 @@ export default function Funcionario({ display, displayF }) {
                           >
                             Buscar
                           </Button>
-                          {message && <p>{message}</p>}
+
                         </div>
                       </Form.Group>
-
+                      {message && <p>{message}</p>}
 
                       <div>
                         <h3>Funcionário encontrado! ID: {idTecnico}</h3>
@@ -1528,6 +1548,13 @@ export default function Funcionario({ display, displayF }) {
                       <Spinner animation="border" variant="primary" />
                       <p>Carregando Cronometros Individual...</p>
                     </div>
+                  ) : ordensSecundaria.length === 0 ? (
+                    // Exibe uma mensagem caso não haja ordens
+
+                    <div className="text-center pt-5">
+                      <h3 className='fw-bold my-3'>Dados não encontrados</h3>
+                      <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+                    </div>
                   ) : (
                     <div className="row">
                       {ordensSecundaria.map((ordem, index) => (
@@ -1537,7 +1564,7 @@ export default function Funcionario({ display, displayF }) {
                             numeroOrdem={ordem.numeroOrdem}
                             estado={ordem.estado}
                             rodando={ordem.rodando}
-                            iniciarPausar={iniciarPausarAux} // Substitua isso com a lógica de iniciar/pausar
+                            //iniciarPausar={iniciarPausarAux} // Substitua isso com a lógica de iniciar/pausar
                             segundosAtual={ordem.segundosAtuais || 0}
                             segundoFinal={ordem.segundosFinais || 3600}
                             tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
@@ -1547,12 +1574,11 @@ export default function Funcionario({ display, displayF }) {
                     </div>
                   )}
                 </Modal.Body>
+
                 <Modal.Footer>
                   <img src={LogoType} alt="..." className="d-block mx-auto" width={250} height={70} />
                 </Modal.Footer>
               </Modal>
-
-
 
               {/* Modal para Sair */}
               <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
@@ -1578,24 +1604,25 @@ export default function Funcionario({ display, displayF }) {
 
 
           <div className="container-fluid">
-
-            <div className="row">
+            
+            <div className="row ">
               <CgCloseO fontSize={30} onClick={handleRedirectRegresso} className={`mEr ${displayF}`} />
-
-              <div className="div-feed border-4   min-vh-100 borderKing col-lg-12 vh-100 h-100 padingCimaBar">
+            
+              <div className="div-feed border-4    min-vh-100 borderKing col-lg-12 vh-100 h-100 padingCimaBar">
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
-
+                <h4 className='my-3 ms-2'>Tempo Total de cada OR</h4>
                 <div className="row">
-
-                  {ordens.map((ordem, index) => (
-
-                    <>
-                      <div className="row">
-
-                        <div className="col-lg-12">
+                  {ordens.length === 0 ? (
+                    // Se o array estiver vazio, exibe a mensagem "Vazio"
+                    <div className="text-center vh-100 pt-5">
+                      <h3 className='fw-bold my-3'>Dados não encontrados</h3>
+                      <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+                    </div>
+                  ) : (
+                    ordens.map((ordem, index) => (
+                      <div className="row" key={index}>
+                        <div className="col-lg-12 ">
                           <Cronometro
-                            key={index}
-
                             nomeMecanico={ordem.idTecnico}
                             numeroOrdem={ordem.numeroOrdem}
                             estado={ordem.estado}
@@ -1607,12 +1634,11 @@ export default function Funcionario({ display, displayF }) {
                             displayF="d-none"
                           />
                         </div>
-
-                      </div></>
-
-                  ))}
-
+                      </div>
+                    ))
+                  )}
                 </div>
+
                 <hr />
               </div>
             </div>
