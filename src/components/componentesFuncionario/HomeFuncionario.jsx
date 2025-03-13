@@ -328,8 +328,13 @@ const Cronometro = ({
 
   // Método para atualizar o estado, chamando o endpoint
   const atualizarEstado = async () => {
-    const data = { estado: "Terminado" };
-
+    const data = {
+      "estado": "Terminado",
+      "segundos_atual": segundos,
+      "rodando": 0
+  }
+  ;
+    
     try {
       // Realizando a requisição para atualizar o estado
       const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdemL}`, {

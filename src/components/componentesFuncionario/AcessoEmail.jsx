@@ -48,9 +48,10 @@ export default function Cartaz() {
       console.log("Resposta da API: ", data);
 
       if (response.ok) {
-        // Caso a senha seja válida, redireciona para a página desejada
+        //Caso a senha seja válida, redireciona para a página desejada
         toast.success("Senha correta! Acessando...");
-        navigate("/homeFuncionario");
+        setTimeout(() => navigate("/homeFuncionario"), 1500); // Aguarda 1.5 segundos antes de redirecionar
+
       } else {
         // Caso a senha esteja errada
         toast.error(data.message || "Erro ao autenticar.");
