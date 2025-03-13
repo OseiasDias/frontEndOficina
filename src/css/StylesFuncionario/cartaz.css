@@ -311,3 +311,12 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
   background-size: cover;
 }
+
+/* Centraliza a Modal em todas as telas */
+.modal-fullscreenAux{
+ display: block !important;
+ margin: auto !important;
+ width: 100% !important;
+ height: 100vh !important;
+
+}

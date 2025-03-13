@@ -415,9 +415,11 @@ const Cronometro = ({
                 <h6 className={classNameValor}>
 
                   <MdDriveFileRenameOutline fontSize={20} className="me-2" />
-                  {loading ? "Carregando..." : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
-                </h6>            </div>
-              <div className='divRight m'>
+                  {loading ? "Carregando... " : (funcionario ? `${funcionario.nome} ${funcionario.sobrenome}` : "Funcionário não encontrado")}
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                </h6>
+              </div>
+              <div className='divRight'>
                 <h6><MdOutlineAutoMode fontSize={20} className="me-2" />{estado}</h6>
 
               </div>
@@ -1903,13 +1905,15 @@ export default function Funcionario({ display, displayF }) {
               </Modal>
 
               {/* Modal Tempo Individual */}
-             
+
               <Modal
                 scrollable
                 show={showFormacaoModal}
-                size="xl"
+                size='xl'
                 onHide={fecharFormacaoModal}
-                dialogClassName="modal-fullscreen"
+
+                dialogClassName="modal-fullscreen modal-fullscreenAux modal-center"
+
               >
                 <Modal.Header closeButton>
                   <Modal.Title>Tempo Individual</Modal.Title>
@@ -1949,6 +1953,9 @@ export default function Funcionario({ display, displayF }) {
 
                 <Modal.Footer>
                   <img src={LogoType} alt="..." className="d-block mx-auto" width={250} height={70} />
+                  <button className="btn links-acessos px-3" onClick={fecharFormacaoModal}>
+                    Fechar
+                  </button>
                 </Modal.Footer>
               </Modal>
 
