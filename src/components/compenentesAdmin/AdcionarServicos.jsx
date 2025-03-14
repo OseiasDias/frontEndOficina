@@ -73,6 +73,7 @@ export default function CadastroServico() {
 
 
       // Resetando os valores após cadastro bem-sucedido
+      // eslint-disable-next-line no-unused-vars
       const data = await response.json();
       // Caso o cadastro seja bem-sucedido
       toast.success("Serviço cadastrado com sucesso!");

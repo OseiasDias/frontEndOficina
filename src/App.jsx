@@ -87,7 +87,7 @@ import AddAgendamentoAdmin from "./pages/pagesAdd/AddAgendamentoAdmin.jsx";
 import Cartaz from "./components/componentesFuncionario/Cartaz.jsx";
 import AcessoEmail from "./components/componentesFuncionario/AcessoEmail.jsx";
 import HomeFuncionario from "./components/componentesFuncionario/HomeFuncionario.jsx";
-import Tela from "./components/componentesFuncionario/TelaActividade.jsx";
+import TelaActividade  from "./components/componentesFuncionario/TelaActividade.jsx";
 
 
 
@@ -751,18 +751,12 @@ const App = () => {
 
 
 
-
-
-
-
-
               {/**Routes de Add de Entidades */}
               <Route path="/verBlog/:id" element={
                 <ProtectedRouteAdmin>
                   <VerBlog />
                 </ProtectedRouteAdmin>
               } />
-
 
 
               {/**Routes de Add de Entidades */}
@@ -793,7 +787,7 @@ const App = () => {
               {/**Routes de Add de Entidades */}
               <Route path="/homeFuncionario" element={
                 <ProtectedRouteFuncionario>
-                  <HomeFuncionario displayF="d-none" />
+                  <HomeFuncionario displayBlock="d-none" />
                 </ProtectedRouteFuncionario>
               } />
 
@@ -801,7 +795,7 @@ const App = () => {
 
               <Route path="/projectarTela" element={
                 <ProtectedRouteFuncionario>
-                  <Tela />
+                  <TelaActividade  />
                 </ProtectedRouteFuncionario>
               } />
 

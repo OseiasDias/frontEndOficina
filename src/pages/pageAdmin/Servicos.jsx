@@ -280,7 +280,7 @@ const Servicos = () => {
         <div className="d-flex">
           <SideBar />
           <div className="flexAuto w-100">
-            <TopoAdmin entrada="Lista de Serviços" direccao="/addServico" icone={<RiAddFill />} leftR="/ProdutosList" />
+            <TopoAdmin entrada="Lista de Serviços" direccao="/addServicos" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
               <ListarServicos />
             </div>

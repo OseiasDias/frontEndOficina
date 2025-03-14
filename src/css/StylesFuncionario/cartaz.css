@@ -205,7 +205,7 @@
 
   .menu-lateral {
     width: 50px;
-    padding-left:10px;
+    padding-left: 10px;
   }
 }
 
@@ -271,7 +271,7 @@
 }
 
 
-.DifinirEspecial{
+.DifinirEspecial {
   display: block !important;
   margin: auto !important;
   border: 2px solid #fff;
@@ -281,42 +281,48 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Altura total da viewport */
+  height: 100vh;
+  /* Altura total da viewport */
   background-color: #000000;
   color: #fff;
 
 }
 
 
-.backFundo{
- border-top: 2px solid #fff;
+.backFundo {
+  border-top: 3px solid #fff;
   border-radius: 15px;
-  border-bottom: 2px solid #fff;
+  border-bottom: 3px solid #fff;
   margin: 10px 5px;
   padding: 0 12px !important;
-  background-color: 
-  #000;
+  background-color:
+    #000;
   color: #fff;
   box-shadow: var(--SombraA);
 
 }
 
-.setasDesign{
+.setasDesign {
 
   font-size: 15pt;
 }
 
 
-.bg-difinido{
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
+.bg-difinido {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
   background-size: cover;
 }
 
 /* Centraliza a Modal em todas as telas */
-.modal-fullscreenAux{
- display: block !important;
- margin: auto !important;
- width: 100% !important;
- height: 100vh !important;
+.modal-fullscreenAux {
+  display: block !important;
+  margin: auto !important;
+  width: 100% !important;
+  height: 100vh !important;
 
+}
+
+.bg-difinido {
+  border: 10px solid #fff;
+  border-radius: 40px;
 }

@@ -39,7 +39,7 @@ export default function Cartaz() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ senha: password }), // Envia a senha no corpo da requisição
+        body: JSON.stringify({ password: password }), // Envia a senha no corpo da requisição
       });
 
       const data = await response.json(); // Para capturar a resposta JSON

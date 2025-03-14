@@ -1,11 +1,10 @@
-import Funcionario from "./HomeFuncionario";
+import HomeFuncionario from "../../components/componentesFuncionario/HomeFuncionario.jsx";
 
 
 
-export default function Tela(){
+export default function TelaActividade(){
 
     return(<>
-    <Funcionario display="d-none" displayF="d-block" />
-    
+      <HomeFuncionario display="d-none" displayBlock="d-block" />
     </>)
 }
