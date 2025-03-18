@@ -309,7 +309,7 @@
 
 
 .bg-difinido {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.6)), url("../../assets/img/StockCake-Busy Auto Shop_1728583541.jpg");
   background-size: cover;
 }
 
@@ -324,5 +324,6 @@
 
 .bg-difinido {
   border: 10px solid #fff;
-  border-radius: 40px;
+  border-top-left-radius: 40px;
+  border-bottom-right-radius: 40px;
 }

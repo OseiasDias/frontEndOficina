@@ -6,18 +6,18 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import ModalCadastrarCliente from './ModalCadastrarCliente';
-
+import { toast, ToastContainer } from 'react-toastify';
 
 // eslint-disable-next-line react/prop-types
 export default function ModalLogin({ show, onHide }) {
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [senhaError, setSenhaError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [modalShowCadastro, setModalShowCadastro] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Novo estado para o carregamento
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -34,76 +34,69 @@ export default function ModalLogin({ show, onHide }) {
     return true;
   };
 
-  const validateSenha = (senha) => {
-    if (!senha) {
-      setSenhaError('Senha é obrigatória.');
+  // eslint-disable-next-line no-unused-vars
+  const validatePassword = (password) => {
+    if (!password) {
+      setPasswordError('Senha é obrigatória.');
       return false;
     }
-    setSenhaError('');
+    setPasswordError('');
     return true;
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    const isEmailValid = validateEmail(email);
-    const isSenhaValid = validateSenha(senha);
+    if (!validateEmail(email)) return;
 
-    if (!isEmailValid || !isSenhaValid) {
+    if (!password || password.length < 6) {
+      toast.error('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
 
-    setIsLoading(true); // Ativa o spinner ao iniciar o login
-
+    setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/clientes/login', {
+      const response = await fetch('http://127.0.0.1:8000/api/clientes/loginClien', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
+        body: JSON.stringify({ email, password }),
       });
-
-      if (!response.ok) {
-        setGeneralError('Verifique as credenciais que inseriste, não está associado a uma conta.');
-        setIsLoading(false); // Desativa o spinner em caso de erro
-        return;
-      }
 
       const data = await response.json();
-      localStorage.setItem('authToken', data.token);
 
-      const clienteResponse = await fetch(`http://localhost:5000/api/clientes/email/${email}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${data.token}`,
-        },
-      });
-
-      if (!clienteResponse.ok) {
-        setGeneralError('Erro ao obter ID do cliente.');
-        setIsLoading(false); // Desativa o spinner em caso de erro
-        return;
+      if (!response.ok || !data.cliente) {
+        throw new Error(data.message || 'Usuário não encontrado. Verifique as credenciais.');
       }
 
-      const clienteData = await clienteResponse.json();
-      localStorage.setItem('userId', clienteData.id_cliente);
+      // Armazenar dados no localStorage
+      localStorage.setItem('authToken', data.token || '');
+      localStorage.setItem('userId', data.cliente.id);
+      localStorage.setItem('userName', `${data.cliente.primeiro_nome} ${data.cliente.sobrenome}`);
+      localStorage.setItem('userEmail', data.cliente.email);
 
-      setTimeout(() => {
-        setIsLoading(false); // Desativa o spinner ao concluir o login
-       // navigate('/Home999Cliente988777', { state: { id_cliente: clienteData.id_cliente } });
-      }, 3000);
-  
-    // eslint-disable-next-line no-unused-vars
+      toast.success('Login realizado com sucesso!');
+      onHide(); // Fecha o modal antes de navegar
+
+      navigate('/HomeCliente');
+
+      //navigate('/HomeCliente', { state: { id_cliente: data.cliente.id } });
+
+
     } catch (error) {
-      setGeneralError('Erro ao conectar ao servidor.');
-      setIsLoading(false); // Desativa o spinner em caso de erro
+      console.error('Erro ao fazer login:', error.message);
+      setGeneralError(error.message || 'Erro ao conectar ao servidor.');
+      toast.error(error.message || 'Erro ao conectar ao servidor.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Modal show={show} onHide={onHide} size="md" centered>
+      <ToastContainer />
       <div className="modalBeleza">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Faça seu login</Modal.Title>
+          <Modal.Title>Faça seu login</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleLogin}>
@@ -119,15 +112,15 @@ export default function ModalLogin({ show, onHide }) {
               <Form.Control.Feedback type="invalid">{emailError}</Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="formBasicSenha" className="mt-3">
+            <Form.Group controlId="formBasicPassword" className="mt-3">
               <Form.Label>Senha</Form.Label>
               <div className="d-flex">
                 <Form.Control
                   type={showPassword ? "text" : "password"}
                   placeholder="Digite sua senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  isInvalid={!!senhaError}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  isInvalid={!!passwordError}
                 />
                 <Button
                   variant="outline-secondary"
@@ -137,7 +130,7 @@ export default function ModalLogin({ show, onHide }) {
                   {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                 </Button>
               </div>
-              <Form.Control.Feedback type="invalid">{senhaError}</Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{passwordError}</Form.Control.Feedback>
             </Form.Group>
 
             <Button variant="primary" type="submit" className="links-acessos mt-3 px-5 mx-auto d-block" disabled={isLoading}>
@@ -150,8 +143,10 @@ export default function ModalLogin({ show, onHide }) {
           </Form>
         </Modal.Body>
         <hr />
-        <p className='text-center'><strong className='melhorarStrong'>Esqueceste a sua senha?</strong></p>
-        <p className='text-center'>Não tens uma conta? <strong className='melhorarStrong' onClick={() => setModalShowCadastro(true)}>Registar</strong></p>
+        <p className="text-center"><strong className="melhorarStrong">Esqueceu sua senha?</strong></p>
+        <p className="text-center">
+          Não tem uma conta? <strong className="melhorarStrong" onClick={() => setModalShowCadastro(true)}>Registrar</strong>
+        </p>
 
         <ModalCadastrarCliente show={modalShowCadastro} onHide={() => setModalShowCadastro(false)} />
       </div>

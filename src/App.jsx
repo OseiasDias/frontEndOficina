@@ -87,19 +87,8 @@ import AddAgendamentoAdmin from "./pages/pagesAdd/AddAgendamentoAdmin.jsx";
 import Cartaz from "./components/componentesFuncionario/Cartaz.jsx";
 import AcessoEmail from "./components/componentesFuncionario/AcessoEmail.jsx";
 import HomeFuncionario from "./components/componentesFuncionario/HomeFuncionario.jsx";
-import TelaActividade  from "./components/componentesFuncionario/TelaActividade.jsx";
+import TelaActividade from "./components/componentesFuncionario/TelaActividade.jsx";
 
-
-
-
-
-
-// eslint-disable-next-line react/prop-types
-const ProtectedRouteAdmin = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('authToken'); // Exemplo de verificação de autenticação
-
-  return isAuthenticated ? children : <Navigate to="/acessoAdministrador" />;
-};
 
 
 // eslint-disable-next-line react/prop-types
@@ -117,6 +106,49 @@ const ProtectedRoute = ({ children }) => {
 
   return isAuthenticated ? children : <Navigate to="/" />;
 };
+
+// eslint-disable-next-line react/prop-types
+const ProtectedRouteAdmin = ({ children }) => {
+  const isAuthenticated = !!localStorage.getItem('authToken');
+
+  useEffect(() => {
+    let timeoutId;
+    let lastActivity = new Date().getTime();
+
+    const handleActivity = () => {
+      lastActivity = new Date().getTime();
+    };
+
+    document.addEventListener('mousemove', handleActivity);
+    document.addEventListener('keydown', handleActivity);
+
+    const checkInactivity = () => {
+      const currentTime = new Date().getTime();
+      const inactivityTime = (currentTime - lastActivity) / 1000 / 60; // minutos
+
+      if (inactivityTime > 60) { // 1 hora
+        localStorage.removeItem('authToken');
+        window.location.reload(); // Recarregar a página para aplicar a mudança
+      } else {
+        timeoutId = setTimeout(checkInactivity, 1000); // Verificar a cada segundo
+      }
+    };
+
+    timeoutId = setTimeout(checkInactivity, 1000);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('mousemove', handleActivity);
+      document.removeEventListener('keydown', handleActivity);
+    };
+  }, []);
+
+  return isAuthenticated ? children : <Navigate to="/acessoAdministrador" />;
+};
+
+
+
+
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -154,7 +186,9 @@ const App = () => {
               <Route path="/HomeCliente" element={
                 <ProtectedRoute>
                   <HomeCliente />
-                </ProtectedRoute>}
+                </ProtectedRoute>
+
+              }
               />
               <Route path="/Blog" element={
                 <Blog />
@@ -777,9 +811,7 @@ const App = () => {
               <Route path="/paginaEstoque" element={<Estoque />} />
 
 
-
               {/**TODAS ROUTES DO MODULO DO FUNCIONARIO */}
-
 
               <Route path="/cartazFuncionario" element={<Cartaz />} />
               <Route path="/emailFuncionario" element={<AcessoEmail />} />
@@ -795,7 +827,7 @@ const App = () => {
 
               <Route path="/projectarTela" element={
                 <ProtectedRouteFuncionario>
-                  <TelaActividade  />
+                  <TelaActividade />
                 </ProtectedRouteFuncionario>
               } />
 

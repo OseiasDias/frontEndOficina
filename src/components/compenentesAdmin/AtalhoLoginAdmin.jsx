@@ -36,42 +36,34 @@ export default function AtalhoLoginAdmin() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
+    
         if (!validateEmail(email)) return;
-
+    
         if (!senha || senha.length < 6) {
             toast.error('A senha deve ter pelo menos 6 caracteres.');
             return;
         }
-
+    
         setIsLoading(true); // Ativa o spinner
         try {
-            const response = await fetch('http://localhost:5000/api/administradores/login', {
+            const response = await fetch('http://127.0.0.1:8000/api/administradores/loginAdmin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, senha }),
+                body: JSON.stringify({ email, password: senha }), // Nome correto do campo 'password'
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Erro ao fazer login.');
-            }
-
+    
             const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Erro ao fazer login.');
+            }
+    
+            // Armazena os dados do administrador no localStorage
             localStorage.setItem('authToken', data.token);
-
-            const adminResponse = await fetch(`http://localhost:5000/api/administradores/email/${email}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${data.token}`,
-                },
-            });
-
-            if (!adminResponse.ok) throw new Error('Erro ao buscar dados do administrador.');
-
-            const adminData = await adminResponse.json();
-            localStorage.setItem('adminId', adminData.id_administrador);
-
+            localStorage.setItem('adminId', data.administrador.id);
+            localStorage.setItem('adminNome', data.administrador.nome);
+            localStorage.setItem('adminEmail', data.administrador.email);
+    
             toast.success('Login realizado com sucesso!');
             navigate('/homeAdministrador');
         } catch (error) {
@@ -82,6 +74,7 @@ export default function AtalhoLoginAdmin() {
             setIsLoading(false); // Desativa o spinner
         }
     };
+    
 
     return (
         <div className="container-login my-4 LoginAdmistrador">

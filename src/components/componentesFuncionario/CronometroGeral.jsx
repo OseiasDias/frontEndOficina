@@ -251,7 +251,7 @@ const CronometroGeral = ({
   
   
     // Função para limpar todos os dados de todos os cronômetros no localStorage
-    /*const limparTodosOsCronometros = () => {
+    const limparTodosOsCronometros = () => {
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith('segundos-') || key.startsWith('rodando-') || key.startsWith('startTime-')) {
           localStorage.removeItem(key);
@@ -261,7 +261,7 @@ const CronometroGeral = ({
       setSegundos(0);
       setRodando(false);
       setTempoEsgotado(false);
-    };*/
+    };
     const classNameValor = displayF;
   
   
@@ -401,7 +401,7 @@ const CronometroGeral = ({
     return (
       <>
         <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-0  backFundo w-100">
-  
+             <button className='d-none' onClick={limparTodosOsCronometros}>Limpar</button>
           <div className="d-flex pt-2 justify-content-between">
             <div className="estado text-start d-flex flex-column">
               <div className="d-flex align-items-center">

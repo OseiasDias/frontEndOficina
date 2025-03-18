@@ -5,7 +5,7 @@ import LogoTIpo from "../../assets/logo- turbo fundo branco.png";
 import "../../css/StylesFuncionario/cartaz.css";
 import { PiSignOutBold } from 'react-icons/pi';
 import LogoSmall from "../../assets/cropped-logo-turbo-fundo-branco-BB.png";
-import { MdContentPasteSearch,   MdPersonSearch } from 'react-icons/md';
+import { MdContentPasteSearch, MdPersonSearch } from 'react-icons/md';
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap'; // Importando Modal, Button e Form do react-bootstrap
 import { useNavigate } from "react-router-dom"; // Usando useNavigate no React Router v6
 import axios from 'axios';
@@ -40,7 +40,7 @@ export default function Funcionario({ display, displayBlock }) {
   const [idTecnico, setIdTecnico] = useState(null);  // Estado para armazenar o idTecnico
   const [loading, setLoading] = useState(false);  // Estado para indicar se a requisição está carregando
   const [error, setError] = useState(null);  // Estado para armazenar erros
-
+  const [showSairModal, setShowSairModal] = useState(false);
   //Função para buscar o idTecnico usando numero_or
 
   const fetchIdTecnico = async () => {
@@ -191,9 +191,10 @@ export default function Funcionario({ display, displayBlock }) {
   const [showAguardarTrabalhoModal, setShowAguardarTrabalhoModal] = useState(false); // Modal de "Aguardar Trabalho"
   const [showAguardarPecasModal, setShowAguardarPecasModal] = useState(false); // Modal de "Aguardar Peças"
   const [showAlmocoModal, setShowAlmocoModal] = useState(false); // Modal de "Almoço"
-  const [showSairModal, setShowSairModal] = useState(false); // Modal de "Sair"
+ // const [showSairModal, setShowSairModal] = useState(false); // Modal de "Sair"
   const [numeroOR, setNumeroOR] = useState(''); // Estado para armazenar o número da OR
   // Funções para abrir e fechar as modais
+
   const abrirModal = () => setShowModal(true);
   const abrirConfirmModal = () => setShowConfirmModal(true);
   const abrirLimpezaModal = () => setShowLimpezaModal(true);
@@ -545,7 +546,7 @@ export default function Funcionario({ display, displayBlock }) {
       // Verificar a resposta do servidor
       if (response.status === 201) {
         console.log("Cadastro realizado com sucesso:", response.data);
-       
+
         toast.success(`Seu Tempo Começou!`);
       } else {
         console.error("Erro ao cadastrar cronômetro:", response.data);
@@ -637,6 +638,21 @@ export default function Funcionario({ display, displayBlock }) {
   };
 
 
+  //Limpar oLocal estorege ao sair
+
+
+
+  // Função para abrir e fechar o modal
+
+  // Função para confirmar logout
+  const confirmarLogout = (resposta) => {
+      if (resposta === "Sim") {
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userId");
+          navigate("/emailFuncionario"); // Redireciona para a tela de login
+      }
+      fecharSairModal();
+  };
   return (
     <div className="seccao-cartaz">
       <div className="container-fluid">
@@ -705,16 +721,17 @@ export default function Funcionario({ display, displayBlock }) {
                     </a>
                   </li>
 
-                  <li className='linhasMenu'>
-                    <a href="#" title='Sair' onClick={abrirSairModal}>
-                      <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
-                    </a>
-                  </li>
+                    {/* Botão de Logout agora abre a modal de sair */}
+                    <li className='linhasMenu'>
+                        <a href="#" title='Sair' onClick={abrirSairModal}>
+                            <PiSignOutBold className='icone-menu' /> <span className='spanTitle'>Sair</span>
+                        </a>
+                    </li>
 
 
                 </ul>
               </nav>
-
+         
             </div>
 
 
@@ -1294,35 +1311,35 @@ export default function Funcionario({ display, displayBlock }) {
 
                 <Modal.Body className='bg-difinido'>
                   <div className="div-sombra">
-                  {loadingAux ? (
-                    // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
-                    <div className="text-center">
-                      <Spinner animation="border" variant="primary" />
-                      <p className='text-white'>Carregando Cronometros Individual...</p>
-                    </div>
-                  ) : ordensSecundaria.length === 0 ? (
-                    // Exibe uma mensagem caso não haja ordens
-                    <div className="text-center pt-5">
-                      <h3 className="fw-bold my-3">Dados não encontrados</h3>
-                      <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
-                    </div>
-                  ) : (
-                    <div className="row">
-                      {ordensSecundaria.map((ordem, index) => (
-                        <div className="col-lg-6" key={index}>
-                          <CronometroIndividual 
-                            nomeMecanico={ordem.idTecnico}
-                            numeroOrdem={ordem.numeroOrdem}
-                            estado={ordem.estado}
-                            rodando={ordem.rodando}
-                            segundosAtual={ordem.segundosAtuais || 0}
-                            segundoFinal={ordem.segundosFinais || 3600}
-                            tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    {loadingAux ? (
+                      // Exibe um Spinner ou outra indicação de carregamento até que os dados sejam carregados
+                      <div className="text-center">
+                        <Spinner animation="border" variant="primary" />
+                        <p className='text-white'>Carregando Cronometros Individual...</p>
+                      </div>
+                    ) : ordensSecundaria.length === 0 ? (
+                      // Exibe uma mensagem caso não haja ordens
+                      <div className="text-center pt-5">
+                        <h3 className="fw-bold my-3">Dados não encontrados</h3>
+                        <img src={imgErro} alt="Erro" className="w-50 d-block mx-auto" />
+                      </div>
+                    ) : (
+                      <div className="row">
+                        {ordensSecundaria.map((ordem, index) => (
+                          <div className="col-lg-6" key={index}>
+                            <CronometroIndividual
+                              nomeMecanico={ordem.idTecnico}
+                              numeroOrdem={ordem.numeroOrdem}
+                              estado={ordem.estado}
+                              rodando={ordem.rodando}
+                              segundosAtual={ordem.segundosAtuais || 0}
+                              segundoFinal={ordem.segundosFinais || 3600}
+                              tempoEsgotado={ordem.tempoEsgotado ? 1 : 0}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </Modal.Body>
 
@@ -1336,22 +1353,23 @@ export default function Funcionario({ display, displayBlock }) {
 
 
               {/* Modal para Sair */}
-              <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
+           {/* Modal para Sair */}
+           <Modal scrollable show={showSairModal} onHide={fecharSairModal}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Sair</Modal.Title>
+                    <Modal.Title>Sair</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  <h5>Você deseja sair?</h5>
+                    <h5>Você deseja sair?</h5>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={() => handleConfirmacao("Não")}>
-                    Não
-                  </Button>
-                  <Button variant="danger" onClick={() => handleConfirmacao("Sim")}>
-                    Sim
-                  </Button>
+                    <Button variant="secondary" onClick={() => confirmarLogout("Não")}>
+                        Não
+                    </Button>
+                    <Button variant="danger" onClick={() => confirmarLogout("Sim")}>
+                        Sim
+                    </Button>
                 </Modal.Footer>
-              </Modal>
+            </Modal>
             </div>
           </div>
 
@@ -1375,7 +1393,7 @@ export default function Funcionario({ display, displayBlock }) {
                     ordens.map((ordem, index) => (
                       <div className="row" key={index}>
                         <div className="col-lg-12 ">
-                          <CronometroGeral 
+                          <CronometroGeral
                             nomeMecanico={ordem.idTecnico}
                             numeroOrdem={ordem.numeroOrdem}
                             estado={ordem.estado}
@@ -1398,7 +1416,18 @@ export default function Funcionario({ display, displayBlock }) {
           </div>
         </div>
       </div>
-      <ToastContainer position='center' />
+      <ToastContainer
+        position="top-center"  // Centraliza o toast no topo
+        autoClose={3000}       // Fecha automaticamente após 3 segundos
+        hideProgressBar={false} // Mostra a barra de progresso
+        newestOnTop={true}      // Exibe os mais recentes no topo
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+
     </div>
   );
 } 

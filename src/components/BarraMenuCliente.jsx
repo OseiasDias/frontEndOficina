@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import {  CgProfile } from "react-icons/cg";
+import { CgProfile } from "react-icons/cg";
 import { IoIosLogOut } from "react-icons/io";
 import { CgMenuGridO } from "react-icons/cg";
 import { FaCalendarAlt, FaBlog, FaEye, FaHome } from "react-icons/fa";
@@ -24,28 +24,36 @@ function BarraMenuCliente() {
   const [showConsultarModal, setShowConsultarModal] = useState(false);
   const [formData, setFormData] = useState({ placa: "" });
   const [formErrors, setFormErrors] = useState({});
-  const [nome, setNome] = useState("");
+  const [cliente, setCliente] = useState(null); // Estado para armazenar os dados do cliente
+  //const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
+
   //const [foto, setFoto] = useState(null);
 
   const userId = localStorage.getItem("userId");
- // const location = useLocation();
- // const id_cliente = location.state?.id_cliente;
+  // const location = useLocation();
+  // const id_cliente = location.state?.id_cliente;
 
   const navigate = useNavigate();
-
   useEffect(() => {
+    const userId = localStorage.getItem("userId"); // Pegando o ID do localStorage
+
     if (userId) {
-      fetch(`http://localhost:5000/api/clientes/${userId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setNome(data.nome);
-         // setFoto(data.foto);
+      fetch(`http://127.0.0.1:8000/api/clientes/${userId}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Erro ao buscar dados do cliente");
+          }
+          return response.json();
         })
-        .catch((error) =>
-          console.error("Erro ao buscar dados do cliente:", error)
-        );
+        .then((data) => {
+          setCliente(data); // Armazena os dados do cliente
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar dados do cliente:", error);
+        });
     }
-  }, [userId]);
+  }, []); // Executa apenas uma vez ao montar o componente
+
 
   const handleShowLogoutModal = () => setShowLogoutModal(true);
   const handleCloseLogoutModal = () => setShowLogoutModal(false);
@@ -111,7 +119,7 @@ function BarraMenuCliente() {
               }}
             >
               <FaHome fontSize={20} className="iconesMenu" />
-              Home {userId}
+              Home <span className="d-none">{userId }</span>
             </Nav.Link>
 
             <div className="dd d-flex">
@@ -175,7 +183,14 @@ function BarraMenuCliente() {
                         className="fotoPerfil me-2"
                         alt="foto perfil"
                       />
-                      <span className="nomeFull">{nome}</span>
+                      <span className="nomeFull">{cliente && (
+
+                        <>     {cliente.primeiro_nome}
+                          {cliente.sobrenome}</>
+
+
+                      )}
+                      </span>
                     </strong>
                   </>
                 }
