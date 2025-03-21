@@ -10,6 +10,11 @@ import logoFoto from "../../assets/img/lgo.png";
 import { toast } from 'react-toastify'; // Importa o Toastify
 import { useNavigate } from 'react-router-dom'; // UseNavigate para navegação no React Router v6
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export default function AtalhoLoginAdmin() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -46,7 +51,7 @@ export default function AtalhoLoginAdmin() {
     
         setIsLoading(true); // Ativa o spinner
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/administradores/loginAdmin', {
+            const response = await fetch(`${API_URL}/administradores/loginAdmin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password: senha }), // Nome correto do campo 'password'

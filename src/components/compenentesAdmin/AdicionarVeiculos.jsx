@@ -12,6 +12,10 @@ import { BsPerson } from 'react-icons/bs';
 import { GrStatusGood } from 'react-icons/gr';
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function AdicionarVeiculo() {
   // Estado do formulário
   const navigate = useNavigate();  // Inicializando o hook useNavigate
@@ -87,13 +91,14 @@ export default function AdicionarVeiculo() {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/clientes');
+        const response = await fetch(`${API_URL}/clientes`);
         if (response.ok) {
           const data = await response.json();
           setClientes(data); // Armazena os clientes no estado
         } else {
           toast.error('Erro ao carregar clientes');
         }
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         toast.error('Erro ao carregar clientes');
       }
@@ -123,7 +128,7 @@ export default function AdicionarVeiculo() {
 
       try {
         // Envia os dados como JSON via fetch
-        const response = await fetch('http://localhost:5000/api/veiculos', {
+        const response = await fetch(`${API_URL}/veiculos`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Envia como JSON

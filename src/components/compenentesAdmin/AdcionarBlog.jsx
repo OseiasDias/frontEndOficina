@@ -11,6 +11,9 @@ import { BsChatRightTextFill } from "react-icons/bs";
 import { format } from 'date-fns'; // Para formatar a data corretamente
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export default function CadastroBlog() {
   const [formValues, setFormValues] = useState({
     titulo: '',
@@ -69,7 +72,7 @@ export default function CadastroBlog() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/blogs', {
+      const response = await fetch(`${API_URL}/blogs`, {
         method: 'POST',
         body: formData,
       });

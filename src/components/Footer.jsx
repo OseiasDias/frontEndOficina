@@ -9,20 +9,24 @@ import {
 } from "react-icons/fa6";
 import { GiRoad } from "react-icons/gi";
 import { TbMap2 } from "react-icons/tb";
-import { RiMapPinLine } from "react-icons/ri";
+import { RiAdminFill, RiMapPinLine } from "react-icons/ri";
 
 
 import Copyright from "./CopyRight";
+import { FaTractor } from "react-icons/fa";
+import {  useNavigate } from "react-router-dom";
 
 
 
 
 export default function Footer() {
+      const navigate = useNavigate();
+  
   return (
     <footer className="seccao-footer h-100">
       <div className="container">
         <div className="row text-white py-5">
-          <div className="col-12 col-md-6 col-lg-4 alinharDiv">
+          <div className="col-12 col-md-6 col-lg-3 alinharDiv">
             <h4 className="mb-4">Contactos</h4>
             <p>
               <IoCall fontSize={22} color=" #0070fa" /> &nbsp;933-884-003
@@ -36,7 +40,7 @@ export default function Footer() {
               &nbsp; 923-544-232
             </p>
           </div>
-          <div className="col-12 col-md-6 col-lg-4 alinharDiv">
+          <div className="col-12 col-md-6 col-lg-3 alinharDiv">
             <h4 className="mb-4">Localização</h4>
             <p>
               <GiRoad fontSize={22} color=" #0070fa" /> &nbsp;Rua 12 - Lado A
@@ -50,7 +54,7 @@ export default function Footer() {
               &nbsp; Luanda-Angola
             </p>
           </div>
-          <div className="col-12 col-md-6 col-lg-4 alinharDiv">
+          <div className="col-12 col-md-6 col-lg-3 alinharDiv">
             <h4 className="mb-4">Redes</h4>
             <p>
               <a href="https://www.facebook.com/" target="_blank">
@@ -70,7 +74,21 @@ export default function Footer() {
               </a>
             </p>
           </div>
+          <div className="col-12 col-md-6 col-lg-3 alinharDiv">
+            <h4 className="mb-4">Acessos</h4>
+            <p>
+              <a onClick={()=>navigate("/acessoAdministrador")}>
+              <RiAdminFill fontSize={22} color=" #0070fa" /> &nbsp;Home Adminstrador
+              </a>
+            </p>
+            <p>
+              <a onClick={()=>navigate("/emailFuncionario")}>
+                <FaTractor fontSize={22} color=" #0070fa" />
+                &nbsp; Home Oficnia
+              </a>
+            </p>
 
+          </div>
         </div>
       </div>
     <Copyright />

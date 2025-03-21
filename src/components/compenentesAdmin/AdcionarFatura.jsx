@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom"; // Importando o hook useNavigate
 import Spinner from "react-bootstrap/Spinner"; // Importando o Spinner
 import "react-toastify/dist/ReactToastify.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function AdicionarFatura() {
   const navigate = useNavigate(); // Instanciando o hook navigate para redirecionamento
   const [formValues, setFormValues] = useState({
@@ -90,7 +94,7 @@ export default function AdicionarFatura() {
     setIsLoading(true); // Ativa o spinner ao iniciar o processo de cadastro
 
     try {
-      const response = await fetch("http://localhost:5000/api/faturas", {
+      const response = await fetch(`${API_URL}/faturas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

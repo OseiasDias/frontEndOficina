@@ -4,9 +4,12 @@ import { toast, ToastContainer } from "react-toastify";
 import { Button, Form, Spinner, Modal } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 import "../../css/StylesAdmin/pagarActive.css";
-import { IoMagnet, IoMail } from "react-icons/io5";
+//import { IoMagnet, IoMail } from "react-icons/io5";
 import { GiMoneyStack } from "react-icons/gi";
 import { FaCreditCard, FaTags } from "react-icons/fa";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const PagarActive = () => {
   const { id } = useParams(); // Obtém o ID do veículo da URL
@@ -45,13 +48,13 @@ const PagarActive = () => {
   useEffect(() => {
     const fetchVeiculo = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/veiculos/${id}`);
+        const response = await fetch(`${API_URL}/veiculos/${id}`);
         if (!response.ok) throw new Error("Erro ao buscar dados do veículo");
         const data = await response.json();
         setVeiculo(data);
 
         if (data.id_cliente) {
-          const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${data.id_cliente}`);
+          const clienteResponse = await fetch(`${API_URL}/clientes/${data.id_cliente}`);
           if (!clienteResponse.ok) throw new Error("Erro ao buscar dados do cliente");
           const clienteData = await clienteResponse.json();
           setCliente(clienteData);
@@ -127,7 +130,7 @@ const PagarActive = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/api/faturas`, {
+      const response = await fetch(`${API_URL}/faturas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

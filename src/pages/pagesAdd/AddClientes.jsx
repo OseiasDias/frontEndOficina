@@ -145,8 +145,11 @@ export function FormularioCliente() {
 
     } catch (error) {
       console.error('Erro ao cadastrar cliente:', error);
+     
       toast.error("Erro ao cadastrar cliente,Talvez esses dados já existem. Tente novamente.");
+   
     }
+    setIsLoading(true);
   };
 
   // Gerar a senha automaticamente ao abrir o formulário

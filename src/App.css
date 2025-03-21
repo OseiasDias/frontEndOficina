@@ -233,3 +233,7 @@
 .widthEspecial{
     width: 200px;
 }
+
+.text-justifyF{
+    text-align: justify !important;
+}

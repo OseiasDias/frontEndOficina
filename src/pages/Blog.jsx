@@ -11,9 +11,10 @@ export default function Blog(){
         <>
         <BarraTopInicial />
         <ConteudoBlog />
-        <div className="mt-5">
+           <div className="mt-5 ">
+           </div>   
         <Footer />
-        </div>      
+          
         </>
     )    
 }

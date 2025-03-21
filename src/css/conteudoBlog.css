@@ -14,13 +14,7 @@
     text-align: justify !important;
 }
 
-.conteuBlog:hover{
-    background-color: var(--corPrimaria);
-    color: var(--corTerciaria) !important;
-    border-right: 6px solid var(--corTerciaria) !important;
-    border-left: 6px solid var(--corTerciaria) !important;
-   
-}
+
 
 .conteuBlog:hover .novo-icon{
     color: var(--corTerciaria) !important;

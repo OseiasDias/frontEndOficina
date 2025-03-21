@@ -6,6 +6,10 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export default function LoginSuperAdmin() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -37,7 +41,7 @@ export default function LoginSuperAdmin() {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/clientes/login', {
+            const response = await fetch(`${API_URL}/clientes/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

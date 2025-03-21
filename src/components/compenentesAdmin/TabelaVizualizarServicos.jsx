@@ -7,6 +7,8 @@ import "../../css/StylesAdmin/tbvCliente.css";
 import { FaRegEye } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import { MdDeleteOutline } from "react-icons/md";
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const customStyles = {
   headCells: {
@@ -83,7 +85,7 @@ export default function TabelaServicos() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/servicos/${servicosIdToDelete}`, {
+      await fetch(`${API_URL}/servicos/${servicosIdToDelete}`, {
         method: "DELETE",
       });
       const updatedRecords = records.filter((record) => record.id_servico !== servicosIdToDelete);
@@ -99,7 +101,7 @@ export default function TabelaServicos() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/servicos");
+      const response = await fetch(`${API_URL}/servicos`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos serviços");
       const data = await response.json();
       setRecords(data);

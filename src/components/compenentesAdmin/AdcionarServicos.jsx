@@ -8,6 +8,11 @@ import { useNavigate } from 'react-router-dom'; // Importando o hook useNavigate
 import { MdTextFields } from "react-icons/md";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 
 export default function CadastroServico() {
 
@@ -57,7 +62,7 @@ export default function CadastroServico() {
     setIsLoading(true); // Ativa o spinner enquanto a requisição é feita
 
     try {
-      const response = await fetch('http://localhost:5000/api/servicos', {
+      const response = await fetch(`${API_URL}/servicos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formValues),

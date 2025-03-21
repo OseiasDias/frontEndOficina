@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ConnectionStatus = () => {
+  // eslint-disable-next-line no-unused-vars
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [offlineToastId, setOfflineToastId] = useState(null); // Para armazenar o ID do toast
 

@@ -4,6 +4,7 @@ import Faq from "../components/Faq";
 import Footer from "../components/Footer";
 import Banner from '../components/Banner.jsx';
 import TabelaVizualizarClientes from "../components/compenentesAdmin/TabelaVizualizarClientes.jsx";
+import ServicosCienntes from "../components/ServicosClientes.jsx";
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
 
       <Banner />
 
-      {/**<Servicos /> */}
+      <ServicosCienntes /> 
      <TabelaVizualizarClientes />
       <ContUp />
       <Faq />

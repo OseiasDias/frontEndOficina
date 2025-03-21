@@ -8,7 +8,10 @@ import "../css/iniciarHome.css";
 
 export default function ControlledCarousel() {
   const [index, setIndex] = useState(0);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
+  console.log("API URL:", apiUrl); // Teste para verificar se a variável está sendo carregada corretamente
+  
   const handleSelect = (selectedIndex) => {
     setIndex(selectedIndex);
   };

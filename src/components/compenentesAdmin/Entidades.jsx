@@ -120,6 +120,8 @@ const Grafico = () => {
 };
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 
 
@@ -153,15 +155,15 @@ export default function Entidades() {
         servicos,
         veiculos
       ] = await Promise.all([
-        axios.get("http://localhost:5000/api/clientes/total"),
-        axios.get("http://localhost:5000/api/usuario/total"),
-        axios.get("http://localhost:5000/api/agendamentos/total"),
-        axios.get("http://localhost:5000/api/blogs/total"),
-        axios.get("http://localhost:5000/api/estoque/total"),
-        axios.get("http://localhost:5000/api/fatura/total"),
-        axios.get("http://localhost:5000/api/pagamento/total"),
-        axios.get("http://localhost:5000/api/servico/total"),
-        axios.get("http://localhost:5000/api/veiculo/total")
+        axios.get(`${API_URL}/clientes/total`),
+        axios.get(`${API_URL}/usuario/total`),
+        axios.get(`${API_URL}/agendamentos/total`),
+        axios.get(`${API_URL}/blogs/total`),
+        axios.get(`${API_URL}/estoque/total`),
+        axios.get(`${API_URL}/fatura/total`),
+        axios.get(`${API_URL}/pagamento/total`),
+        axios.get(`${API_URL}/servico/total`),
+        axios.get(`${API_URL}/veiculo/total`)
       ]);
 
       setQuantidades({
