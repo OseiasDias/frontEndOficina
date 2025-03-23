@@ -28,7 +28,13 @@ const customStyles = {
   },
 };
 
+
+
+
+
 export function TabelaVizualizarFornecedores() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [records, setRecords] = useState([]);
   //const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +55,7 @@ export function TabelaVizualizarFornecedores() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/distribuidores/${selectedFornecedor.id}`);
+      await axios.delete(`${API_URL}/distribuidores/${selectedFornecedor.id}`);
       setRecords(records.filter((fornecedor) => fornecedor.id !== selectedFornecedor.id));
       setShowDeleteModal(false);
       toast.success('Fornecedor excluído com sucesso!');
@@ -95,7 +101,7 @@ export function TabelaVizualizarFornecedores() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/distribuidores/");
+      const response = await axios.get(`${API_URL}/distribuidores/`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         //setOriginalRecords(response.data);

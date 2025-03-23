@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
@@ -36,6 +38,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function ListarFiliais() {
   const [filiais, setFiliais] = useState([]); // Lista de filiais
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
@@ -49,7 +55,7 @@ export function ListarFiliais() {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/filiais');
+      const response = await axios.get(`${API_URL}/filiais`);
       setFiliais(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error('Erro ao carregar as filiais:', error);
@@ -82,7 +88,7 @@ export function ListarFiliais() {
   // Função para excluir uma filial
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/filiais/${id}`);
+      await axios.delete(`${API_URL}/filiais/${id}`);
       setFiliais(filiais.filter((item) => item.id !== id)); // Remove a filial excluída
       toast.success('Filial excluída com sucesso!');
     } catch (error) {

@@ -8,6 +8,10 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import ModalCadastrarCliente from './ModalCadastrarCliente';
 import { toast, ToastContainer } from 'react-toastify';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 // eslint-disable-next-line react/prop-types
 export default function ModalLogin({ show, onHide }) {
   const [email, setEmail] = useState('');
@@ -56,7 +60,7 @@ export default function ModalLogin({ show, onHide }) {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/clientes/loginClien', {
+      const response = await fetch(`${API_URL}/clientes/loginClien`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

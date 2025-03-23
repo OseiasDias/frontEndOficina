@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import React from 'react';
 
 function ModalAjuda(props) {
   return (
@@ -38,7 +40,7 @@ function App() {
         Launch vertically centered modal
       </Button>
 
-      <MyVerticallyCenteredModal
+      <ModalAjuda
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
@@ -46,3 +48,4 @@ function App() {
   );
 }
 
+export default App;

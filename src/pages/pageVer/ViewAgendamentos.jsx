@@ -26,7 +26,7 @@ import logoMarca from "../../assets/lgo.png";
 const customStyles = {
   headCells: {
     style: {
-      backgroundColor: '#044697',
+      backgroundColor: '#044697', 
       color: '#fff',
       fontSize: '16px',
       fontWeight: 'bolder',
@@ -41,6 +41,10 @@ const customStyles = {
     },
   },
 };
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+  
 
 export function ListarAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
@@ -62,7 +66,7 @@ export function ListarAgendamentos() {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/agendamentos");
+      const response = await axios.get(`${API_URL}/agendamentos`);
       setAgendamentos(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error("Erro ao carregar os agendamentos:", error);
@@ -103,13 +107,13 @@ export function ListarAgendamentos() {
     setShowViewModal(true);
 
 
-    axios.get(`http://127.0.0.1:8000/api/clientes/${agendamento.id_cliente}`)
+    axios.get(`${API_URL}/clientes/${agendamento.id_cliente}`)
       .then(response => {
         setCliente(response.data);
         setLoading(false);
       });
 
-    axios.get(`http://127.0.0.1:8000/api/veiculos/${agendamento.id_veiculo}`)
+    axios.get(`${API_URL}/veiculos/${agendamento.id_veiculo}`)
       .then(response => {
         setVeiculo(response.data);
         setLoading(false);
@@ -216,7 +220,7 @@ export function ListarAgendamentos() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${agendamentoToDelete.id}`);
+      await axios.delete(`${API_URL}/agendamentos/${agendamentoToDelete.id}`);
       setAgendamentos(agendamentos.filter((item) => item.id !== agendamentoToDelete.id));
       toast.success("Agendamento excluído com sucesso!");
     } catch (error) {

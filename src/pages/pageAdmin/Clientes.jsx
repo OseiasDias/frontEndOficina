@@ -31,6 +31,11 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+ 
+
+
 export function TabelaVizualizarClient() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -55,7 +60,7 @@ export function TabelaVizualizarClient() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/clientes/${selectedCliente.id}`);
+      await axios.delete(`${API_URL}/clientes/${selectedCliente.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((cliente) => cliente.id !== selectedCliente.id));
       setShowDeleteModal(false);
@@ -108,7 +113,7 @@ export function TabelaVizualizarClient() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/clientes/");
+      const response = await axios.get(`${API_URL}/clientes/`);
       if (Array.isArray(response.data)) {
         // Ordena os registros pela data de criação, do mais recente para o mais antigo
         const sortedData = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));

@@ -11,6 +11,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 const FormularioAgendamento = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -84,7 +89,7 @@ const FormularioAgendamento = () => {
         setFilteredClientes([]); // Limpar a lista de resultados ao selecionar um cliente
 
         // Requisição para pegar os veículos do cliente selecionado
-        fetch(`http://127.0.0.1:8000/api/veiculos/cliente/${cliente.id}`)
+        fetch(`${API_URL}/cliente/${cliente.id}`)
             .then((response) => response.json())
             .then((data) => {
                 setVeiculos(data);  // Armazena os veículos no estado
@@ -132,7 +137,7 @@ const FormularioAgendamento = () => {
         };
     
         // Enviar o agendamento para a API
-        fetch('http://127.0.0.1:8000/api/agendamentos', {
+        fetch(`${API_URL}/agendamentos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -185,7 +190,7 @@ const FormularioAgendamento = () => {
             data: formattedDate
         }));
 
-        fetch('http://127.0.0.1:8000/api/clientes')
+        fetch(`${API_URL}/clientes`)
             .then((response) => response.json())
             .then((data) => {
                 setClientes(data);
@@ -198,7 +203,7 @@ const FormularioAgendamento = () => {
                 setLoading(false);
             });
 
-        fetch('http://127.0.0.1:8000/api/servicos')
+        fetch(`${API_URL}/servicos`)
             .then((response) => response.json())
             .then((data) => {
                 setServicos(data);

@@ -39,6 +39,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function ListarRendas() {
   const [rendas, setRendas] = useState([]); // Lista de rendas
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
@@ -53,7 +57,7 @@ export function ListarRendas() {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/rendas");
+      const response = await axios.get(`${API_URL}/rendas`);
       setRendas(response.data); // Preenche a lista com os dados recebidos
       setOrdemData(response.data);
 
@@ -88,7 +92,7 @@ export function ListarRendas() {
   // Função para excluir uma renda
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/rendas/${id}`);
+      await axios.delete(`${API_URL}/rendas/${id}`);
       setRendas(rendas.filter((item) => item.id !== id)); // Remove a renda excluída
       toast.success("Renda excluída com sucesso!");
     } catch (error) {

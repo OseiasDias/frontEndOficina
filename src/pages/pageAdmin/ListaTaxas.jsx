@@ -39,6 +39,7 @@ const customStyles = {
     },
   },
 };
+const API_URL = import.meta.env.VITE_API_URL;
 
 export function ListarTaxas() {
   const [showModal, setShowModal] = useState(false); // Modal de adicionar taxa
@@ -64,7 +65,7 @@ export function ListarTaxas() {
     setError(null); // Limpa o erro anterior, se houver
 
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/taxas");
+      const response = await axios.get(`${API_URL}/blogs/taxas`);
       setTaxas(response.data); // Preenche a lista com os dados recebidos
       setOrdemData(response.data);
     } catch (error) {
@@ -98,7 +99,7 @@ export function ListarTaxas() {
       setError(null); // Limpa o erro anterior
 
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/taxas", novaTaxa);
+        const response = await axios.post(`${API_URL}/taxas`, novaTaxa);
         setTaxas((prevTaxas) => [...prevTaxas, response.data]); // Atualiza a lista de taxas
         setNovaTaxa({ taxrate: "", tax_number: "", tax: "" }); // Limpar os campos
         setShowModal(false); // Fechar o modal

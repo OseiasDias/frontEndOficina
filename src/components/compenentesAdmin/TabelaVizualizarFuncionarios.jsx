@@ -27,6 +27,11 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export default function TabelaVizualizarFuncionarios() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -44,7 +49,7 @@ export default function TabelaVizualizarFuncionarios() {
 
     const { id, novoStatus } = clientToEdit;
     try {
-      const response = await fetch(`http://localhost:5000/api/usuarios/${id}/status`, {
+      const response = await fetch(`${API_URL}/usuarios/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +98,7 @@ export default function TabelaVizualizarFuncionarios() {
   // Função para excluir o funcionário
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/usuarios/${clientIdToDelete}`, {
+      await fetch(`${API_URL}/usuarios/${clientIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -116,7 +121,7 @@ export default function TabelaVizualizarFuncionarios() {
   // Função para buscar os dados dos funcionários
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/usuarios");
+      const response = await fetch(`${API_URL}/blogs/usuarios`);
       if (!response.ok) throw new Error("Erro ao buscar dados");
       const data = await response.json();
       setRecords(data);

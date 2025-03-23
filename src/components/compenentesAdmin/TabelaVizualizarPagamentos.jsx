@@ -27,6 +27,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function TabelaPagamento() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -79,7 +83,7 @@ export default function TabelaPagamento() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/pagamentos/${PagamentoIdToDelete}`, {
+      await fetch(`${API_URL}/pagamentos/${PagamentoIdToDelete}`, {
         method: "DELETE",
       });
       const updatedRecords = records.filter((record) => record.id_pagamento !== PagamentoIdToDelete);
@@ -95,7 +99,7 @@ export default function TabelaPagamento() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/pagamentos");
+      const response = await fetch(`${API_URL}/pagamentos`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos pagamentos");
       const data = await response.json();
       setRecords(data);

@@ -2,7 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import axios from "axios"; // Para fazer requisições HTTP
 import DataTable from "react-data-table-component";
 import { Dropdown, Modal, Button } from "react-bootstrap";
@@ -31,6 +31,10 @@ const customStyles = {
     },
   },
 };
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export function TabelaVizualizarGatepasses() {
   const [records, setRecords] = useState([]);
@@ -66,7 +70,7 @@ export function TabelaVizualizarGatepasses() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/gatepasses/${selectedRecord.id}`);
+      await axios.delete(`${API_URL}/gatepasses/${selectedRecord.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((record) => record.id !== selectedRecord.id));
       setShowDeleteModal(false);
@@ -121,7 +125,7 @@ export function TabelaVizualizarGatepasses() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/gatepasses");
+      const response = await axios.get(`${API_URL}/gatepasses`);
 
       // Verifique se a chave `data` existe e se é um array
       if (Array.isArray(response.data.data)) {

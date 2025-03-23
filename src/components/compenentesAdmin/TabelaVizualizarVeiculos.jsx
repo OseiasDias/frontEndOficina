@@ -26,6 +26,9 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export default function TabelaVizualizarVeiculos() {
 
   const navigate = useNavigate();
@@ -94,7 +97,7 @@ export default function TabelaVizualizarVeiculos() {
     if (vehicle.id_cliente) {
       // Buscar os dados do cliente associado ao veículo
       try {
-        const response = await fetch(`http://localhost:5000/api/clientes/${vehicle.id_cliente}`);
+        const response = await fetch(`${API_URL}/clientes/${vehicle.id_cliente}`);
         if (!response.ok) {
           throw new Error("Erro ao buscar dados do cliente");
         }
@@ -116,7 +119,7 @@ export default function TabelaVizualizarVeiculos() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/veiculos/${vehicleIdToDelete}`, {
+      await fetch(`${API_URL}/veiculos/${vehicleIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -137,7 +140,7 @@ export default function TabelaVizualizarVeiculos() {
   };
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/veiculos");
+      const response = await fetch(`${API_URL}/veiculos`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos veículos");
       const vehicles = await response.json();
   
@@ -148,7 +151,7 @@ export default function TabelaVizualizarVeiculos() {
         sortedVehicles.map(async (vehicle) => {
           if (vehicle.id_cliente) {
             try {
-              const clientResponse = await fetch(`http://localhost:5000/api/clientes/${vehicle.id_cliente}`);
+              const clientResponse = await fetch(`${API_URL}/clientes/${vehicle.id_cliente}`);
               if (clientResponse.ok) {
                 const clientData = await clientResponse.json();
                 return {...vehicle, clienteNome: clientData.nome };

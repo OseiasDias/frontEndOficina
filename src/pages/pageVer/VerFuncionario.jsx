@@ -12,6 +12,11 @@ import { IoCall } from 'react-icons/io5';
 import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não encontrado"
 import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export function VerFuncionario() {
     const { id } = useParams(); // Captura o id da URL
     const [funcionarioData, setFuncionarioData] = useState(null); // Estado para armazenar os dados do funcionário
@@ -23,7 +28,7 @@ export function VerFuncionario() {
     const fetchFuncionarioData = async () => {
         try {
             setLoading(true); // Inicia o carregamento
-            const response = await axios.get(`http://127.0.0.1:8000/api/funcionarios/${id}`);
+            const response = await axios.get(`${API_URL}/funcionarios/${id}`);
             setFuncionarioData(response.data); // Armazenar os dados do funcionário no estado
         } catch (error) {
             setError('Erro ao carregar os dados do funcionário.'); // Mensagem de erro

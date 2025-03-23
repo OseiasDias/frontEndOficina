@@ -1,9 +1,14 @@
+/* eslint-disable react/prop-types */
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export default function ModalUpdateAgendamento(props) {
     const [formData, setFormData] = useState({
@@ -16,7 +21,7 @@ export default function ModalUpdateAgendamento(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/agendamentos/${props.id}`);
+                const response = await fetch(`${API_URL}/agendamentos/${props.id}`);
                 const data = await response.json();
                 setFormData({
                     descricao: data.descricao || '',
@@ -29,6 +34,7 @@ export default function ModalUpdateAgendamento(props) {
             }
         };
 
+        // eslint-disable-next-line react/prop-types
         if (props.show && props.id) {
             fetchData();
         }
@@ -63,7 +69,7 @@ export default function ModalUpdateAgendamento(props) {
         event.preventDefault();
         if (validate()) {
             try {
-                const response = await fetch(`http://localhost:5000/api/agendamentos/${props.id}`, {
+                const response = await fetch(`${API_URL}/agendamentos/${props.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

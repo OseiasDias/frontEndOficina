@@ -14,6 +14,10 @@ import { useNavigate } from 'react-router-dom'; // Importando useNavigate
 import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não encontrado"
 import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 
 export  function VerEquipeSuporte() {
     const { id } = useParams(); // Captura o id da URL
@@ -26,7 +30,7 @@ export  function VerEquipeSuporte() {
     // Função para buscar os dados do usuário com o id
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/equipe-suporte/${id}`);
+            const response = await axios.get(`${API_URL}/equipe-suporte/${id}`);
             setUserData(response.data); // Armazenar os dados do usuário no estado
         } catch (error) {
             setError('Erro ao carregar os dados do usuário.');

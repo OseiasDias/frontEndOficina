@@ -28,6 +28,9 @@ import { FaBuildingCircleArrowRight } from "react-icons/fa6";
 import { FaBuildingCircleCheck } from "react-icons/fa6";
 import { FaLink } from "react-icons/fa";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 
 const FormularioEmpresa = () => {
@@ -435,7 +438,7 @@ function EditarDadosDaEmpresa() {
   useEffect(() => {
     const fetchEmpresaData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/empresas/${id_empresa}`);
+        const response = await fetch(`${API_URL}/empresas/${id_empresa}`);
         const data = await response.json();
         if (response.ok) {
           // Preencher o formulário com os dados da empresa
@@ -540,7 +543,7 @@ function EditarDadosDaEmpresa() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/empresas/${id_empresa}`, {
+      const response = await fetch(`${API_URL}/empresas/${id_empresa}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

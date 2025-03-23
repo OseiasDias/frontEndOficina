@@ -10,6 +10,10 @@ import { FaArrowLeftLong } from 'react-icons/fa6';
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 
 export function AddFornecedor  () {
   const [formData, setFormData] = useState({
@@ -98,7 +102,7 @@ export function AddFornecedor  () {
 
     setIsLoading(true);
 
-    axios.post('http://127.0.0.1:8000/api/distribuidores/', fornecedorData)
+    axios.post(`${API_URL}/distribuidores/`, fornecedorData)
       // eslint-disable-next-line no-unused-vars
       .then((response) => {
         toast.success("Fornecedor cadastrado com sucesso!");

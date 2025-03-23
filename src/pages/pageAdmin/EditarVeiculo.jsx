@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import "../../css/StylesAdmin/homeAdministrador.css";
 import "react-toastify/dist/ReactToastify.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
@@ -12,6 +13,8 @@ import Tabs from 'react-bootstrap/Tabs';
 import TopPerfil from "../../components/compenentesAdmin/TopPerfil";
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 
@@ -39,7 +42,7 @@ function AtualizarVeiculo({ id_veiculo }) {
             try {
                 setLoading(true);
                 console.log(`Buscando dados do veículo com ID: ${id}`);
-                const response = await fetch(`http://localhost:5000/api/veiculos/${id}`);
+                const response = await fetch(`${API_URL}/veiculos/${id}`);
                 if (!response.ok) {
                     throw new Error("Erro ao carregar os dados do veículo.");
                 }
@@ -58,7 +61,7 @@ function AtualizarVeiculo({ id_veiculo }) {
         const fetchClientes = async () => {
             try {
                 console.log("Buscando lista de clientes...");
-                const response = await fetch("http://localhost:5000/api/clientes");
+                const response = await fetch(`${API_URL}/clientes`);
                 if (!response.ok) {
                     throw new Error("Erro ao carregar clientes.");
                 }
@@ -94,7 +97,7 @@ function AtualizarVeiculo({ id_veiculo }) {
             try {
                 setLoading(true);
                 console.log("Dados enviados ao backend:", formData);
-                const response = await fetch(`http://localhost:5000/api/veiculos/${id}`, {
+                const response = await fetch(`${API_URL}/veiculos/${id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
@@ -239,7 +242,7 @@ function VisualizarVeiculo() {
       }
 
       // Buscar dados do veículo
-      const vehicleResponse = await fetch(`http://localhost:5000/api/veiculos/${idVeiculo}`);
+      const vehicleResponse = await fetch(`${API_URL}/veiculos/${idVeiculo}`);
       if (!vehicleResponse.ok) {
         throw new Error(`Erro ao buscar dados do veículo. Código: ${vehicleResponse.status}`);
       }
@@ -248,7 +251,7 @@ function VisualizarVeiculo() {
 
       // Buscar dados do cliente associado ao veículo
       if (vehicleData.id_cliente) {
-        const clientResponse = await fetch(`http://localhost:5000/api/clientes/${vehicleData.id_cliente}`);
+        const clientResponse = await fetch(`${API_URL}/clientes/${vehicleData.id_cliente}`);
         if (!clientResponse.ok) {
           throw new Error("Erro ao buscar dados do cliente.");
         }
@@ -257,7 +260,7 @@ function VisualizarVeiculo() {
       }
 
       // Buscar dados do agendamento do veículo
-      const agendamentoResponse = await fetch(`http://localhost:5000/api/agendamentos/`);
+      const agendamentoResponse = await fetch(`${API_URL}/agendamentos/`);
       if (!agendamentoResponse.ok) {
         throw new Error(`Erro ao buscar dados do agendamento. Código: ${agendamentoResponse.status}`);
       }

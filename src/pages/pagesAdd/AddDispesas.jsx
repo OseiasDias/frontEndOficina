@@ -8,6 +8,10 @@ import { useState } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { FaBuilding, FaCalendarAlt, FaCheckCircle,  FaDollarSign, FaTag, FaTags } from "react-icons/fa";
 
+
+
+
+
 const FormularioDespesas = () => {
   // Estado para armazenar os valores dos campos
   const [formData, setFormData] = useState({

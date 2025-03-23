@@ -26,14 +26,20 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function TabelaEstoque() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [showVisualizarModal, setShowVisualizarModal] = useState(false); // Modal para visualização
   const [itemIdToDelete, setItemIdToDelete] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [itemDetails, setItemDetails] = useState(null); // Para armazenar os detalhes do item
   const [showUpdateModal, setShowUpdateModal] = useState(false); // Modal para atualizar
   const [quantityToUpdate, setQuantityToUpdate] = useState(""); // Quantidade para atualizar
@@ -91,7 +97,7 @@ export default function TabelaEstoque() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/estoque/${itemIdToDelete}`, {
+      await fetch(`${API_URL}/estoque/${itemIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -114,7 +120,7 @@ export default function TabelaEstoque() {
   const handleUpdate = async () => {
     try {
       // Criando a URL com o ID do item
-      const updateUrl = `http://localhost:5000/api/estoque/atualizarQuantidade/${itemToUpdate.id_item}`;
+      const updateUrl = `${API_URL}/estoque/atualizarQuantidade/${itemToUpdate.id_item}`;
 
       // Realizando a requisição PUT com a nova quantidade
       const response = await fetch(updateUrl, {
@@ -153,7 +159,7 @@ export default function TabelaEstoque() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/estoque");
+      const response = await fetch(`${API_URL}/estoque`);
       if (!response.ok) throw new Error("Erro ao buscar dados");
       const data = await response.json();
       setRecords(data);

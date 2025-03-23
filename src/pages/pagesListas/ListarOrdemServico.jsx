@@ -34,6 +34,11 @@ const customStyles = {
   },
 };
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function TabelaVizualizarOrdensServico() {
   const [records, setRecords] = useState([]); // Dados das ordens de serviço
   const [originalRecords, setOriginalRecords] = useState([]); // Dados originais
@@ -48,7 +53,7 @@ export function TabelaVizualizarOrdensServico() {
   // Função para buscar os nomes dos clientes (com base no cliente_id)
   const fetchClientes = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/clientes/");  // Suponha que a API retorne todos os clientes
+      const response = await axios.get(`${API_URL}/clientes/`);  // Suponha que a API retorne todos os clientes
       const clientesMap = response.data.reduce((acc, cliente) => {
         acc[cliente.id] = cliente.primeiro_nome + " " + cliente.sobrenome;
         return acc;
@@ -64,7 +69,7 @@ export function TabelaVizualizarOrdensServico() {
  // Função para buscar as ordens de serviço da API
 const fetchData = async () => {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/ordens-de-reparo/");
+    const response = await axios.get(`${API_URL}/ordens-de-reparo/`);
     if (Array.isArray(response.data)) {
       // Ordenando as ordens de serviço pela data ou id em ordem decrescente
       const sortedOrders = response.data.sort((a, b) => {
@@ -109,7 +114,7 @@ const fetchData = async () => {
   // Função de confirmação de exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/ordens-de-reparo/${selectedOrder.id}`);
+      await axios.delete(`${API_URL}/ordens-de-reparo/${selectedOrder.id}`);
       setRecords(records.filter((order) => order.id !== selectedOrder.id)); // Remove da lista
       setShowDeleteModal(false);
       toast.success('Ordem de reparo excluída com sucesso!');

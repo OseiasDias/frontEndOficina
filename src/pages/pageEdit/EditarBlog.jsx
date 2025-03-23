@@ -16,6 +16,11 @@ import { MdTextFields } from "react-icons/md";
 import { BsChatRightTextFill } from "react-icons/bs";
 import { format } from 'date-fns'; // Para formatar a data corretamente
 
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
  function EditarBlog() {
   const { id } = useParams(); // Obtém o ID do blog a partir da URL
   const navigate = useNavigate();
@@ -37,7 +42,7 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
   useEffect(() => {
     const fetchBlogData = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/blogs/${id}`);
+        const response = await fetch(`${API_URL}/blogs/${id}`);
         const data = await response.json();
         
         if (response.ok) {
@@ -107,7 +112,7 @@ import { format } from 'date-fns'; // Para formatar a data corretamente
     }
   
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/blogs/${id}`, {
+      const response = await fetch(`${API_URL}/blogs/${id}`, {
         method: 'PUT', // Usamos PUT para edição
         headers: {
           'Content-Type': 'application/json', // Certifique-se de enviar os dados como JSON

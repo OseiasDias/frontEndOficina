@@ -1,7 +1,7 @@
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
-
+ 
 import Accordion from 'react-bootstrap/Accordion';
 
 import  { useState, useEffect } from 'react';

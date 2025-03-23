@@ -1,9 +1,14 @@
+/* eslint-disable react/prop-types */
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState, useEffect } from 'react';
 import { Form } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export default function ModalFazerAgendamento(props) {
     const [formData, setFormData] = useState({
@@ -54,7 +59,7 @@ export default function ModalFazerAgendamento(props) {
         event.preventDefault();
         if (validate()) {
             try {
-                const response = await fetch('http://localhost:5000/api/agendamentos', {
+                const response = await fetch(`${API_URL}/agendamentos`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData),

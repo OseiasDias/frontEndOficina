@@ -41,6 +41,11 @@ const customStyles = {
   },
 };
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function ListarFacturas() {
   const [facturas, setFacturas] = useState([]); // Lista de faturas
   const [clientes, setClientes] = useState([]); // Lista de clientes
@@ -57,7 +62,7 @@ export function ListarFacturas() {
   // Função para obter os dados da ordem de serviço
   const getOrdemDeServicoDetalhes = async (ordemServicoId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-servico/${ordemServicoId}`);
+      const response = await axios.get(`${API_URL}/ordens-de-servico/${ordemServicoId}`);
       return response.data;  // Retorna os detalhes da ordem de serviço
     } catch (error) {
       console.error('Erro ao buscar ordem de serviço:', error);
@@ -75,7 +80,7 @@ export function ListarFacturas() {
   const fetchFacturas = async () => {
     try {
       setLoading(true); // Define o loading para verdadeiro enquanto carrega as faturas
-      const response = await axios.get("http://127.0.0.1:8000/api/facturas");
+      const response = await axios.get(`${API_URL}/api/facturas`);
       setFacturas(response.data.data); // Preenche a lista com os dados de faturas
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
@@ -89,7 +94,7 @@ export function ListarFacturas() {
   // Função para buscar clientes da API
   const fetchClientes = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/clientes");
+      const response = await axios.get(`${API_URL}/clientes`);
       setClientes(response.data.data || []); // Verifica se a resposta é válida e seta os clientes
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
@@ -101,7 +106,7 @@ export function ListarFacturas() {
   // Função para obter os dados do veículo
   const getVeiculoDetalhes = async (veiculoId) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/veiculos/${veiculoId}`);
+      const response = await axios.get(`${API_URL}/veiculos/${veiculoId}`);
       const veiculo = response.data;  // Veículo encontrado
       return veiculo; // Retorna todos os detalhes do veículo
     } catch (error) {
@@ -113,7 +118,7 @@ export function ListarFacturas() {
   // Função para buscar os dados do cliente pelo ID
   const fetchClientById = async (id) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/clientes/${id}`);
+      const response = await axios.get(`${API_URL}/clientes/${id}`);
       setSelectedClient(response.data); // Armazena os dados do cliente
     // eslint-disable-next-line no-unused-vars
     } catch (error) {
@@ -165,7 +170,7 @@ export function ListarFacturas() {
   // Função para excluir uma fatura
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/facturas/${id}`);
+      await axios.delete(`${API_URL}/facturas/${id}`);
       setFacturas(facturas.filter((item) => item.id !== id)); // Remove a fatura excluída
       toast.success("Fatura excluída com sucesso!");
       // eslint-disable-next-line no-unused-vars

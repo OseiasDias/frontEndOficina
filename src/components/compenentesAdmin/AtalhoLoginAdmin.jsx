@@ -4,9 +4,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { RiAdminFill } from "react-icons/ri";
-import ModalAcessoSuperAdmin from './ModalAcessoSuperAdmin.jsx';
-import logoFoto from "../../assets/img/lgo.png";
+
+import logoFoto from "../../assets/img/logo- turbo fundo branco.png";
 import { toast } from 'react-toastify'; // Importa o Toastify
 import { useNavigate } from 'react-router-dom'; // UseNavigate para navegação no React Router v6
 
@@ -22,7 +21,6 @@ export default function AtalhoLoginAdmin() {
     const [showPassword, setShowPassword] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [isLoading, setIsLoading] = useState(false); // Estado para o spinner
-    const [modalSuperShow, setModalSuperShow] = useState(false);
 
     const navigate = useNavigate();
 
@@ -82,7 +80,7 @@ export default function AtalhoLoginAdmin() {
     
 
     return (
-        <div className="container-login my-4 LoginAdmistrador">
+        <div className="container-login my-4 LoginAdmistrador ">
             <div className="login-box shadow rounded">
                 <div className="row p-2">
                     <img src={logoFoto} alt="logotipo da empresa" className='d-block mx-auto' style={{ width: "220px", height: "100px" }} />
@@ -135,18 +133,9 @@ export default function AtalhoLoginAdmin() {
                         <p className="text-center">
                             <strong className="melhorarStrong">Esqueceu sua senha?</strong>
                         </p>
-                        <hr />
+                        <hr className='mb-5'/>
 
-                        <p className="text-center">
-                            <strong className="melhorarStrong text-danger" onClick={() => setModalSuperShow(true)}>
-                                Super Administrador <RiAdminFill fontSize={25} />
-                            </strong>
-                        </p>
-
-                        <ModalAcessoSuperAdmin
-                            show={modalSuperShow}
-                            onHide={() => setModalSuperShow(false)}
-                        />
+                       
                     </div>
                 </div>
             </div>

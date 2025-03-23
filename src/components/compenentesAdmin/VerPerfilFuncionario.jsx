@@ -1,6 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export default function VerPerfilFuncionario() {
   const { id } = useParams();  // Pega o id da URL
   const [funcionario, setFuncionario] = useState(null);
@@ -10,7 +14,7 @@ export default function VerPerfilFuncionario() {
   useEffect(() => {
     const fetchFuncionario = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/usuarios/${id}`);
+        const response = await fetch(`${API_URL}/usuarios/${id}`);
         if (!response.ok) throw new Error("Erro ao buscar dados do funcionário");
         const data = await response.json();
         setFuncionario(data);

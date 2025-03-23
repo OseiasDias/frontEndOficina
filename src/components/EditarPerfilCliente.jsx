@@ -7,6 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../css/editarPerfilCliente.css';
 import fotoPerfil from '../assets/img/minha.jpg';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 function MudarSenha() {
   const [showPasswordAtual, setShowPasswordAtual] = useState(false);
@@ -34,7 +37,7 @@ function MudarSenha() {
 
     try {
       // Verifica a senha atual
-      const response = await fetch(`http://localhost:5000/api/clientes/${userId}`, {
+      const response = await fetch(`${API_URL}/clientes/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +56,7 @@ function MudarSenha() {
       }
       
       // Atualiza a senha
-      const updateResponse = await fetch(`http://localhost:5000/api/clientes/${userId}`, {
+      const updateResponse = await fetch(`${API_URL}/clientes/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -157,7 +160,7 @@ function EditarDados() {
   useEffect(() => {
     const fetchClienteData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/clientes/${userId}`);
+        const response = await fetch(`${API_URL}/clientes/${userId}`);
         if (!response.ok) throw new Error("Erro ao buscar os dados do cliente");
         const data = await response.json();
         setCliente(data);
@@ -180,7 +183,7 @@ function EditarDados() {
 
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/clientes/${userId}`, {
+      const response = await fetch(`${API_URL}/clientes/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -284,7 +287,7 @@ function MostrarDados() {
   useEffect(() => {
     const fetchClienteData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/clientes/${userId}`);
+        const response = await fetch(`${API_URL}/clientes/${userId}`);
         if (!response.ok) throw new Error("Erro ao buscar os dados do cliente");
         const data = await response.json();
         setCliente(data);

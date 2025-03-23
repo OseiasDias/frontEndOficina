@@ -31,6 +31,11 @@ const customStyles = {
   },
 };
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function TabelaVizualizarEquipeSuporte() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -62,7 +67,7 @@ export function TabelaVizualizarEquipeSuporte() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/equipe-suporte/${selectedUser.id}`);
+      await axios.delete(`${API_URL}/equipe-suporte/${selectedUser.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((user) => user.id !== selectedUser.id));
       setShowDeleteModal(false);
@@ -113,7 +118,7 @@ export function TabelaVizualizarEquipeSuporte() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/equipe-suporte/");
+      const response = await axios.get(`${API_URL}/equipe-suporte/`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable no-unused-vars */
 import "../../css/StylesAdmin/homeAdministrador.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -11,10 +13,9 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Importante para os estilos do Toast
 import Spinner from 'react-bootstrap/Spinner'; // Spinner importado
-
-
-
 import { Form, Button } from "react-bootstrap";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 
@@ -70,7 +71,7 @@ function TabelaAgendamento() {
     setIsLoading(true); // Usando isLoading para mostrar o spinner
 
     try {
-      const response = await fetch(`http://localhost:5000/api/agendamentos/${id}/adiar`, {
+      const response = await fetch(`${API_URL}/agendamentos/${id}/adiar`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -111,7 +112,7 @@ function TabelaAgendamento() {
   useEffect(() => {
     const fetchAgendamento = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/agendamentos/${id}`);
+        const response = await fetch(`${API_URL}/agendamentos/${id}`);
         if (response.ok) {
           const data = await response.json();
           setAgendamento(data);
@@ -201,14 +202,14 @@ function AdiarAgendamento() {
   const fetchData = async () => {
     try {
       // Primeiro busca o agendamento pelo ID
-      const agendamentoResponse = await fetch(`http://localhost:5000/api/agendamentos/${id}`);
+      const agendamentoResponse = await fetch(`${API_URL}/agendamentos/${id}`);
       if (!agendamentoResponse.ok) throw new Error("Erro ao buscar dados do agendamento");
 
       const agendamentoData = await agendamentoResponse.json();
 
       // Depois busca os dados do cliente e do veículo com base nos IDs
-      const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${agendamentoData.id_cliente}`);
-      const veiculoResponse = await fetch(`http://localhost:5000/api/veiculos/${agendamentoData.id_veiculo}`);
+      const clienteResponse = await fetch(`${API_URL}/clientes/${agendamentoData.id_cliente}`);
+      const veiculoResponse = await fetch(`${API_URL}/veiculos/${agendamentoData.id_veiculo}`);
 
       if (!clienteResponse.ok || !veiculoResponse.ok) {
         throw new Error("Erro ao buscar dados do cliente ou do veículo");

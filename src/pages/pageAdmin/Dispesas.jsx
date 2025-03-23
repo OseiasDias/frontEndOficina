@@ -38,6 +38,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function ListarDespesas() {
   const [despesas, setDespesas] = useState([]); // Lista de despesas
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
@@ -52,7 +56,7 @@ export function ListarDespesas() {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/despesas");
+      const response = await axios.get(`${API_URL}/despesas`);
       setDespesas(response.data); // Preenche a lista com os dados recebidos
       setOrdemData(response.data);
 
@@ -87,7 +91,7 @@ export function ListarDespesas() {
   // Função para excluir uma despesa
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/despesas/${id}`);
+      await axios.delete(`${API_URL}/despesas/${id}`);
       setDespesas(despesas.filter((item) => item.id !== id)); // Remove a despesa excluída
       toast.success("Despesa excluída com sucesso!");
     } catch (error) {

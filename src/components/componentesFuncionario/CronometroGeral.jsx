@@ -20,6 +20,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Não se esqueça de importar o
 import { AiOutlineFieldNumber } from 'react-icons/ai'
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 
 
 const CronometroGeral = ({
@@ -83,7 +87,7 @@ const CronometroGeral = ({
   
       try {
         // Fazendo a requisição para o backend Laravel
-        const response = await axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordemNumero/${numeroOrdemL}`);
+        const response = await axios.get(`${API_URL}/ordem-de-reparacao-cronometro-tecnicos/ordemNumero/${numeroOrdemL}`);
   
         // Verificar se a resposta contém dados do idTecnico
         if (response.data && response.data.idTecnico) {
@@ -201,7 +205,7 @@ const CronometroGeral = ({
            // Requisições com retry
         
   
-          const response = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/funcionarios/${nomeMecanico}`));
+          const response = await retryRequest(() => axios.get(`${API_URL}/funcionarios/${nomeMecanico}`));
           setFuncionario(response.data);
           // eslint-disable-next-line no-unused-vars
         } catch (err) {
@@ -279,7 +283,7 @@ const CronometroGeral = ({
   
       try {
         // Fazendo a requisição para o backend Laravel
-        const response = await axios.get(`http://127.0.0.1:8000/api/funcionariosIdReturn/id/${numeroTecnico}`);
+        const response = await axios.get(`${API_URL}/funcionariosIdReturn/id/${numeroTecnico}`);
   
         // Verificar se a resposta contém o id do funcionário
         if (response.data && response.data.id) {
@@ -330,7 +334,7 @@ const CronometroGeral = ({
       
       try {
         // Realizando a requisição para atualizar o estado
-        const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdemL}`, {
+        const response = await fetch(`${API_URL}/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdemL}`, {
           method: 'PUT', // ou 'PATCH'
           headers: {
             'Content-Type': 'application/json',
@@ -373,13 +377,7 @@ const CronometroGeral = ({
       compararIds(); // Só chama compararIds depois da busca
     };
   
-    // Função para lidar com o envio do número do técnico
-    /*const handleSubmitTecnico = (e) => {
-      e.preventDefault();
-      alert(`Número do técnico: ${numeroTecnico}`);
-      fecharModalTecnico(); // Fechar a modal após o envio
-    };*/
-  
+ 
     // Função para fechar o modal e reiniciar os estados
     const fecharModal = () => {
   

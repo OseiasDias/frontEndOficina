@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
@@ -6,16 +7,18 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TopPerfil from "../../components/compenentesAdmin/TopPerfil";
 import { FaArrowLeftLong } from "react-icons/fa6";
-
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Spinner from 'react-bootstrap/Spinner';
 import "react-toastify/dist/ReactToastify.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 function VerPerfilFuncionario() {
   const { id } = useParams();  // Pega o id da URL
@@ -26,7 +29,7 @@ function VerPerfilFuncionario() {
   useEffect(() => {
     const fetchFuncionario = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/usuarios/${id}`);
+        const response = await fetch(`${API_URL}/usuarios/${id}`);
         if (!response.ok) throw new Error("Erro ao buscar dados do funcionário");
         const data = await response.json();
         setFuncionario(data);
@@ -131,7 +134,7 @@ function EditarFuncionario() {
     const fetchFuncionario = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/usuarios/${id}`);
+        const response = await fetch(`${API_URL}/usuarios/${id}`);
         if (!response.ok) {
           throw new Error("Funcionário não encontrado");
         }
@@ -242,7 +245,7 @@ function EditarFuncionario() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/usuarios/${id}`, {
+      const response = await fetch(`${API_URL}/usuarios/${id}`, {
         method: "PUT",  // Usando PUT para editar
         headers: {
           "Content-Type": "application/json",

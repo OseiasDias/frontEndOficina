@@ -2,9 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-
 import "../../css/StylesAdmin/homeAdministrador.css";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
@@ -32,6 +30,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function TabelaVizualizarVeiculos() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -56,7 +58,7 @@ export function TabelaVizualizarVeiculos() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/veiculos/${selectedVeiculo.id}`);
+      await axios.delete(`${API_URL}/veiculos/${selectedVeiculo.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((veiculo) => veiculo.id !== selectedVeiculo.id));
       setShowDeleteModal(false);
@@ -107,7 +109,7 @@ export function TabelaVizualizarVeiculos() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/veiculos/");
+      const response = await axios.get(`${API_URL}/veiculos/`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);

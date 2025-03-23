@@ -12,6 +12,9 @@ import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não 
 import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
 import { FaArrowLeftLong } from 'react-icons/fa6';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export function VerVeiculo() {
     const { id } = useParams(); // Captura o id da URL
     const [veiculoData, setVeiculoData] = useState(null); // Estado para armazenar os dados do veículo
@@ -24,12 +27,12 @@ export function VerVeiculo() {
     const fetchVeiculoData = async () => {
         try {
             setLoading(true); // Inicia o carregamento
-            const response = await axios.get(`http://127.0.0.1:8000/api/veiculos/${id}`);
+            const response = await axios.get(`${API_URL}/veiculos/${id}`);
             if (response.status === 200) {
                 setVeiculoData(response.data); // Armazenar os dados do veículo no estado
 
                 // Buscar os dados do cliente (dono) usando o id do cliente
-                const clienteResponse = await axios.get(`http://127.0.0.1:8000/api/clientes/${response.data.cliente.id}`);
+                const clienteResponse = await axios.get(`${API_URL}/clientes/${response.data.cliente.id}`);
                 setClienteData(clienteResponse.data); // Armazenar os dados do cliente no estado
             } else {
                 setError('Veículo não encontrado!');

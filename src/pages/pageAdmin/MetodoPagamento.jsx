@@ -35,6 +35,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function ListarMetodosPagamento() {
   const [showModal, setShowModal] = useState(false); // Modal de adicionar pagamento
   const [novoMetodo, setNovoMetodo] = useState({ payment_method_name: "" }); // Dados do novo método de pagamento
@@ -47,7 +51,7 @@ export function ListarMetodosPagamento() {
     setLoading(true); // Ativa o carregamento
     setError(null); // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/payment-methods");
+      const response = await axios.get(`${API_URL}/payment-methods`);
       setMetodosPagamento(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error("Erro ao carregar os métodos de pagamento:", error);
@@ -77,7 +81,7 @@ export function ListarMetodosPagamento() {
     e.preventDefault();
     if (novoMetodo.payment_method_name.trim()) {
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/payment-methods", novoMetodo);
+        const response = await axios.post(`${API_URL}/payment-methods`, novoMetodo);
         setMetodosPagamento((prevMetodos) => [...prevMetodos, response.data]); // Atualiza a lista de métodos
         setNovoMetodo({ payment_method_name: "" }); // Limpar os campos
         setShowModal(false); // Fechar o modal
@@ -107,7 +111,7 @@ export function ListarMetodosPagamento() {
   // Função para excluir um método de pagamento
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/payment-methods/${id}`);
+      await axios.delete(`${API_URL}/payment-methods/${id}`);
       setMetodosPagamento(metodosPagamento.filter((item) => item.id !== id)); // Remove o método excluído
       toast.success("Método de pagamento excluído com sucesso!");
     } catch (error) {

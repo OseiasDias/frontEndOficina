@@ -27,6 +27,11 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export default function TabelaVizualizarFaturas() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -98,7 +103,7 @@ export default function TabelaVizualizarFaturas() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/faturas/${itemIdToDelete}`, {
+      await fetch(`${API_URL}/faturas/${itemIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -120,7 +125,7 @@ export default function TabelaVizualizarFaturas() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/faturas"); // Endpoint da API de faturas
+      const response = await fetch(`${API_URL}/faturas`); // Endpoint da API de faturas
       if (!response.ok) throw new Error("Erro ao buscar dados das faturas");
       const data = await response.json();
 

@@ -29,6 +29,11 @@ const customStyles = {
   },
 };
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function TabelaVizualizarFuncionarios() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -50,7 +55,7 @@ export function TabelaVizualizarFuncionarios() {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/funcionarios/${selectedFuncionario.id}`);
+      await axios.delete(`${API_URL}/funcionarios/${selectedFuncionario.id}`);
       setRecords(records.filter((funcionario) => funcionario.id !== selectedFuncionario.id));
       setShowDeleteModal(false);
       toast.success('Funcionário excluído com sucesso!');
@@ -95,7 +100,7 @@ export function TabelaVizualizarFuncionarios() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/funcionarios/");
+      const response = await axios.get(`${API_URL}/funcionarios/`);
       if (Array.isArray(response.data)) {
         // Ordenar os funcionários para que os mais recentes apareçam primeiro
         const sortedRecords = response.data.sort((a, b) => b.id - a.id); // Ordena pela ID (descrescente)

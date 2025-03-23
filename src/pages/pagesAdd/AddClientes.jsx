@@ -14,6 +14,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export function FormularioCliente() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,7 +57,7 @@ export function FormularioCliente() {
   // Função para pegar o último ID da ordem
   const fetchUltimoId = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/clientesUltimos/last-id');
+      const response = await axios.get(`${API_URL}/clientesUltimos/last-id`);
       const id = response.data.ultimo_id;
       setUltimoId(id);
       gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
@@ -132,7 +137,7 @@ export function FormularioCliente() {
     setIsLoading(true);
     // Envia os dados para o backend
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/clientes/', formData);
+      const response = await axios.post(`${API_URL}/clientes/`, formData);
       console.log('Cliente cadastrado com sucesso:', response.data);
       toast.success("Cliente cadastrado com sucesso!");
 

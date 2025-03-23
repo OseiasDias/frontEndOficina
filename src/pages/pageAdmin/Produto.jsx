@@ -37,6 +37,8 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 
 // Componente principal para visualizar a tabela de produtos
@@ -66,7 +68,7 @@ export function TabelaVizualizarProdutos() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/produtos/${selectedProduto.id}`);
+      await axios.delete(`${API_URL}/produtos/${selectedProduto.id}`);
       setRecords(records.filter((produto) => produto.id !== selectedProduto.id));
       setShowDeleteModal(false);
       toast.success('Produto excluído com sucesso!');
@@ -87,8 +89,8 @@ export function TabelaVizualizarProdutos() {
       try {
         // Requisição para obter os fabricantes e distribuidores paralelamente
         const [fabricantesResponse, distribuidoresResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:8000/api/fabricantes/'),
-          axios.get('http://127.0.0.1:8000/api/distribuidores/')
+          axios.get(`${API_URL}/fabricantes/`),
+          axios.get(`${API_URL}/distribuidores/`)
         ]);
 
         // Armazenar os dados no estado
@@ -169,7 +171,7 @@ export function TabelaVizualizarProdutos() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/produtos/");
+      const response = await axios.get(`${API_URL}/produtos/`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);
@@ -381,11 +383,6 @@ export function TabelaVizualizarProdutos() {
     </div>
   );
 }
-
-
-
-
-
 
 
 

@@ -21,6 +21,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function TabelaFaturas() {
   const navigate = useNavigate(); // Inicializar o hook useNavigate
   const [records, setRecords] = useState([]);
@@ -78,7 +82,7 @@ export default function TabelaFaturas() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/veiculos/${vehicleIdToDelete}`, {
+      await fetch(`${API_URL}/veiculos/${vehicleIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -100,7 +104,7 @@ export default function TabelaFaturas() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/veiculos");
+      const response = await fetch(`${API_URL}/veiculos`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos veículos");
       const vehicles = await response.json();
 
@@ -108,7 +112,7 @@ export default function TabelaFaturas() {
         vehicles.map(async (vehicle) => {
           if (vehicle.id_cliente) {
             try {
-              const clientResponse = await fetch(`http://localhost:5000/api/clientes/${vehicle.id_cliente}`);
+              const clientResponse = await fetch(`${API_URL}/clientes/${vehicle.id_cliente}`);
               if (clientResponse.ok) {
                 const clientData = await clientResponse.json();
                 return { ...vehicle, clienteNome: clientData.nome };

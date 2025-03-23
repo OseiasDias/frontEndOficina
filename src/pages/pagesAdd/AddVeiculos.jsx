@@ -15,6 +15,8 @@ import { RiAddLargeFill } from "react-icons/ri";
 import axios from "axios";
 
 //import { useNavigate } from 'react-router-dom';
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 
 export function FormularioVeiculo() {
@@ -58,7 +60,7 @@ export function FormularioVeiculo() {
 
     try {
       // Enviar os dados via POST para a API
-      const response = await axios.post('http://127.0.0.1:8000/api/veiculos/', formData);
+      const response = await axios.post(`${API_URL}/veiculos/`, formData);
       console.log('Veículo cadastrado:', response.data);
       alert('Veículo cadastrado com sucesso!');
     } catch (error) {
@@ -92,6 +94,7 @@ export function FormularioVeiculo() {
 
 
 
+  // eslint-disable-next-line no-unused-vars
   const handleRemoveTipo = (id) => {
     setTiposVeiculos(tiposVeiculos.filter((tipo) => tipo.id !== id));
   };
@@ -220,7 +223,7 @@ export function FormularioVeiculo() {
 
   useEffect(() => {
     // Fazendo a requisição para a API
-    fetch("http://127.0.0.1:8000/api/tipos-veiculos")
+    fetch(`${API_URL}/tipos-veiculos`)
       .then((response) => response.json())
       .then((data) => {
         setTiposVeiculos(data); // Atualiza o estado com os dados da API
@@ -234,7 +237,7 @@ export function FormularioVeiculo() {
 
   useEffect(() => {
     // Fazendo a requisição para a API
-    fetch("http://127.0.0.1:8000/api/marcas")
+    fetch(`${API_URL}/marcas`)
       .then((response) => response.json())
       .then((data) => {
         setMarcas(data); // Atualiza o estado com as marcas retornadas
@@ -252,7 +255,7 @@ export function FormularioVeiculo() {
 
   useEffect(() => {
     // Fazendo a requisição para a API
-    fetch("http://127.0.0.1:8000/api/modelos-veiculos/")
+    fetch(`${API_URL}/modelos-veiculos/`)
       .then((response) => response.json())
       .then((data) => {
         setModelos(data); // Atualiza o estado com os modelos retornados
@@ -318,7 +321,7 @@ export function FormularioVeiculo() {
     }));
 
     // Fazendo a requisição para a API
-    fetch('http://127.0.0.1:8000/api/clientes')
+    fetch(`${API_URL}/clientes`)
       .then((response) => response.json())
       .then((data) => {
         setClientes(data);

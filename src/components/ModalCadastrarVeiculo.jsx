@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
@@ -5,6 +6,10 @@ import { Form } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/modalCadVeiculo.css';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export default function ModalCadastrarVeiculo(props) {
     const [formData, setFormData] = useState({
@@ -69,7 +74,7 @@ export default function ModalCadastrarVeiculo(props) {
             formDataToSend.append('fotos', formData.fotos);
 
             try {
-                const response = await fetch('http://localhost:5000/api/veiculos', {
+                const response = await fetch(`${API_URL}/veiculos`, {
                     method: 'POST',
                     body: formDataToSend,
                 });

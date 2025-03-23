@@ -33,6 +33,9 @@ const customStyles = {
 
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export default function TabelaBlog() {
   const [records, setRecords] = useState([]);
@@ -80,7 +83,7 @@ export default function TabelaBlog() {
   const handleVisualizar = async (row) => {
     try {
       // Carrega os detalhes do blog
-      const response = await fetch(`http://localhost:5000/api/blogs/${row.id_blog}`);
+      const response = await fetch(`${API_URL}/blogs/${row.id_blog}`);
       if (!response.ok) throw new Error("Erro ao carregar os detalhes do blog.");
       const blogData = await response.json();
 
@@ -107,7 +110,7 @@ export default function TabelaBlog() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/blogs/${blogIdToDelete}`, {
+      await fetch(`${API_URL}/blogs/${blogIdToDelete}`, {
         method: "DELETE",
       });
       const updatedRecords = records.filter((record) => record.id_blog !== blogIdToDelete);
@@ -123,7 +126,7 @@ export default function TabelaBlog() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/blogs");
+      const response = await fetch(`${API_URL}/blogs`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos blogs");
       const data = await response.json();
       setRecords(data);

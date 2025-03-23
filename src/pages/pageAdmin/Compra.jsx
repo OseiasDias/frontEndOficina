@@ -32,6 +32,11 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export function TabelaVizualizarCompras() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -57,7 +62,7 @@ export function TabelaVizualizarCompras() {
   // Função para confirmar exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/compras/${selectedCompra.id}`);
+      await axios.delete(`${API_URL}/compras/${selectedCompra.id}`);
       setRecords(records.filter((compra) => compra.id !== selectedCompra.id));
       setShowDeleteModal(false);
       toast.success('Compra excluída com sucesso!');
@@ -117,7 +122,7 @@ export function TabelaVizualizarCompras() {
   // Função para buscar os dados
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/compras");
+      const response = await axios.get(`${API_URL}/compras`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);

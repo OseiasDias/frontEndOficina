@@ -14,6 +14,8 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 //import { useNavigate } from 'react-router-dom'; // Importando useNavigate1
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 
 const FormularioEquipeSuporte = () => {
@@ -83,7 +85,7 @@ const FormularioEquipeSuporte = () => {
       const fetchData = async () => {
         setLoading(true); // Inicia o carregamento
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/equipe-suporte/${id}`);
+          const response = await fetch(`${API_URL}/equipe-suporte/${id}`);
 
           if (!response.ok) {
             throw new Error('Erro ao carregar os dados');
@@ -155,7 +157,7 @@ const FormularioEquipeSuporte = () => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/equipe-suporte/${id}`, {
+      const response = await fetch(`${API_URL}/equipe-suporte/${id}`, {
         method: 'PUT',
         body: formData,
       });

@@ -15,7 +15,6 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { FaCar } from "react-icons/fa";
 import imgN from "../../assets/not-found.png";
 import logoMarca from "../../assets/lgo.png";
-
 import imgErro from "../../assets/error.webp";
 
 // Estilos customizados para a tabela
@@ -38,6 +37,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export  function ListarMarcasVeiculos() {
   const [showModal, setShowModal] = useState(false);
   const [novoMarca, setNovoMarca] = useState("");
@@ -50,7 +53,7 @@ export  function ListarMarcasVeiculos() {
   // Buscar tipos de veículos da API
   const fetchTiposVeiculos = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/tipos-veiculos");
+      const response = await axios.get(`${API_URL}/tipos-veiculos`);
       setTiposVeiculos(response.data);
     } catch (error) {
       console.error("Erro ao carregar os tipos de veículos:", error);
@@ -61,7 +64,7 @@ export  function ListarMarcasVeiculos() {
   // Buscar marcas de veículos da API
   const fetchMarcasVeiculos = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/marcas");
+      const response = await axios.get(`${API_URL}/marcas`);
       setMarcasVeiculos(response.data);
     } catch (error) {
       console.error("Erro ao carregar as marcas de veículos:", error);
@@ -89,7 +92,7 @@ export  function ListarMarcasVeiculos() {
           nome: novoMarca,
           tipo_veiculo_id: tipoSelecionado,
         };
-        const response = await axios.post("http://127.0.0.1:8000/api/marcas", newMarca);
+        const response = await axios.post(`${API_URL}/marcas`, newMarca);
         setMarcasVeiculos((prevMarcas) => [...prevMarcas, response.data]);
         setNovoMarca(""); 
         setTipoSelecionado(""); 

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
@@ -7,6 +8,10 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { toast, ToastContainer } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
 import '../css/modalLogin.css';
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export default function ModalCadastrarCliente({ show, onHide }) {
   const navigate = useNavigate();
@@ -81,7 +86,7 @@ export default function ModalCadastrarCliente({ show, onHide }) {
     setIsLoading(true);  // Ativar o spinner
 
     try {
-      const response = await fetch('http://localhost:5000/api/clientes', {
+      const response = await fetch(`${API_URL}/clientes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formValues),

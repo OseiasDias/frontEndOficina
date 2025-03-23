@@ -29,6 +29,9 @@ const customStyles = {
   },
 };
 
+
+
+
 export default function TabelaServicos() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);

@@ -9,6 +9,10 @@ import { IoIosAdd } from "react-icons/io";
 import { useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 function FormularioAddCompra() {
     const [dadosCompra, setDadosCompra] = useState({
         numeroCompra: '',
@@ -42,8 +46,8 @@ function FormularioAddCompra() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const filiasResponse = await axios.get('http://127.0.0.1:8000/api/filiais'); // API para as filiais
-                const distribuidoresResponse = await axios.get('http://127.0.0.1:8000/api/distribuidores/'); // API para distribuidores
+                const filiasResponse = await axios.get(`${API_URL}/filiais`); // API para as filiais
+                const distribuidoresResponse = await axios.get(`${API_URL}/distribuidores/`); // API para distribuidores
                 setFilias(filiasResponse.data);
                 setDistribuidores(distribuidoresResponse.data);
             } catch (error) {
@@ -65,7 +69,7 @@ function FormularioAddCompra() {
         // Verificar se o campo alterado foi o fornecedor, se sim, fazer a requisição
         if (name === 'fornecedor' && value) {
             // Requisição para buscar o fornecedor
-            axios.get(`http://127.0.0.1:8000/api/distribuidores/${value}`)
+            axios.get(`${API_URL}/distribuidores/${value}`)
                 .then((response) => {
                     const fornecedor = response.data;
                     setDadosCompra((prevState) => ({
@@ -99,7 +103,7 @@ function FormularioAddCompra() {
 
     // Função para buscar os distribuidores da API
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/distribuidores/')
+        axios.get(`${API_URL}/distribuidores/`)
             .then(response => {
                 setDistribuidores(response.data);  // Preenche o estado 'distribuidores' com os dados da API
             })
@@ -110,7 +114,7 @@ function FormularioAddCompra() {
 
     // Função para buscar as filiais da API
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/filiais')
+        axios.get(`${API_URL}/filiais`)
             .then(response => {
                 setFilias(response.data);  // Preenche o estado 'filias' com os dados da API
             })
@@ -144,7 +148,7 @@ function FormularioAddCompra() {
     // Carregar fabricantes e produtos ao iniciar o componente
     useEffect(() => {
         // Requisição para buscar fabricantes
-        axios.get('http://127.0.0.1:8000/api/fabricantes/')
+        axios.get(`${API_URL}/fabricantes/`)
             .then(response => {
                 setFabricantes(response.data);
             })
@@ -153,7 +157,7 @@ function FormularioAddCompra() {
             });
 
         // Requisição para buscar produtos
-        axios.get('http://127.0.0.1:8000/api/produtos/')
+        axios.get(`${API_URL}/produtos/`)
             .then(response => {
                 setProdutos(response.data);
             })

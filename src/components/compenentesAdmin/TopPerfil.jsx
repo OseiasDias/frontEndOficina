@@ -3,6 +3,7 @@ import "../../css/StylesAdmin/topPerfil.css";
 import { IoCall } from "react-icons/io5";
 
 
+// eslint-disable-next-line no-unused-vars, react/prop-types
 export default function TopPerfil({foto,nome,telefone,email}) {
 
     return (

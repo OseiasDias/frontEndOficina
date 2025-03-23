@@ -11,15 +11,11 @@ export default function Home() {
     <>
 
       <Banner />
-
-      <ServicosCienntes /> 
-     <TabelaVizualizarClientes />
+      <ServicosCienntes />
+      <TabelaVizualizarClientes />
       <ContUp />
       <Faq />
       <Footer />
-
-
-
 
     </>
   );

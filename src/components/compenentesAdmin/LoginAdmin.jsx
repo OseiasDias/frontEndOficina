@@ -14,9 +14,9 @@ export default function LoginAdmin() {
        <div className="AllBodyLogin ">
              <div className="container">
                 
-            <div className="row">
+            <div className="row ">
                 
-                <div className="col-12 col-md-10 col-lg-5 mx-auto TabAcesso ">
+                <div className="col-11 col-md-7 col-lg-5 mx-auto TabAcesso ">
                     <AtalhoLoginAdmin />
                   
                 </div>

@@ -15,6 +15,10 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 const FormularioFuncionario = () => {
   const [formData, setFormData] = useState({
     numero_funcionario: "",
@@ -50,7 +54,7 @@ const FormularioFuncionario = () => {
   // Função para pegar o último ID da ordem
   const fetchUltimoId = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/funcionariosUltimo/ultimo-id');
+      const response = await axios.get(`${API_URL}/funcionariosUltimo/ultimo-id`);
       const id = response.data.ultimo_id;
       setUltimoId(id);
       gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
@@ -151,7 +155,7 @@ const FormularioFuncionario = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/funcionarios', formData);
+      const response = await axios.post(`${API_URL}/funcionarios`, formData);
       console.log('Funcionario cadastrado:', response.data);
       toast.success('Funcionário cadastrado com sucesso!');
 

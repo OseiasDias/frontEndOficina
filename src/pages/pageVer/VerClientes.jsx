@@ -12,6 +12,11 @@ import { IoCall } from 'react-icons/io5';
 import imgN from "../../assets/not-found.png"; // Imagem para o estado de "não encontrado"
 import imgErro from "../../assets/error.webp"; // Imagem para o estado de erro
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 export function VerCliente() {
     const { id } = useParams(); // Captura o id da URL
     const [clienteData, setClienteData] = useState(null); // Estado para armazenar os dados do cliente
@@ -23,7 +28,7 @@ export function VerCliente() {
     const fetchClienteData = async () => {
         try {
             setLoading(true); // Inicia o carregamento
-            const response = await axios.get(`http://127.0.0.1:8000/api/clientes/${id}`);
+            const response = await axios.get(`${API_URL}/api/clientes/${id}`);
             setClienteData(response.data); // Armazenar os dados do cliente no estado
         } catch (error) {
             setError('Erro ao carregar os dados do cliente.'); // Mensagem de erro

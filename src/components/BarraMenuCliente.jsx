@@ -16,6 +16,9 @@ import minhaFoto from "../assets/img/minha.jpg";
 import { IoMdHelpCircleOutline } from "react-icons/io";
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 function BarraMenuCliente() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -38,7 +41,7 @@ function BarraMenuCliente() {
     const userId = localStorage.getItem("userId"); // Pegando o ID do localStorage
 
     if (userId) {
-      fetch(`http://127.0.0.1:8000/api/clientes/${userId}`)
+      fetch(`${API_URL}/clientes/${userId}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error("Erro ao buscar dados do cliente");

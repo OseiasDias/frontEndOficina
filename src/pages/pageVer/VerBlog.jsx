@@ -14,6 +14,9 @@ import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export function VerBlog() {
     const { id } = useParams(); // Captura o id da URL
     const [userData, setUserData] = useState(null); // Estado para armazenar os dados do usuário
@@ -25,7 +28,7 @@ export function VerBlog() {
     // Função para buscar os dados do blog com o id
     const fetchBlogData = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/blogs/${id}`);
+            const response = await axios.get(`${API_URL}/blogs/${id}`);
             setUserData(response.data); // Armazenar os dados do blog no estado
         } catch (error) {
             setError('Erro ao carregar os dados do blog.');
@@ -74,7 +77,7 @@ export function VerBlog() {
                                         <div className="divFoto">
                                             {userData.foto ? (
                                                 <img
-                                                    src={`http://127.0.0.1:8000/storage/${userData.foto}`}
+                                                    src={`${API_URL}/storage/${userData.foto}`}
                                                     alt={userData.titulo}
                                                     className="img-fluid mt-4 mx-auto"
                                                     style={{ width: '100px', height: '100px', objectFit: 'cover' }}

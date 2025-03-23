@@ -28,6 +28,8 @@ import { CgCloseO } from 'react-icons/cg';
 import CronometroGeral from "./CronometroGeral.jsx";
 import CronometroIndividual from "./CronometroIndividual.jsx";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 
 export default function Funcionario({ display, displayBlock }) {
@@ -49,7 +51,7 @@ export default function Funcionario({ display, displayBlock }) {
 
     try {
       // Fazendo a requisição para o backend Laravel
-      const response = await axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordemNumero/${numeroOrdem}`);
+      const response = await axios.get(`${API_URL}/ordem-de-reparacao-cronometro-tecnicos/ordemNumero/${numeroOrdem}`);
 
       // Verificar se a resposta contém dados do idTecnico
       if (response.data && response.data.idTecnico) {
@@ -78,7 +80,7 @@ export default function Funcionario({ display, displayBlock }) {
     const fetchCronometros = async () => {
       setLoadingAux(true); // Ativa o carregamento
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/ordens/ativas");
+        const response = await fetch(`${API_URL}/ordem-de-reparacao-cronometro-tecnicos/ordens/ativas`);
         const data = await response.json();
 
         // Verifique a resposta da API
@@ -116,7 +118,7 @@ export default function Funcionario({ display, displayBlock }) {
   useEffect(() => {
     const fetchCronometros = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/cronometros");
+        const response = await fetch(`${API_URL}/cronometros`);
         const data = await response.json();
         // Filtrando os cronômetros que não terminaram (segundos_atual < segundos_final)
         const ordensFiltradas = data.filter(cronometro => cronometro.segundos_atual < cronometro.segundo_final)
@@ -250,7 +252,7 @@ export default function Funcionario({ display, displayBlock }) {
     setLoading(true);  // Iniciar carregamento
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/numero-trabalho/${numeroOR}`);
+      const response = await axios.get(`${API_URL}/ordens-de-reparo/numero-trabalho/${numeroOR}`);
       if (response.data) {
         setOrdem(response.data);  // Atualiza os dados da ordem
         setIdOrdemDeReparacao(response.data.id);
@@ -284,7 +286,7 @@ export default function Funcionario({ display, displayBlock }) {
 
     try {
       // Fazendo a requisição para o backend Laravel
-      const response = await axios.get(`http://127.0.0.1:8000/api/funcionariosIdReturn/id/${numeroTecnico}`);
+      const response = await axios.get(`${API_URL}/funcionariosIdReturn/id/${numeroTecnico}`);
 
       // Verificar se a resposta contém o id do funcionário
       if (response.data && response.data.id) {
@@ -400,7 +402,7 @@ export default function Funcionario({ display, displayBlock }) {
   const handleSubmitTecnicoOrdemDeReparacao = async () => {
     try {
       // Realiza a busca do funcionário
-      const response = await axios.get(`http://127.0.0.1:8000/api/funcionario/numero/${numeroTecnicoOrdemDeReparacao}`);
+      const response = await axios.get(`${API_URL}/funcionario/numero/${numeroTecnicoOrdemDeReparacao}`);
 
       if (response.data) {
         setFuncionarioOrdemDeReparacao(response.data); // Se encontrado, armazena os dados do funcionário
@@ -491,7 +493,7 @@ export default function Funcionario({ display, displayBlock }) {
       };
 
       // Enviar dados via POST
-      const response = await axios.post("http://127.0.0.1:8000/api/cronometros", dados);
+      const response = await axios.post(`${API_URL}/cronometros`, dados);
 
       if (response.status === 201) {
         console.log("Cronômetro cadastrado com sucesso:", response.data);
@@ -539,7 +541,7 @@ export default function Funcionario({ display, displayBlock }) {
     try {
       // Enviar os dados via POST
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos",
+        `${API_URL}/ordem-de-reparacao-cronometro-tecnicos`,
         dadosAux
       );
 
@@ -596,7 +598,7 @@ export default function Funcionario({ display, displayBlock }) {
 
     try {
       // Realizando a requisição para atualizar o estado
-      const response = await fetch(`http://127.0.0.1:8000/api/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdem}`, {
+      const response = await fetch(`${API_URL}/ordem-de-reparacao-cronometro-tecnicos/update-estado/${idTecnico}/${numeroOrdem}`, {
         method: 'PUT', // ou 'PATCH'
         headers: {
           'Content-Type': 'application/json',

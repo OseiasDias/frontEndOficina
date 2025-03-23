@@ -19,6 +19,10 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function TabelaVizualizarClientes() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
@@ -66,7 +70,7 @@ export default function TabelaVizualizarClientes() {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/clientes");
+      const response = await axios.get(`${API_URL}/clientes`);
       console.log("Resposta da API:", response.data); // Inspecionar a estrutura da resposta
 
       // Verifique se a resposta contém um array

@@ -34,6 +34,11 @@ const customStyles = {
   },
 };
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function ListarAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
   const [loading, setLoading] = useState(true); // Variável de estado para carregamento
@@ -47,7 +52,7 @@ export default function ListarAgendamentos() {
     setLoading(true);  // Ativa o estado de carregamento
     setError(null);    // Reseta qualquer erro anterior
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/agendamentos");
+      const response = await axios.get(`${API_URL}/agendamentos`);
       setAgendamentos(response.data); // Preenche a lista com os dados recebidos
     } catch (error) {
       console.error("Erro ao carregar os agendamentos:", error);
@@ -81,7 +86,7 @@ export default function ListarAgendamentos() {
   // Função para excluir um agendamento
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/agendamentos/${id}`);
+      await axios.delete(`${API_URL}/agendamentos/${id}`);
       setAgendamentos(agendamentos.filter((item) => item.id !== id)); // Remove o agendamento excluído
       toast.success("Agendamento excluído com sucesso!");
     } catch (error) {

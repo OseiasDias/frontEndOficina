@@ -12,8 +12,12 @@ import { toast, ToastContainer } from 'react-toastify'; // Importando react-toas
 import 'react-toastify/dist/ReactToastify.css'; // Estilos do toast
 import { RiAddLargeLine } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom'; // Certifique-se de importar o useNavigate
-
 import { AddFornecedor } from "../pagesAdd/AddFornecedor.jsx";
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 function FormularioProduto() {
   const [showUnidadeModal, setShowUnidadeModal] = useState(false); // Modal para unidades
@@ -116,7 +120,7 @@ function FormularioProduto() {
     setIsLoading(true);
 
     // Envio dos dados via axios
-    axios.post('http://127.0.0.1:8000/api/produtos/', formData)
+    axios.post(`${API_URL}/produtos/`, formData)
       // eslint-disable-next-line no-unused-vars
       .then((response) => {
         toast.success("Produto cadastrado com sucesso!", {
@@ -212,7 +216,7 @@ function FormularioProduto() {
   // Função para buscar todos os fabricantes
   const fetchFabricantes = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/fabricantes/');
+      const response = await axios.get(`${API_URL}/fabricantes/`);
       setFabricantes(response.data);
     } catch (error) {
       console.error('Erro ao buscar fabricantes:', error);
@@ -228,7 +232,7 @@ function FormularioProduto() {
     setIsLoadingFabricante(true); // Inicia o estado de carregamento (botão desabilitado)
   
     try {
-      await axios.post('http://127.0.0.1:8000/api/fabricantes/', { nome: novoFabricante });
+      await axios.post(`${API_URL}/fabricantes/`, { nome: novoFabricante });
       setNovoFabricante(''); // Limpa o campo de input
       fetchFabricantes(); // Recarrega a lista de fabricantes
   
@@ -273,7 +277,7 @@ function FormularioProduto() {
     if (!fabricanteToDelete) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/fabricantes/${fabricanteToDelete}`);
+      await axios.delete(`${API_URL}/fabricantes/${fabricanteToDelete}`);
       fetchFabricantes(); // Recarrega a lista de fabricantes
       setShowConfirmDeleteModal(false);
 
@@ -336,7 +340,7 @@ function FormularioProduto() {
     setIsLoading(true);  // Inicia o estado de carregamento (desabilita o botão)
   
     try {
-      await axios.post('http://127.0.0.1:8000/api/unidade-medidas/', { unidade: novaUnidadeMedidaUnidade });
+      await axios.post(`${API_URL}/unidade-medidas/`, { unidade: novaUnidadeMedidaUnidade });
       setNovaUnidadeMedidaUnidade('');  // Limpa o campo de input
       fetchUnidadesMedidaUnidade();  // Recarrega a lista de unidades de medida
   
@@ -378,7 +382,7 @@ function FormularioProduto() {
     if (!unidadeMedidaToDeleteUnidade) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/unidade-medidas/${unidadeMedidaToDeleteUnidade}`);
+      await axios.delete(`${API_URL}/unidade-medidas/${unidadeMedidaToDeleteUnidade}`);
       fetchUnidadesMedidaUnidade(); // Recarrega a lista de unidades de medida
       setShowConfirmDeleteModalUnidade(false);
       toast.success('Unidade de medida excluída com sucesso!');
@@ -409,7 +413,7 @@ function FormularioProduto() {
   // Função para buscar todas as unidades de medida
   const fetchUnidadesMedidaUnidade = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/unidade-medidas/');
+      const response = await axios.get(`${API_URL}/api/unidade-medidas/`);
       console.log('Unidades de Medida:', response.data);  // Verifique se os dados estão sendo retornados corretamente
       setUnidades(response.data);  // Atualiza o estado com os dados recebidos
     } catch (error) {
@@ -435,7 +439,7 @@ function FormularioProduto() {
   // Função para buscar os fornecedores
   const fetchFornecedores = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/distribuidores/');
+      const response = await axios.get(`${API_URL}/distribuidores/`);
       console.log('Fornecedores:', response.data);  // Verifique os dados no console
       setFornecedores(response.data);  // Atualiza o estado com os dados recebidos
     } catch (error) {

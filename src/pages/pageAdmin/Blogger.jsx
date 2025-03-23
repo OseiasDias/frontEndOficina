@@ -4,10 +4,7 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import { IoIosAdd } from "react-icons/io";
 import imgN from "../../assets/not-found.png";
 import { toast, ToastContainer } from 'react-toastify';
-
-
 import "../../css/StylesAdmin/homeAdministrador.css";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
@@ -31,6 +28,11 @@ const customStyles = {
     },
   },
 };
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 export function TabelaVizualizarBlogs() {
   const [records, setRecords] = useState([]);
@@ -63,7 +65,7 @@ export function TabelaVizualizarBlogs() {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/blogs/${selectedBlog.id}`);
+      await axios.delete(`${API_URL}/blogs/${selectedBlog.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((blog) => blog.id !== selectedBlog.id));
       setShowDeleteModal(false);
@@ -119,7 +121,7 @@ export function TabelaVizualizarBlogs() {
   // Função para buscar os dados da API e ordenar pela data de publicação
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/blogs");
+      const response = await axios.get(`${API_URL}/blogs`);
       if (Array.isArray(response.data)) {
         // Ordena os blogs pela data de publicação (mais recente primeiro)
         const sortedBlogs = response.data.sort((a, b) => new Date(b.data_publicacao) - new Date(a.data_publicacao));

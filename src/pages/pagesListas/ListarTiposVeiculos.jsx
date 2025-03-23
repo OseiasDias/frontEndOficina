@@ -30,6 +30,11 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+
 // eslint-disable-next-line react/prop-types
 export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   const [records, setRecords] = useState([]);
@@ -51,7 +56,7 @@ export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   // Função para confirmar a exclusão
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/tipos-veiculos/${selectedTipo.id}`);
+      await axios.delete(`${API_URL}/tipos-veiculos/${selectedTipo.id}`);
       // Após excluir, fechar a modal e atualizar os dados
       setRecords(records.filter((tipo) => tipo.id !== selectedTipo.id));
       setShowDeleteModal(false);
@@ -93,7 +98,7 @@ export function TabelaVizualizarTiposVeiculos({setShowModal}) {
   // Função para buscar os dados da API
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/tipos-veiculos");
+      const response = await axios.get(`${API_URL}/tipos-veiculos`);
       if (Array.isArray(response.data)) {
         setRecords(response.data);
         setOriginalRecords(response.data);

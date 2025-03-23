@@ -14,6 +14,11 @@ import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import axios from 'axios';
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 const OrdemDeReparo = () => {
     const { id } = useParams(); // Obtém o ID diretamente da URL
     const [ordem, setOrdem] = useState(null);
@@ -26,18 +31,18 @@ const OrdemDeReparo = () => {
     useEffect(() => {
         const fetchDados = async () => {
             try {
-                const ordemResponse = await fetch(`http://127.0.0.1:8000/api/ordens-de-reparo/${id}`);
+                const ordemResponse = await fetch(`${API_URL}/ordens-de-reparo/${id}`);
                 const ordemData = await ordemResponse.json();
                 setOrdem(ordemData);
 
-                const clienteResponse = await fetch(`http://127.0.0.1:8000/api/clientes/${ordemData.cliente_id}`);
+                const clienteResponse = await fetch(`${API_URL}/clientes/${ordemData.cliente_id}`);
                 const clienteData = await clienteResponse.json();
                 setCliente(clienteData);
            
-                const veiculoResponse = await fetch(`http://127.0.0.1:8000/api/veiculos/${ordemData.veiculo_id}`);
+                const veiculoResponse = await fetch(`${API_URL}/veiculos/${ordemData.veiculo_id}`);
                 const veiculoData = await veiculoResponse.json();
                 setVeiculo(veiculoData);
-                const empresaResponse = await axios.get(`http://127.0.0.1:8000/api/empresas/1`);
+                const empresaResponse = await axios.get(`${API_URL}/empresas/1`);
                 setEmpresaData(empresaResponse.data);
             } catch (error) {
                 console.error("Erro ao buscar dados", error);

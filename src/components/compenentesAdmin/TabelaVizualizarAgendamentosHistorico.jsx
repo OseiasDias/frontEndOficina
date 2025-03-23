@@ -25,10 +25,16 @@ const customStyles = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
 export default function TabelaAgendamento() {
   const [records, setRecords] = useState([]);
   const [originalRecords, setOriginalRecords] = useState([]);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState(null);
   const [showVisualizarModal, setShowVisualizarModal] = useState(false);  // Modal de Visualização
   const [showExcluirModal, setShowExcluirModal] = useState(false);  // Modal de Exclusão
@@ -87,8 +93,8 @@ export default function TabelaAgendamento() {
   // Função para abrir a modal de visualização com os dados do agendamento
   const handleVisualizarHistorico = async (row) => {
     try {
-      const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${row.id_cliente}`);
-      const veiculoResponse = await fetch(`http://localhost:5000/api/veiculos/${row.id_veiculo}`);
+      const clienteResponse = await fetch(`${API_URL}/clientes/${row.id_cliente}`);
+      const veiculoResponse = await fetch(`${API_URL}/veiculos/${row.id_veiculo}`);
 
       const clienteData = await clienteResponse.json();
       const veiculoData = await veiculoResponse.json();
@@ -106,6 +112,7 @@ export default function TabelaAgendamento() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const openConfirmModal = (id, statusAtual) => {
     const novoStatus = statusAtual === 1 ? 0 : 1; // Inverte o status (0 = cancelado, 1 = confirmado)
     setAgendamentoToConfirm({ id, novoStatus });
@@ -121,7 +128,7 @@ export default function TabelaAgendamento() {
     const statusString = novoStatus === 1 ? "Confirmado" : "Cancelado";
 
     try {
-      const response = await fetch(`http://localhost:5000/api/agendamentos/${id}/status`, {
+      const response = await fetch(`${API_URL}/agendamentos/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -141,6 +148,7 @@ export default function TabelaAgendamento() {
 
       toast.success(`Agendamento ${statusString} com sucesso!`);
       setShowConfirmModal(false); // Fecha a modal
+    // eslint-disable-next-line no-unused-vars
     } catch (err) {
       toast.error("Erro ao atualizar status do agendamento.");
     }
@@ -153,7 +161,7 @@ export default function TabelaAgendamento() {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:5000/api/agendamentos/${agendamentoIdToDelete}`, {
+      await fetch(`${API_URL}/agendamentos/${agendamentoIdToDelete}`, {
         method: "DELETE",
       });
 
@@ -175,14 +183,14 @@ export default function TabelaAgendamento() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/agendamentos");
+      const response = await fetch(`${API_URL}/agendamentos`);
       if (!response.ok) throw new Error("Erro ao buscar dados dos agendamentos");
       const data = await response.json();
 
       const dataWithDetails = await Promise.all(
         data.map(async (agendamento) => {
-          const clienteResponse = await fetch(`http://localhost:5000/api/clientes/${agendamento.id_cliente}`);
-          const veiculoResponse = await fetch(`http://localhost:5000/api/veiculos/${agendamento.id_veiculo}`);
+          const clienteResponse = await fetch(`${API_URL}/clientes/${agendamento.id_cliente}`);
+          const veiculoResponse = await fetch(`${API_URL}/veiculos/${agendamento.id_veiculo}`);
 
           const clienteData = await clienteResponse.json();
           const veiculoData = await veiculoResponse.json();

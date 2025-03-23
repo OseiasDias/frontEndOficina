@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import '../css/tabelaVerAgendamento.css';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -7,6 +8,11 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ModalVerAllAgendamento from "./ModalVerAllAgendamento";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
+
+// eslint-disable-next-line react/prop-types
 function BotaoMenu({ onCancel, onUpdate, onVisao }) {
   return (
     <Dropdown>
@@ -20,6 +26,7 @@ function BotaoMenu({ onCancel, onUpdate, onVisao }) {
   );
 }
 
+// eslint-disable-next-line react/prop-types
 function TabelaVerAgendamento({ clienteId }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [agendamentos, setAgendamentos] = useState([]);
@@ -35,8 +42,8 @@ function TabelaVerAgendamento({ clienteId }) {
     const fetchDados = async () => {
       try {
         setLoading(true);
-        const responseAgendamentos = await fetch(`http://localhost:5000/api/agendamentos/cliente/${clienteId}`);
-        const responseVeiculos = await fetch(`http://localhost:5000/api/veiculos/cliente/${clienteId}`);
+        const responseAgendamentos = await fetch(`${API_URL}/agendamentos/cliente/${clienteId}`);
+        const responseVeiculos = await fetch(`${API_URL}/veiculos/cliente/${clienteId}`);
         if (!responseAgendamentos.ok || !responseVeiculos.ok) {
           throw new Error('Erro ao buscar agendamentos ou veículos');
         }
@@ -63,7 +70,7 @@ function TabelaVerAgendamento({ clienteId }) {
   const handleCancelarAgendamento = async () => {
     if (agendamentoSelecionado) {
       try {
-        await fetch(`http://localhost:5000/api/agendamentos/${agendamentoSelecionado}`, {
+        await fetch(`${API_URL}/agendamentos/${agendamentoSelecionado}`, {
           method: 'DELETE',
         });
         setAgendamentos((prevAgendamentos) =>

@@ -19,6 +19,9 @@ import imgErro from "../../assets/error.webp";
 import axios from 'axios';
 import { toast, ToastContainer } from "react-toastify";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 
 
 const OrdemDeReparacaoForm = () => {
@@ -67,7 +70,7 @@ const OrdemDeReparacaoForm = () => {
   // Função para pegar o último ID da ordem
   const fetchUltimoId = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/ordens/ultimo-id');
+      const response = await axios.get(`${API_URL}/ordens/ultimo-id`);
       const id = response.data.ultimo_id;
       setUltimoId(id);
       gerarNumeroOrdem(id); // Gerar o número da ordem após obter o último ID
@@ -174,7 +177,7 @@ const OrdemDeReparacaoForm = () => {
     }));
 
     // Carregar clientes via API
-    fetch('http://127.0.0.1:8000/api/clientes')
+    fetch(`${API_URL}/clientes`)
       .then((response) => response.json())
       .then((data) => {
         setClientes(data);
@@ -190,7 +193,7 @@ const OrdemDeReparacaoForm = () => {
 
     const fetchServicosVer = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/servicos');
+        const response = await fetch(`${API_URL}/servicos`);
         const data = await response.json();
         setServicosVer(data); // Armazenar os serviços no estado
       } catch (error) {
@@ -232,7 +235,7 @@ const OrdemDeReparacaoForm = () => {
     setFilteredClientes([]); // Limpar a lista de resultados ao selecionar um cliente
 
     // Requisição para pegar os veículos do cliente selecionado
-    fetch(`http://127.0.0.1:8000/api/veiculos/cliente/${cliente.id}`)
+    fetch(`${API_URL}/veiculos/cliente/${cliente.id}`)
       .then((response) => response.json())
       .then((data) => {
         setVeiculos(data);  // Armazena os veículos no estado
@@ -264,7 +267,7 @@ const OrdemDeReparacaoForm = () => {
 
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/ordens-de-reparo/',
+        `${API_URL}/ordens-de-reparo/`,
         formData
       );
 
@@ -308,7 +311,7 @@ const OrdemDeReparacaoForm = () => {
       };
 
       try {
-        await axios.post("http://127.0.0.1:8000/api/ordem-de-reparacao-servico", data);
+        await axios.post(`${API_URL}/ordem-de-reparacao-servico`, data);
         console.log(`Serviço ${servicoId} cadastrado com sucesso.`);
       } catch (error) {
         console.error("Erro ao cadastrar serviço", error);

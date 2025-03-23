@@ -7,11 +7,7 @@ import { Form, Button, Row, Col, Modal, Image, Spinner } from "react-bootstrap";
 import { ToastContainer, toast } from 'react-toastify'; // Importando as funções do react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importando o CSS do react-toastify
 import { useNavigate } from 'react-router-dom'; // Importando useNavigate
-
-
 import "../../css/StylesAdmin/homeAdministrador.css";
-//import SideBar from "../../components/compenentesAdmin/SideBar.jsx";
-//import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin.jsx";
 import "../../css/StylesAdmin/homeAdministrador.css";
 import {
   FaGlobe,
@@ -35,6 +31,10 @@ import {
 } from "react-icons/fa";
 import { InputGroup } from "react-bootstrap";
 import { useEffect } from "react";
+
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 const FormularioEquipeSuporte = () => {
   const [dadosFormulario, setDadosFormulario] = useState({
@@ -155,7 +155,7 @@ const FormularioEquipeSuporte = () => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/equipe-suporte', {
+      const response = await fetch(`${API_URL}/equipe-suporte`, {
         method: 'POST',
         body: formData,
       });
