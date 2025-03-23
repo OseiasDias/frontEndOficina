@@ -237,3 +237,11 @@
 .text-justifyF{
     text-align: justify !important;
 }
+
+.div-construtor {
+    position: absolute; /* Ou fixed, se quiser que fique sempre centralizado na tela */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  

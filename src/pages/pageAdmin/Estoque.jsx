@@ -4,6 +4,7 @@ import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 //import TabelaVizualizarEstoque from "../../components/compenentesAdmin/TabelaVizualizarEstoque";
 import {TabelaVizualizarCompras} from "../pageAdmin/Compra.jsx";
+import Construcao from "../../components/compenentesAdmin/Construcao.jsx";
 
 
 const Estoque = () => {
@@ -12,8 +13,9 @@ const Estoque = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100 ">
+       {/*Seccao em construcao */}
+                 <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Estoque" icone={<IoIosAdd />}  leftR="/estoqueList" direccao="/addCompras"/>
 
             <div className="vh-100 alturaPereita">

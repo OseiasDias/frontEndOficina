@@ -9,6 +9,7 @@ import Tabs from 'react-bootstrap/Tabs';
 
 import  {  useEffect } from 'react';
 import { Button, Form, Row, Col, ListGroup } from 'react-bootstrap';
+import Construcao from "../../components/compenentesAdmin/Construcao";
 
 const ArmazenarRelatorios = () => {
   const [relatorios, setRelatorios] = useState([]);
@@ -190,7 +191,10 @@ const Relatorios = () => {
         <div className="d-flex">
           <SideBar />
 
-          <div className="flexAuto w-100 ">
+            {/*Seccao em construcao */}
+                              <Construcao />
+
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Relatórios"  />
 
             <div className="vh-100 alturaPereita">

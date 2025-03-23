@@ -18,6 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import imgN from "../../assets/not-found.png"; // Imagem para mostrar enquanto carrega
 import { IoMdEye } from 'react-icons/io';
 import { Modal } from "react-bootstrap"; // Importando o Modal
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 // Estilos customizados para a tabela
 
@@ -394,7 +395,10 @@ const Faturas = () => {
       <div className="d-flex">
         <SideBar />
 
-        <div className="flexAuto w-100">
+         {/*Seccao em construcao */}
+        <Construcao />
+
+        <div className="flexAuto w-100 d-none">
           <TopoAdmin entrada=" Faturas" />
 
           <div className="vh-100 alturaPereita">

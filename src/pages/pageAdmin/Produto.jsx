@@ -22,6 +22,7 @@ import { FaEnvelopeOpenText, FaMapMarkerAlt } from 'react-icons/fa';
 
 import { FaPrint, FaFilePdf } from 'react-icons/fa';  // Importar os ícones de imprimir e PDF
 import { jsPDF } from "jspdf";  // Importar a biblioteca jsPDF para geração de PDF
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 // Estilos personalizados para a tabela
 const customStyles = {
@@ -395,8 +396,9 @@ const Produtos = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100">
+          {/*Seccao em construcao */}
+         <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Produtos" direccao="/addProdutos" icone={<IoIosAdd />} leftR="/ProdutosList" />
 
             <div className="vh-100 alturaPereita">

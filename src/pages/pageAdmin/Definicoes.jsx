@@ -27,6 +27,7 @@ import { TbNumber } from "react-icons/tb";
 import { FaBuildingCircleArrowRight } from "react-icons/fa6";
 import { FaBuildingCircleCheck } from "react-icons/fa6";
 import { FaLink } from "react-icons/fa";
+import Construcao from "../../components/compenentesAdmin/Construcao";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -911,8 +912,9 @@ const DeficnicoesPage = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100">
+   {/*Seccao em construcao */}
+              <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin
               entrada="Definições"
               leftSeta={<BiCog />}

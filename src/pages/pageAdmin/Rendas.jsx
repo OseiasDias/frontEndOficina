@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import logoMarca from "../../assets/lgo.png";
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -327,8 +328,9 @@ const Rendas = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100">
+     {/*Seccao em construcao */}
+          <Construcao />
+          <div className="flexAuto w-100 d-none">
             <h4 className='me-3'></h4>
 
             <TopoAdmin entrada="Lista de Rendas" direccao="/addRenda" icone={<RiAddFill />} leftR="/ProdutosList" />

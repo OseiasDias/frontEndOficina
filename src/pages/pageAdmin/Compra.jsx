@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaFilePdf, FaPrint } from "react-icons/fa";
 import { jsPDF } from "jspdf";  // Importar a biblioteca jsPDF para geração de PDF
 import logoMarca from "../../assets/lgo.png";
+import Construcao from "../../components/compenentesAdmin/Construcao";
 
 
 const customStyles = {
@@ -321,7 +322,9 @@ const Compras = () => {
     <div className="container-fluid">
       <div className="d-flex">
         <SideBar />
-        <div className="flexAuto w-100">
+            {/*Seccao em construcao */}
+                 <Construcao />
+        <div className="flexAuto w-100 d-none">
           <TopoAdmin entrada="Compras" direccao="/addCompras" icone={<IoIosAdd />} leftR="/ComprasList" />
           <div className="vh-100 alturaPereita">
             <TabelaVizualizarCompras />

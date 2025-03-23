@@ -15,6 +15,7 @@ import { IoEye } from "react-icons/io5";
 import { Modal, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom'; // Importando o useNavigate para redirecionamento
 import imgErro from "../../assets/error.webp";
+import Construcao from "../../components/compenentesAdmin/Construcao.jsx";
 // Estilos personalizados para a tabela
 const customStyles = {
   headCells: {
@@ -227,8 +228,9 @@ const Blog = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100 ">
+  {/*Seccao em construcao */}
+                    <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Blogs" icone={<IoIosAdd />} direccao="/addBlogs" />
 
             <div className="vh-100 alturaPereita">

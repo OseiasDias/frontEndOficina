@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect } from 'react';
 import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
@@ -14,6 +14,7 @@ import { MdDeleteOutline, MdOutlinePayments } from "react-icons/md";
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
 import logoMarca from "../../assets/lgo.png";
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -250,8 +251,8 @@ export function ListarMetodosPagamento() {
           </Form>
         </Modal.Body>
         <Modal.Footer className='p-0'>
-                        <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60}/>
-            
+          <img src={logoMarca} className="d-block mx-auto" alt="logo da Biturbo" width={160} height={60} />
+
         </Modal.Footer>
       </Modal>
     </>
@@ -265,8 +266,9 @@ const MetodosPagamento = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100">
+          {/*Seccao em construcao */}
+          <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="" />
 
             <div className="vh-100 alturaPereita">

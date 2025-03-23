@@ -20,13 +20,14 @@ import imgErro from "../../assets/error.webp";
 import Accordion from 'react-bootstrap/Accordion';
 import 'react-toastify/dist/ReactToastify.css';
 import logoMarca from "../../assets/lgo.png";
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 
 // Estilos customizados para a tabela
 const customStyles = {
   headCells: {
     style: {
-      backgroundColor: '#044697', 
+      backgroundColor: '#044697',
       color: '#fff',
       fontSize: '16px',
       fontWeight: 'bolder',
@@ -44,7 +45,7 @@ const customStyles = {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-  
+
 
 export function ListarAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]); // Lista de agendamentos
@@ -528,13 +529,16 @@ export function ListarAgendamentos() {
   );
 }
 
+
 const Agendamentos = () => {
   return (
     <>
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-          <div className="flexAuto w-100">
+          {/*Seccao em construcao */}
+          <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Lista de Agendamentos" direccao="/marcarAgendamentoAdimin" icone={<RiAddFill />} />
             <div className="vh-100 alturaPereita">
               <ListarAgendamentos />

@@ -67,11 +67,12 @@ export default function AtalhoLoginAdmin() {
             localStorage.setItem('adminNome', data.administrador.nome);
             localStorage.setItem('adminEmail', data.administrador.email);
     
-            toast.success('Login realizado com sucesso!');
+           // toast.success('Login realizado com sucesso!');
             navigate('/homeAdministrador');
         } catch (error) {
             console.error('Erro ao fazer login:', error.message);
             setLoginError(error.message);
+           
             toast.error(error.message || 'Erro ao conectar ao servidor.');
         } finally {
             setIsLoading(false); // Desativa o spinner

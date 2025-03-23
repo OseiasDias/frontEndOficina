@@ -17,6 +17,7 @@ import TopoAdmin from '../../components/compenentesAdmin/TopoAdmin';
 import SideBar from '../../components/compenentesAdmin/SideBar';
 import { RiAddFill } from 'react-icons/ri';
 import jsPDF from 'jspdf';
+import Construcao from '../../components/compenentesAdmin/Construcao';
 
 // Estilos customizados para a tabela
 const customStyles = {
@@ -292,7 +293,10 @@ const Filiais = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-          <div className="flexAuto w-100">
+
+             {/*Seccao em construcao */}
+              <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Lista de Filiais" direccao="/addGalho" icone={<RiAddFill />} leftR="/ProdutosList" />
             <div className="vh-100 alturaPereita">
               <ListarFiliais />

@@ -3,6 +3,7 @@ import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
 import TabelaFaturas from "../../components/compenentesAdmin/TabelaFaturas.jsx";
+import Construcao from "../../components/compenentesAdmin/Construcao.jsx";
 
 
 const Pagamento = () => {
@@ -11,8 +12,9 @@ const Pagamento = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100 ">
+  {/*Seccao em construcao */}
+                    <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Pagamentos" icone={<IoIosAdd />}    />
 
             <div className="vh-100">

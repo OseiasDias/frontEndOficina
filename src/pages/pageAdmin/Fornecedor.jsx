@@ -14,6 +14,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import imgN from "../../assets/not-found.png";
 import imgErro from "../../assets/error.webp";
+import Construcao from "../../components/compenentesAdmin/Construcao";
 
 const customStyles = {
   headCells: {
@@ -171,8 +172,10 @@ const Fornecedor = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar /> 
+          
 
-          <div className="flexAuto w-100 ">
+          <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Fornecedores" direccao="/addFornecedorPage" icone={<IoIosAdd />} leftR="/FornecedorList" />
 
             <div className="vh-100 alturaPereita">

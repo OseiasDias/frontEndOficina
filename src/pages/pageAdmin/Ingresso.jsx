@@ -2,7 +2,7 @@ import "../../css/StylesAdmin/homeAdministrador.css";
 import SideBar from "../../components/compenentesAdmin/SideBar";
 import TopoAdmin from "../../components/compenentesAdmin/TopoAdmin";
 import { IoIosAdd } from "react-icons/io";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import axios from "axios"; // Para fazer requisições HTTP
 import DataTable from "react-data-table-component";
 import { Dropdown, Modal, Button } from "react-bootstrap";
@@ -17,6 +17,7 @@ import imgErro from "../../assets/error.webp";
 import { ImWhatsapp } from "react-icons/im";
 import jsPDF from "jspdf";
 import logoMarca from "../../assets/lgo.png";
+import Construcao from "../../components/compenentesAdmin/Construcao";
 
 
 const customStyles = {
@@ -329,8 +330,9 @@ const Ingresso = () => {
       <div className="container-fluid">
         <div className="d-flex">
           <SideBar />
-
-          <div className="flexAuto w-100 ">
+          {/*Seccao em construcao */}
+          <Construcao />
+          <div className="flexAuto w-100 d-none">
             <TopoAdmin entrada="Ingresso" direccao="/addGetPass" icone={<IoIosAdd />} />
 
             <div className="vh-100 alturaPereita">
