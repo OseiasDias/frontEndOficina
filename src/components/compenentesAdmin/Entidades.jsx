@@ -155,7 +155,7 @@ export default function Entidades() {
         servicos,
         veiculos
       ] = await Promise.all([
-        axios.get(`${API_URL}/clientes/total`),
+        axios.get(`${API_URL}/clientesContar`),
         axios.get(`${API_URL}/usuario/total`),
         axios.get(`${API_URL}/agendamentos/total`),
         axios.get(`${API_URL}/blogs/total`),
@@ -167,7 +167,7 @@ export default function Entidades() {
       ]);
 
       setQuantidades({
-        clientes: clientes.data.total,
+        clientes: clientes,
         funcionarios: funcionarios.data.total,
         agendamentos: agendamentos.data.total,
         blogs: blogs.data.total,
@@ -277,54 +277,7 @@ export default function Entidades() {
                   </Link>
                 </div>
               </div>
-              {/** 
-              <div className="col-6 col-md-4 col-lg-2">
-                <div className="abertura mb-3 py-3">
-                  <Link to="/faturaList">
-                    <div className="box-icon">
-                      <IoNewspaperSharp className="ikone" />
-                    </div>
-                    <span className="text-black tituloSh text-center fw-bold my-1 entiSize d-block">
-                      {quantidades.faturas}
-                    </span>
-                    <div>
-                      <h6 className="text-center text-black tituloSh">Faturas</h6>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-              <div className="col-6 col-md-4 col-lg-2">
-                <div className="abertura mb-3 py-3">
-                  <Link to="/pagamentoList">
-                    <div className="box-icon">
-                      <FaSackDollar className="ikone" />
-                    </div>
-                    <span className="text-black tituloSh text-center fw-bold my-1 entiSize d-block">
-                      {quantidades.pagamentos}
-                    </span>
-                    <div>
-                      <h6 className="text-center text-black tituloSh">Pagamentos</h6>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="col-6 col-md-4 col-lg-2">
-                <div className="abertura mb-3 py-3">
-                  <Link to="/servicosList">
-                    <div className="box-icon">
-                      <GrServices className="ikone" />
-                    </div>
-                    <span className="text-black tituloSh text-center fw-bold my-1 entiSize d-block">
-                      {quantidades.servicos}
-                    </span>
-                    <div>
-                      <h6 className="text-center text-black tituloSh">Serviços</h6>
-                    </div>
-                  </Link>
-                </div>
-              </div>*/}
-
+              
               <div className="col-6 col-md-4 col-lg-2">
                 <div className="abertura mb-3 py-3">
                   <Link to="/veiculosList">
