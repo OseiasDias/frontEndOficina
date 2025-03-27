@@ -62,8 +62,8 @@ const CronometroGeral = ({
   const [numeroOrdemL, setNumeroOrdem] = useState(numeroOrdem); // Estado para armazenar o número da ordem
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 
-   // Função para salvar o tempo acumulado no banco de dados
-   const salvarTempoNoBanco = async (segundosAtual, estaRodando) => {
+  // Função para salvar o tempo acumulado no banco de dados
+  const salvarTempoNoBanco = async (segundosAtual, estaRodando) => {
     if (!idTecnico || !numeroOrdemL) {
       console.warn('Dados insuficientes para salvar');
       return;
@@ -92,7 +92,7 @@ const CronometroGeral = ({
       localStorage.setItem(`ultimaAtualizacao-${numeroOrdem}`, Date.now());
     } catch (error) {
       console.error('Erro ao salvar tempo acumulado:', error);
-      
+
       // Fallback: armazena localmente para tentar novamente depois
       const pendentes = JSON.parse(localStorage.getItem('atualizacoesPendentes') || []);
       pendentes.push({
@@ -109,7 +109,16 @@ const CronometroGeral = ({
   };
   // Debounce para limitar chamadas da API (1 chamada por segundo no máximo)
   // Alterar de 3000 para 60000 (3 segundos para 60 segundos)
-  const debouncedSalvarTempo = debounce(salvarTempoNoBanco, 60000);
+  // Debounce otimizado
+  const debouncedSalvarTempo = useCallback(
+    debounce((segundos, rodando) => {
+      if (idTecnico && numeroOrdemL) {
+        salvarTempoNoBanco(segundos, rodando);
+      }
+    }, 30000), // 30 segundos
+    [idTecnico, numeroOrdemL]
+  );
+  //const debouncedSalvarTempo = debounce(salvarTempoNoBanco, 60000);
 
   debouncedSalvarTempo(segundos, rodando);
 
@@ -183,7 +192,7 @@ const CronometroGeral = ({
         localStorage.setItem(`segundos-${numeroOrdem}`, novoSegundos);
 
         // Salvar na API a cada 10 segundos
-        if (novoSegundos % 10 === 0 && idTecnico && numeroOrdemL) {
+        if (novoSegundos % 60 === 0 && idTecnico && numeroOrdemL) {
           salvarTempoNoBanco(novoSegundos, rodando);
         }
 
@@ -269,52 +278,69 @@ const CronometroGeral = ({
     setIsOptionsVisible(prev => !prev);
   }, []);
 
-  // Efeito para carregar o tempo e o estado de "rodando" do localStorage
+  // Substituir múltiplos useEffect por um único gerenciador de estado
   useEffect(() => {
-    const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
-    const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
-    const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
+    // Carregar estado inicial
+    const loadInitialState = () => {
+      const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
+      const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
+      const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-    if (tempoSalvo) {
-      setSegundos(parseInt(tempoSalvo));
-    }
+      if (tempoSalvo) setSegundos(parseInt(tempoSalvo));
+      setRodando(estadoRodandoSalvo === "true");
 
-    if (estadoRodandoSalvo === "true") {
-      setRodando(true);
-    }
+      if (startTimeSalvo && estadoRodandoSalvo === "true") {
+        const currentTime = Date.now();
+        setSegundos(prev => prev + Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000));
+      }
+    };
 
-    if (startTimeSalvo) {
-      const currentTime = new Date().getTime();
-      const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
-      setSegundos((prevSegundos) => prevSegundos + timeDifference);
-    }
-  }, [numeroOrdem]);
+    // Buscar dados do técnico
+    const fetchTecnicoData = async () => {
+      try {
+        const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+        setIdTecnico(data.tecnico_id);
+      } catch (err) {
+        console.error("Erro ao buscar técnico:", err);
+      }
+    };
+
+    loadInitialState();
+    fetchTecnicoData();
+  }, [numeroOrdem, numeroOrdemL]);
 
 
+
+  // Substituir múltiplos useEffect por um único gerenciador de estado
   useEffect(() => {
-    const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
-    const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
-    const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
+    // Carregar estado inicial
+    const loadInitialState = () => {
+      const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
+      const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
+      const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-    if (tempoSalvo) {
-      setSegundos(parseInt(tempoSalvo));
-    }
+      if (tempoSalvo) setSegundos(parseInt(tempoSalvo));
+      setRodando(estadoRodandoSalvo === "true");
 
-    // Verifica se o cronômetro estava rodando antes de recarregar
-    if (estadoRodandoSalvo === "true") {
-      setRodando(true);
-    } else if (estadoRodandoSalvo === "false") {
-      setRodando(false); // Se estava pausado, não retome a contagem
-    }
+      if (startTimeSalvo && estadoRodandoSalvo === "true") {
+        const currentTime = Date.now();
+        setSegundos(prev => prev + Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000));
+      }
+    };
 
-    // calcule o tempo já passado
-    if (startTimeSalvo && estadoRodandoSalvo === "true") {
-      const currentTime = new Date().getTime();
-      const timeDifference = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
-      setSegundos((prevSegundos) => prevSegundos + timeDifference);
-    }
-  }, [numeroOrdem]);
+    // Buscar dados do técnico
+    const fetchTecnicoData = async () => {
+      try {
+        const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+        setIdTecnico(data.tecnico_id);
+      } catch (err) {
+        console.error("Erro ao buscar técnico:", err);
+      }
+    };
 
+    loadInitialState();
+    fetchTecnicoData();
+  }, [numeroOrdem, numeroOrdemL]);
   // Função para formatar o tempo
   const formatarTempo = (segundos) => {
     const minutos = Math.floor(segundos / 60);
@@ -607,6 +633,9 @@ const CronometroGeral = ({
         <div className="row pb-3  ">
           <div className="col-11 py-1">
             <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
+
+            {/**segundosAtual */}
+
           </div>
           <button onClick={toggleOptionsVisibility} className='col-1 setasDesign  p-0  text-white d-block ms-auto' style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}>
             {isOptionsVisible ? <FaAngleUp /> : <FaAngleDown />}
