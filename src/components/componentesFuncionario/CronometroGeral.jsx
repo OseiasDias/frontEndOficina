@@ -62,58 +62,55 @@ const CronometroGeral = ({
   const [numeroOrdemL, setNumeroOrdem] = useState(numeroOrdem); // Estado para armazenar o número da ordem
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 
-  const salvarTempoNoBanco = async (segundosAtual, estaRodando) => {
-
+   // Função para salvar o tempo acumulado no banco de dados
+   const salvarTempoNoBanco = async (segundosAtual, estaRodando) => {
     if (!idTecnico || !numeroOrdemL) {
-      console.warn('idTecnico ou numeroOrdemL não disponíveis');
+      console.warn('Dados insuficientes para salvar');
       return;
     }
-    const MAX_RETRIES = 3;
-    let attempts = 0;
 
-    console.log(numeroOrdemL);
-    console.log(`[${new Date().toISOString()}] Tentando salvar tempo:`, {
-      segundos: segundosAtual,
-      estado: estaRodando ? 'Rodando' : 'Pausado',
-      idTecnico,
-      numeroOrdem: numeroOrdemL
-    });
+    console.log(`Enviando tempo acumulado: ${segundosAtual}s`, `Estado: ${estaRodando ? 'Rodando' : 'Pausado'}`);
 
-    while (attempts < MAX_RETRIES) {
-      try {
-        const data = {
-         
+    try {
+      const data = {
+        segundos_atual: segundosAtual,
+        rodando: estaRodando ? 1 : 0,
+        ultima_atualizacao: new Date().toISOString()
+      };
+
+      const response = await axios.put(
+        `${API_URL}/cronometro/atualizar/${idTecnico}/${numeroOrdemL}`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      console.log('Tempo acumulado salvo:', response.data);
+      localStorage.setItem(`ultimaAtualizacao-${numeroOrdem}`, Date.now());
+    } catch (error) {
+      console.error('Erro ao salvar tempo acumulado:', error);
+      
+      // Fallback: armazena localmente para tentar novamente depois
+      const pendentes = JSON.parse(localStorage.getItem('atualizacoesPendentes') || []);
+      pendentes.push({
+        idTecnico,
+        numeroOrdem: numeroOrdemL,
+        data: {
           segundos_atual: segundosAtual,
           rodando: estaRodando ? 1 : 0
-        };
-
-        console.log(`[${new Date().toISOString()}] Enviando dados para API:`, data);
-
-        const response = await axios.put(
-          `${API_URL}/cronometro/atualizar/${idTecnico}/${numeroOrdemL}`,
-          data
-        );
-
-        console.log(`[${new Date().toISOString()}] Tempo salvo com sucesso!`, response.data);
-        break;
-      } catch (error) {
-        attempts++;
-        console.log(`esta aqui::: ${numeroOrdemL}`)
-        console.log(`esta aqui::: ${idTecnico}`)
-        console.error(`[${new Date().toISOString()}] Tentativa ${attempts} falhou:`, error);
-
-        if (attempts === MAX_RETRIES) {
-          console.error("[ERRO FINAL] Falha ao atualizar após 3 tentativas:", error);
-        }
-
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
-      }
+        },
+        timestamp: Date.now()
+      });
+      localStorage.setItem('atualizacoesPendentes', JSON.stringify(pendentes));
     }
-
   };
-
   // Debounce para limitar chamadas da API (1 chamada por segundo no máximo)
-  const debouncedSalvarTempo = debounce(salvarTempoNoBanco, 3000);
+  // Alterar de 3000 para 60000 (3 segundos para 60 segundos)
+  const debouncedSalvarTempo = debounce(salvarTempoNoBanco, 60000);
+
   debouncedSalvarTempo(segundos, rodando);
 
   const cache = {};
@@ -128,35 +125,44 @@ const CronometroGeral = ({
     cache[url] = { data, timestamp: Date.now() };
     return data;
   };
+
+
+  // No useEffect principal:
   useEffect(() => {
     if (!rodando || segundos >= tempoLimite) return;
-  
+
     const intervalo = setInterval(() => {
       setSegundos(prev => {
         const novoSegundos = prev + 1;
+
+        // Salva no localStorage a cada 1 minuto
+        if (novoSegundos % 60 === 0) {
+          localStorage.setItem(`segundos-${numeroOrdem}`, novoSegundos);
+        }
+
         debouncedSalvarTempo(novoSegundos, rodando);
         return novoSegundos;
       });
     }, 1000);
-  
+
     return () => clearInterval(intervalo);
   }, [rodando, tempoLimite, debouncedSalvarTempo]);
 
   // Em um arquivo service-worker.js
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/cronometro/atualizar')) {
-    event.respondWith(
-      caches.open('cronometro-cache').then(cache => {
-        return fetch(event.request)
-          .then(response => {
-            cache.put(event.request, response.clone());
-            return response;
-          })
-          .catch(() => cache.match(event.request));
-      })
-    );
-  }
-});
+  self.addEventListener('fetch', (event) => {
+    if (event.request.url.includes('/cronometro/atualizar')) {
+      event.respondWith(
+        caches.open('cronometro-cache').then(cache => {
+          return fetch(event.request)
+            .then(response => {
+              cache.put(event.request, response.clone());
+              return response;
+            })
+            .catch(() => cache.match(event.request));
+        })
+      );
+    }
+  });
 
   // Use em vez de fetch direto
   useEffect(() => {
@@ -165,63 +171,36 @@ self.addEventListener('fetch', (event) => {
       .catch(err => setError(err.message));
   }, [numeroOrdemL]);
 
+  // Substituir os múltiplos useEffect por um único gerenciador
   useEffect(() => {
-
-
     let intervalo;
 
-    console.log('[Cronômetro] Efeito principal iniciado', { rodando, segundos });
+    const atualizarTempo = () => {
+      setSegundos(prev => {
+        const novoSegundos = prev + 1;
 
-    const atualizarTempo = async () => {
-
-      const novoSegundos = segundos + 1;
-      setSegundos(novoSegundos);
-
-      // Salva no localStorage apenas a cada 5 segundos
-      if (novoSegundos % 5 === 0) {
+        // Salvar no localStorage a cada segundo
         localStorage.setItem(`segundos-${numeroOrdem}`, novoSegundos);
-      }
 
-      try {
-        if (idTecnico && numeroOrdemL) {
-          console.log('[Cronômetro] Chamando debouncedSalvarTempo');
-          await debouncedSalvarTempo(novoSegundos, rodando);
-        } else {
-          console.warn('[Cronômetro] Dados insuficientes para salvar - idTecnico ou numeroOrdemL faltando');
+        // Salvar na API a cada 10 segundos
+        if (novoSegundos % 10 === 0 && idTecnico && numeroOrdemL) {
+          salvarTempoNoBanco(novoSegundos, rodando);
         }
-      } catch (error) {
-        console.error('[Cronômetro] Erro ao atualizar tempo:', error);
-      }
-    };
 
-    const finalizarTempo = async () => {
-      console.log('[Cronômetro] Tempo esgotado! Finalizando...');
-      setTempoEsgotado(true);
-
-      try {
-        if (idTecnico && numeroOrdemL) {
-          console.log('[Cronômetro] Salvando estado final');
-          await salvarTempoNoBanco(segundos, false);
-        }
-      } catch (error) {
-        console.error('[Cronômetro] Erro ao finalizar tempo:', error);
-      }
+        return novoSegundos;
+      });
     };
 
     if (rodando && segundos < tempoLimite) {
-      console.log('[Cronômetro] Iniciando intervalo');
       intervalo = setInterval(atualizarTempo, 1000);
     } else if (segundos >= tempoLimite) {
-      finalizarTempo();
+      setTempoEsgotado(true);
+      salvarTempoNoBanco(segundos, false);
     }
 
-    return () => {
-      console.log('[Cronômetro] Limpando intervalo');
-      clearInterval(intervalo);
-      debouncedSalvarTempo.cancel();
-    };
-
+    return () => clearInterval(intervalo);
   }, [rodando, segundos, tempoLimite, numeroOrdem, idTecnico, numeroOrdemL]);
+
   // No useEffect, substitua a chamada direta por:
 
   useEffect(() => {
@@ -613,9 +592,9 @@ self.addEventListener('fetch', (event) => {
                 <p style={{ fontSize: "22px", color: "red" }}>Tempo Esgotado!</p>
               ) : (
                 <p style={{ fontSize: "30px" }}>{formatarTempo(segundos)}
-                
-                
-                
+
+
+
                 </p>
               )}
             </h5>
