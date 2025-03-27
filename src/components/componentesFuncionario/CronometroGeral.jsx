@@ -279,36 +279,44 @@ const CronometroGeral = ({
   }, []);
 
   // Substituir múltiplos useEffect por um único gerenciador de estado
-  useEffect(() => {
-    // Carregar estado inicial
-    const loadInitialState = () => {
-      const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
-      const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
-      const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
+// Substitua TODOS os useEffect relacionados ao carregamento inicial por este único:
 
-      if (tempoSalvo) setSegundos(parseInt(tempoSalvo));
-      setRodando(estadoRodandoSalvo === "true");
+useEffect(() => {
+  // 1. Carregar estado do localStorage
+  const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
+  const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
+  const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-      if (startTimeSalvo && estadoRodandoSalvo === "true") {
-        const currentTime = Date.now();
-        setSegundos(prev => prev + Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000));
-      }
-    };
+  // 2. Restaurar valores iniciais
+  if (tempoSalvo) {
+    setSegundos(parseInt(tempoSalvo));
+  }
 
-    // Buscar dados do técnico
-    const fetchTecnicoData = async () => {
-      try {
-        const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
-        setIdTecnico(data.tecnico_id);
-      } catch (err) {
-        console.error("Erro ao buscar técnico:", err);
-      }
-    };
+  // 3. Determinar se deve continuar contando
+  if (estadoRodandoSalvo === "true") {
+    setRodando(true);
+    
+    // Se estava rodando, calcular tempo decorrido desde a última atualização
+    if (startTimeSalvo) {
+      const currentTime = new Date().getTime();
+      const tempoDecorrido = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
+      setSegundos(prev => prev + tempoDecorrido);
+    }
+  } else {
+    setRodando(false);
+  }
 
-    loadInitialState();
-    fetchTecnicoData();
-  }, [numeroOrdem, numeroOrdemL]);
-
+  // 4. Buscar dados do técnico (opcional, se necessário)
+  const fetchTecnicoData = async () => {
+    try {
+      const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+      setIdTecnico(data.tecnico_id);
+    } catch (err) {
+      console.error("Erro ao buscar técnico:", err);
+    }
+  };
+  fetchTecnicoData();
+}, [numeroOrdem, numeroOrdemL]);
 
 
   // Substituir múltiplos useEffect por um único gerenciador de estado
@@ -409,18 +417,15 @@ const CronometroGeral = ({
   // Função para alternar o estado "rodando" (iniciar ou pausar)
   const iniciarPausar = (opcao) => {
     const novoEstadoRodando = !rodando;
+    
+    // Atualizar estado imediatamente
     setRodando(novoEstadoRodando);
-
-    // Atualiza imediatamente o banco de dados
-    salvarTempoNoBanco(segundos, novoEstadoRodando);
-    if (opcaoAtiva === opcao) {
-      setOpcaoAtiva(null); // Se a opção clicada já estiver ativa, desmarque
-      setRodando(false);
-    } else {
-      setOpcaoAtiva(opcao); // Marca a opção clicada
-    }
-    setRodando((prev) => !prev); ((prev) => !prev);
-    if (!rodando) {
+    
+    // Atualizar opção ativa
+    setOpcaoAtiva(opcaoAtiva === opcao ? null : opcao);
+  
+    // Gerenciar localStorage
+    if (novoEstadoRodando) {
       const startTime = new Date().getTime();
       localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
       localStorage.setItem(`rodando-${numeroOrdem}`, "true");
@@ -428,9 +433,10 @@ const CronometroGeral = ({
       localStorage.removeItem(`startTime-${numeroOrdem}`);
       localStorage.setItem(`rodando-${numeroOrdem}`, "false");
     }
+  
+    // Salvar no banco de dados
+    salvarTempoNoBanco(segundos, novoEstadoRodando);
   };
-
-
 
 
   // Função para limpar todos os dados de todos os cronômetros no localStorage
