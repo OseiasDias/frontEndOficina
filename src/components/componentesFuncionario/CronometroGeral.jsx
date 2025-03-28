@@ -16,9 +16,7 @@ import { useEffect } from 'react';
 import { GiAutoRepair } from "react-icons/gi";
 import { debounce } from 'lodash';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Não se esqueça de importar o CSS do bootstrap
-
 import { AiOutlineFieldNumber } from 'react-icons/ai'
-
 import React, { useCallback } from 'react';
 
 
@@ -38,8 +36,6 @@ const CronometroGeral = ({
   segundoFinal,
   tempoEsgotado: tempoEsgotadoProp,
   displayF,
-
-
 }) => {
 
   // 3. Agora declare os estados
@@ -61,6 +57,61 @@ const CronometroGeral = ({
   const [numeroTecnico, setNumeroTecnico] = useState('');
   const [numeroOrdemL, setNumeroOrdem] = useState(numeroOrdem); // Estado para armazenar o número da ordem
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+  const [segundosRemotos, setSegundosRemotos] = useState(segundosAtual);
+  // eslint-disable-next-line no-unused-vars
+  const [ultimaSincronizacao, setUltimaSincronizacao] = useState(null);
+  const [segundoFinalRemoto, setSegundoFinalRemoto] = useState(segundoFinal);
+
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  const buscarSegundosAtuais = async () => {
+    if (!idTecnico || !numeroOrdemL) return;
+    
+    try {
+      const response = await axios.get(
+        `${API_URL}/cronometroSegundoAtual/${idTecnico}/${numeroOrdemL}`
+      );
+      if (response.data && response.data.segundos_atual !== undefined) {
+        setSegundosRemotos(response.data.segundos_atual);
+        setUltimaSincronizacao(new Date());
+      }
+    } catch (error) {
+      console.error("Erro ao buscar segundos atuais:", error);
+    }
+  };
+
+  const buscarSegundoFinal = async () => {
+    if (!idTecnico || !numeroOrdemL) return;
+    
+    try {
+      const response = await axios.get(
+        `${API_URL}/cronometroSegundoFinal/${idTecnico}/${numeroOrdemL}`
+      );
+      if (response.data && response.data.segundo_final !== undefined) {
+        setSegundoFinalRemoto(response.data.segundo_final);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar segundo final:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Busca inicial dos dados
+    buscarSegundosAtuais();
+    buscarSegundoFinal();
+    
+    // Configura os intervalos para sincronização periódica
+    const intervaloAtual = setInterval(buscarSegundosAtuais, 90000);
+    const intervaloFinal = setInterval(buscarSegundoFinal, 90000);
+    
+    return () => {
+      clearInterval(intervaloAtual);
+      clearInterval(intervaloFinal);
+    };
+  }, [idTecnico, numeroOrdemL]);
 
   // Função para salvar o tempo acumulado no banco de dados
   const salvarTempoNoBanco = async (segundosAtual, estaRodando) => {
@@ -134,6 +185,16 @@ const CronometroGeral = ({
     cache[url] = { data, timestamp: Date.now() };
     return data;
   };
+  useEffect(() => {
+    // Se for um novo cronômetro (sem dados no localStorage)
+    if (!localStorage.getItem(`rodando-${numeroOrdem}`)) {
+      const startTime = new Date().getTime();
+      localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
+      localStorage.setItem(`rodando-${numeroOrdem}`, "true");
+      setRodando(true);
+      salvarTempoNoBanco(segundos, true);
+    }
+  }, [numeroOrdem]);
 
 
   // No useEffect principal:
@@ -216,7 +277,8 @@ const CronometroGeral = ({
     fetch(`http://127.0.0.1:8000/api/cronometros/buscar/${numeroOrdemL}`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Erro ao buscar os dados");
+          //throw new Error("Erro ao buscar os dados");
+          window.location.reload();
         }
         return response.json();
       })
@@ -257,9 +319,6 @@ const CronometroGeral = ({
     }
   };
 
-  const handleRefresh = () => {
-    window.location.reload();
-  };
 
   // Função para reiniciar o cronômetro
   const reiniciar = () => {
@@ -282,31 +341,39 @@ const CronometroGeral = ({
 // Substitua TODOS os useEffect relacionados ao carregamento inicial por este único:
 
 useEffect(() => {
-  // 1. Carregar estado do localStorage
+  // 1. Inicializar como rodando por padrão
+  setRodando(true);
+  
+  // 2. Carregar estado do localStorage se existir
   const tempoSalvo = localStorage.getItem(`segundos-${numeroOrdem}`);
   const estadoRodandoSalvo = localStorage.getItem(`rodando-${numeroOrdem}`);
   const startTimeSalvo = localStorage.getItem(`startTime-${numeroOrdem}`);
 
-  // 2. Restaurar valores iniciais
+  // 3. Restaurar valores salvos
   if (tempoSalvo) {
     setSegundos(parseInt(tempoSalvo));
   }
 
-  // 3. Determinar se deve continuar contando
-  if (estadoRodandoSalvo === "true") {
-    setRodando(true);
-    
-    // Se estava rodando, calcular tempo decorrido desde a última atualização
-    if (startTimeSalvo) {
-      const currentTime = new Date().getTime();
-      const tempoDecorrido = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
-      setSegundos(prev => prev + tempoDecorrido);
-    }
-  } else {
-    setRodando(false);
+  // 4. Se havia um estado salvo, respeitar esse estado
+  if (estadoRodandoSalvo !== null) {
+    setRodando(estadoRodandoSalvo === "true");
   }
 
-  // 4. Buscar dados do técnico (opcional, se necessário)
+  // 5. Se estava rodando, calcular tempo decorrido
+  if (estadoRodandoSalvo === "true" && startTimeSalvo) {
+    const currentTime = new Date().getTime();
+    const tempoDecorrido = Math.floor((currentTime - parseInt(startTimeSalvo)) / 1000);
+    setSegundos(prev => prev + tempoDecorrido);
+  }
+
+  // 6. Salvar o estado inicial como rodando se for um novo cronômetro
+  if (estadoRodandoSalvo === null) {
+    const startTime = new Date().getTime();
+    localStorage.setItem(`startTime-${numeroOrdem}`, startTime);
+    localStorage.setItem(`rodando-${numeroOrdem}`, "true");
+  }
+
+  // 7. Buscar dados do técnico
   const fetchTecnicoData = async () => {
     try {
       const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
@@ -317,7 +384,6 @@ useEffect(() => {
   };
   fetchTecnicoData();
 }, [numeroOrdem, numeroOrdemL]);
-
 
   // Substituir múltiplos useEffect por um único gerenciador de estado
   useEffect(() => {
@@ -349,11 +415,16 @@ useEffect(() => {
     loadInitialState();
     fetchTecnicoData();
   }, [numeroOrdem, numeroOrdemL]);
+  
   // Função para formatar o tempo
   const formatarTempo = (segundos) => {
-    const minutos = Math.floor(segundos / 60);
+    const horas = Math.floor(segundos / 3600);
+    const minutos = Math.floor((segundos % 3600) / 60);
     const segundosRestantes = segundos % 60;
-    return `${minutos < 10 ? "0" + minutos : minutos}:${segundosRestantes < 10 ? "0" + segundosRestantes : segundosRestantes}`;
+    
+    return `${horas < 10 ? "0" + horas : horas}:${
+      minutos < 10 ? "0" + minutos : minutos
+    }:${segundosRestantes < 10 ? "0" + segundosRestantes : segundosRestantes}`;
   };
 
   // Função para buscar o funcionário
@@ -592,7 +663,7 @@ useEffect(() => {
   return (
     <>
       <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-0  backFundo w-100">
-        <button className='d-none' onClick={limparTodosOsCronometros}>Limpar</button>
+        <button className='' onClick={limparTodosOsCronometros}>Limpar</button>
         <div className="d-flex pt-2 justify-content-between">
           <div className="estado text-start d-flex flex-column">
             <div className="d-flex align-items-center">
@@ -638,15 +709,19 @@ useEffect(() => {
 
         <div className="row pb-3  ">
           <div className="col-11 py-1">
-            <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
+            <ProgressoBar progresso= {segundosRemotos} segundoFinal={segundoFinalRemoto} numeroOrdem={numeroOrdem} />
+           
 
-            {/**segundosAtual */}
+            {/**segundosAtual
+             *             <ProgressoBar progresso={(segundos / tempoLimite) * 100} numeroOrdem={numeroOrdem} />
+
+            */}
 
           </div>
           <button onClick={toggleOptionsVisibility} className='col-1 setasDesign  p-0  text-white d-block ms-auto' style={{ padding: "0", margin: "0", backgroundColor: "#00000000", border: "0" }}>
             {isOptionsVisible ? <FaAngleUp /> : <FaAngleDown />}
           </button>
-
+        
         </div>
         {/* Opções com visibilidade controlada */}
 
