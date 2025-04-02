@@ -361,19 +361,19 @@ export default function Funcionario({ display, displayBlock }) {
     const fetchDadosOrdemDeReparacao = async () => {
       try {
         // Requisições com retry
-        const ordemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordens-de-reparo/${idOrdemDeReparacao}`));
+        const ordemDeReparacaoResponse = await retryRequest(() => axios.get(`${API_URL}/ordens-de-reparo/${idOrdemDeReparacao}`));
         setOrdemDeReparacao(ordemDeReparacaoResponse.data);
 
-        const clienteOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/clientes/${ordemDeReparacaoResponse.data.cliente_id}`));
+        const clienteOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`${API_URL}/clientes/${ordemDeReparacaoResponse.data.cliente_id}`));
         setClienteOrdemDeReparacao(clienteOrdemDeReparacaoResponse.data);
 
-        const veiculoOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/veiculos/${ordemDeReparacaoResponse.data.veiculo_id}`));
+        const veiculoOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`${API_URL}/veiculos/${ordemDeReparacaoResponse.data.veiculo_id}`));
         setVeiculoOrdemDeReparacao(veiculoOrdemDeReparacaoResponse.data);
 
-        const empresaOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/empresas/1`));
+        const empresaOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`${API_URL}/empresas/1`));
         setEmpresaOrdemDeReparacao(empresaOrdemDeReparacaoResponse.data);
 
-        const servicosOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`http://127.0.0.1:8000/api/ordem-de-reparacao-servicoU/${idOrdemDeReparacao}`));
+        const servicosOrdemDeReparacaoResponse = await retryRequest(() => axios.get(`${API_URL}/ordem-de-reparacao-servicoU/${idOrdemDeReparacao}`));
         setServicosOrdemDeReparacao(servicosOrdemDeReparacaoResponse.data);
 
       } catch (error) {
@@ -429,7 +429,7 @@ export default function Funcionario({ display, displayBlock }) {
       </div>
     );
   }
-
+/*
   if (!ordemDeReparacao || !clienteOrdemDeReparacao || !veiculoOrdemDeReparacao) {
     return (
 
@@ -440,7 +440,7 @@ export default function Funcionario({ display, displayBlock }) {
         </div>
       </div>
     );
-  }
+  }*/
   // Função para limpar os dados
   const limparDadosModalTecnico = () => {
     setNumeroTecnicoOrdemDeReparacao("");  // Limpa o valor do input
@@ -1385,7 +1385,7 @@ export default function Funcionario({ display, displayBlock }) {
                 {/* Renderiza os cronômetros dinamicamente com base nas ordens */}
                 <h4 className='my-3 ms-2'>Tempo Total de cada OR</h4>
                 <div className="row">
-                  {ordens.length === 0 ? (
+                  {ordens.length === 1 ? (
                     // Se o array estiver vazio, exibe a mensagem "Vazio"
                     <div className="text-center vh-100 pt-5">
                       <h3 className='fw-bold my-3'>Dados não encontrados</h3>

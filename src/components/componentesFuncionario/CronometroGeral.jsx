@@ -219,7 +219,7 @@ const CronometroGeral = ({
   }, [rodando, tempoLimite, debouncedSalvarTempo]);
 
   // Em um arquivo service-worker.js
-  self.addEventListener('fetch', (event) => {
+  /*self.addEventListener('fetch', (event) => {
     if (event.request.url.includes('/cronometro/atualizar')) {
       event.respondWith(
         caches.open('cronometro-cache').then(cache => {
@@ -232,11 +232,11 @@ const CronometroGeral = ({
         })
       );
     }
-  });
+  });*/
 
   // Use em vez de fetch direto
   useEffect(() => {
-    fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`)
+    fetchWithCache(`${API_URL}/cronometrosBuscar/${numeroOrdemL}`)
       .then(data => setIdTecnico(data.tecnico_id))
       .catch(err => setError(err.message));
   }, [numeroOrdemL]);
@@ -274,7 +274,7 @@ const CronometroGeral = ({
   // No useEffect, substitua a chamada direta por:
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/cronometros/buscar/${numeroOrdemL}`)
+    fetch( `${API_URL}/cronometrosBuscar/${numeroOrdemL}`)
       .then((response) => {
         if (!response.ok) {
           //throw new Error("Erro ao buscar os dados");
@@ -299,8 +299,8 @@ const CronometroGeral = ({
     setErroMensagem("");
 
     try {
-      console.log('Fazendo requisição para:', `${API_URL}/cronometros/buscar/${numeroOrdemL}`);
-      const response = await axios.get(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+      console.log('Fazendo requisição para:', `${API_URL}/cronometrosBuscar/${numeroOrdemL}`);
+      const response = await axios.get(`${API_URL}/cronometrosBuscar/${numeroOrdemL}`);
       console.log('Resposta recebida:', response.data);
       setIdTecnico(12);
       if (response.data?.tecnico_id) {
@@ -376,7 +376,7 @@ useEffect(() => {
   // 7. Buscar dados do técnico
   const fetchTecnicoData = async () => {
     try {
-      const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+      const data = await fetchWithCache(`${API_URL}/cronometrosBuscar/${numeroOrdemL}`);
       setIdTecnico(data.tecnico_id);
     } catch (err) {
       console.error("Erro ao buscar técnico:", err);
@@ -405,7 +405,7 @@ useEffect(() => {
     // Buscar dados do técnico
     const fetchTecnicoData = async () => {
       try {
-        const data = await fetchWithCache(`${API_URL}/cronometros/buscar/${numeroOrdemL}`);
+        const data = await fetchWithCache(`${API_URL}/cronometrosBuscar/${numeroOrdemL}`);
         setIdTecnico(data.tecnico_id);
       } catch (err) {
         console.error("Erro ao buscar técnico:", err);
@@ -663,7 +663,7 @@ useEffect(() => {
   return (
     <>
       <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }} className="p-0  backFundo w-100">
-        <button className='' onClick={limparTodosOsCronometros}>Limpar</button>
+        <button className='d-none' onClick={limparTodosOsCronometros}>Limpar</button>
         <div className="d-flex pt-2 justify-content-between">
           <div className="estado text-start d-flex flex-column">
             <div className="d-flex align-items-center">
