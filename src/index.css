@@ -17,6 +17,7 @@
   --linearGradiente: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
   --linearGradienteA: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9));
   --sombraAdmin: 0 .0rem 1rem rgba(0, 0, 0, .15);
+  --azulBg: #EEF3F9;
 }
 
 a{

@@ -65,8 +65,23 @@
   border-radius: 20px !important;
   box-shadow: var(--sombra);
   transition: all 300ms ease-in;
+  background-color: #fff;
+
 }
 
 .pHorarios:hover {
   transform: scale(1.07);
+  background-color: #fff;
+}
+
+
+.horasTrabalho{
+  background-color:var(--azulBg) !important;
+}
+
+
+.bordaritem .accordion-item>.accordion-header .accordion-button {
+  background-color: var(--azulBg) !important;
+  border-bottom: 2px solid var(--corPrimaria);
+  border-radius: 5px;
 }

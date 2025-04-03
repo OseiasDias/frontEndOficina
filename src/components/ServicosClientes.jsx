@@ -2,14 +2,11 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MdMiscellaneousServices } from "react-icons/md";
 import '../css/servicos.css';
-import { ImEyeBlocked } from "react-icons/im";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-
-
-export default function ServicosCienntes() {
+export default function ServicosClientes() {
     const [servicos, setServicos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -43,22 +40,20 @@ export default function ServicosCienntes() {
                 <div className="container">
                     <h2 className='titulo-secao text-center'>Conheça a nossa diversidade de serviços</h2>
                     <div className='row'>
-                        {servicos.slice(0, showAll ? servicos.length : 6).map(servico => (
+                        {servicos.slice(0, showAll ? servicos.length : 9).map(servico => (
                             <div key={servico.id} className="servico-item mt-3 col-12 col-md-6 col-lg-4 h-100">
                                 <div className="margem h-100">
                                     <MdMiscellaneousServices fontSize={38} className=' corIcone' />
                                     <h5 className='fw-500 tamanhoH5 my-1'>{servico.nome_servico}</h5>
                                     <p className='parSer'>{servico.descricao}</p>
                                     <p className='sizeAgenda'><strong>Agende uma avaliação! <IoCalendarNumberOutline fontSize={20} /></strong></p>
-                                    {/**                                    <p>A partir de: <strong><GiMoneyStack fontSize={25}/> {parseFloat(servico.preco).toFixed(2)}</strong> kz</p>
- */}
                                 </div>
                             </div>
                         ))}
                     </div>
-                    {!showAll && ( // Mostra o botão apenas se não estiver mostrando todos
+                    {!showAll && servicos.length > 9 && ( // Mostra o botão apenas se houver mais de 9 serviços
                         <div className="text-center mt-3">
-                            <button onClick={handleShowAll} className="btn btn-primary links-acessos px-5 my-4">Ver mais <ImEyeBlocked fontSize={25} /></button>
+                            <button onClick={handleShowAll} className="btn btn-primary links-acessos px-5 my-4">Ver mais</button>
                         </div>
                     )}
                 </div>

@@ -12,7 +12,8 @@
     color: #000000d5;
     transition: var(--trasicao);
     text-shadow: var(--sombraTexto);
-                 border-top: 5px solid var(--corPrimaria);
+    border-top: 5px solid var(--corPrimaria);
+    background-color: var(--azulBg);
                
 }
 
